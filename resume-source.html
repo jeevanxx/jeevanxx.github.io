@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jeevan J Shine — Resume</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #1c2230; font-size: 9.2pt; line-height: 1.38; }
+  .page { width: 210mm; padding: 12mm 15mm 10mm; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2.5px solid #0d59f2; padding-bottom: 9px; }
+  h1 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 25pt; line-height: 1; letter-spacing: -.5px; color: #0f131d; }
+  .role { font-size: 10.5pt; color: #0d59f2; font-weight: 600; margin-top: 5px; }
+  .contact { text-align: right; font-size: 8.8pt; color: #3b4252; line-height: 1.6; }
+  .contact a { color: #3b4252; text-decoration: none; }
+  h2 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 10.5pt; text-transform: uppercase; letter-spacing: 1.4px; color: #0d59f2; margin: 10px 0 5px; display: flex; align-items: center; gap: 8px; }
+  h2::after { content: ""; flex: 1; height: 1px; background: #d7dce8; }
+  .summary { color: #2d3443; }
+  .item { margin-bottom: 6px; break-inside: avoid; }
+  .row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .title { font-weight: 700; color: #0f131d; font-size: 10pt; }
+  .meta { color: #5b6476; font-size: 8.8pt; white-space: nowrap; }
+  .sub { color: #3b4252; font-weight: 500; }
+  ul { margin: 3px 0 0 14px; }
+  li { margin: 1.5px 0; color: #2d3443; }
+  .tech { margin-top: 3px; font-size: 8.6pt; color: #5b6476; }
+  .tech b { color: #0d59f2; font-weight: 600; }
+  .tag { display: inline-block; font-size: 7.6pt; font-weight: 700; color: #00874a; background: #e3f8ec; border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; letter-spacing: .3px; }
+  .skills { display: grid; grid-template-columns: 118px 1fr; row-gap: 4px; }
+  .skills dt { font-weight: 600; color: #0f131d; }
+  .skills dd { color: #2d3443; }
+  a.link { color: #0d59f2; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <h1>Jeevan J Shine</h1>
+      <div class="role">B.Tech CSE (AI) Student · Web &amp; AI Developer</div>
+    </div>
+    <div class="contact">
+      Nagercoil, Tamil Nadu, India<br>
+      <a href="mailto:jeevanshine2008@gmail.com">jeevanshine2008@gmail.com</a><br>
+      <a href="https://github.com/jeevanxx">github.com/jeevanxx</a> · <a href="https://jeevanxx.github.io">jeevanxx.github.io</a><br>
+      <a href="https://www.linkedin.com/in/jeevan-shine-708377372">linkedin.com/in/jeevan-shine-708377372</a>
+    </div>
+  </header>
+
+  <h2>Summary</h2>
+  <p class="summary">First-year Computer Science (AI) student at Joy University through NIAT who learns by building real projects and putting them online. I build web apps, installable PWAs and AI vision tools, use modern AI coding tools to move fast, and publish my work on GitHub. Looking for hackathon teams, project collaborations and learning opportunities.</p>
+
+  <h2>Education</h2>
+  <div class="item">
+    <div class="row"><span class="title">B.Tech, Computer Science &amp; Engineering (AI)</span><span class="meta">Jul 2026 – Present</span></div>
+    <div class="sub">Joy University × NIAT, Nagercoil, Tamil Nadu</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">NIAT Bootcamp</span><span class="meta">Before college</span></div>
+    <div class="sub">AMET College, Chennai</div>
+  </div>
+
+  <h2>Projects</h2>
+  <div class="item">
+    <div class="row"><span class="title">Event Radar <span class="tag">LIVE</span></span><a class="meta link" href="https://github.com/jeevanxx/Event-Rader">github.com/jeevanxx/Event-Rader</a></div>
+    <ul>
+      <li>Installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.</li>
+      <li>Built and deployed on GitHub Pages so it works on any phone or laptop.</li>
+    </ul>
+    <div class="tech"><b>Tech:</b> JavaScript, HTML, CSS, Service Workers / PWA, GitHub Pages</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">CampusPilot <span class="tag" style="color:#7746e1;background:#efe8ff">IN PROGRESS</span></span><span class="meta">AI vision project</span></div>
+    <ul>
+      <li>AI vision assistant to help visually impaired students navigate campus: the camera detects objects and obstacles, and an AI agent turns detections into spoken guidance.</li>
+    </ul>
+    <div class="tech"><b>Tech:</b> React, Vite, FastAPI, YOLOv8, LangGraph</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">Focus Forge</span><a class="meta link" href="https://github.com/jeevanxx/focus-forge-hq">github.com/jeevanxx/focus-forge-hq</a></div>
+    <ul><li>Productivity and discipline web app to help users focus and build better habits.</li></ul>
+    <div class="tech"><b>Tech:</b> TypeScript, React, Vite, Lovable</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">CampusAid v2</span><a class="meta link" href="https://github.com/jeevanxx/campusaid-v2">github.com/jeevanxx/campusaid-v2</a></div>
+    <ul><li>Rebuilt step-free campus guide for Joy University, focused on map-based accessible routes and a cleaner design.</li></ul>
+    <div class="tech"><b>Tech:</b> JavaScript, HTML, CSS</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">Task Tracker <span class="tag">LIVE</span></span><a class="meta link" href="https://github.com/jeevanxx/Task-Tracker">github.com/jeevanxx/Task-Tracker</a></div>
+    <ul><li>First project, built from scratch: add, edit, complete and delete tasks, filters, task counter, dark mode, and tasks saved between visits with localStorage.</li></ul>
+    <div class="tech"><b>Tech:</b> HTML, CSS, JavaScript, localStorage</div>
+  </div>
+  <div class="item">
+    <div class="row"><span class="title">Personal Portfolio</span><a class="meta link" href="https://jeevanxx.github.io">jeevanxx.github.io</a></div>
+    <ul><li>Portfolio that automatically lists my GitHub projects using the GitHub API, with a Three.js 3D scene and six switchable themes.</li></ul>
+    <div class="tech"><b>Tech:</b> JavaScript, Tailwind CSS, Three.js, GitHub API</div>
+  </div>
+
+  <h2>Certificates &amp; Events</h2>
+  <div class="item">
+    <div class="row"><span class="title">Vibe Coding Workshop 2026 — Certificate of Participation</span><span class="meta">30 Oct 2026</span></div>
+    <div class="sub">StartupTN × Google for Developers · Noorul Islam Centre for Higher Education, Kumaracoil · ID: VCW26-7R5XM</div>
+  </div>
+
+  <h2>Skills</h2>
+  <dl class="skills">
+    <dt>Languages</dt><dd>JavaScript, TypeScript, Python, HTML, CSS</dd>
+    <dt>Frameworks</dt><dd>React, Vite, FastAPI, Tailwind CSS, Three.js</dd>
+    <dt>AI / ML</dt><dd>YOLOv8 (object detection), LangGraph (AI agents)</dd>
+    <dt>Tools</dt><dd>Git, GitHub, GitHub Pages, Claude Code, Google Antigravity, Google AI Studio, Lovable, Notion</dd>
+  </dl>
+
+  <h2>Interests</h2>
+  <p class="summary">AI vision &amp; agents, web apps and PWAs, hackathons and tech workshops. Outside tech: football, gaming, reading and philosophy.</p>
+</div>
+</body>
+</html>

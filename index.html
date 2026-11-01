@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html class="dark scroll-smooth" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="web_standard" name="shell-type">
+  <title>Jeevan J Shine | Portfolio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230d59f2'/%3E%3Cstop offset='1' stop-color='%2304dd83'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='white'%3EJ%3C/text%3E%3C/svg%3E">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jeevan J Shine | Portfolio">
+  <meta property="og:description" content="First-year B.Tech CSE (AI) student at Joy University × NIAT. I build web apps and AI tools. See my projects, live from GitHub.">
+  <meta property="og:url" content="https://jeevanxx.github.io/">
+  <meta property="og:image" content="https://jeevanxx.github.io/profile.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#0f131d">
+  <meta name="description" content="Jeevan J Shine: first-year B.Tech CSE (AI) student at Joy University × NIAT. Web apps, AI tools and projects, synced live from GitHub.">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Space+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet">
+  <style>
+    :root, .dark {
+      --md-sys-typescale-font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --md-sys-body-font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --md-sys-code-font-family: 'JetBrains Mono', monospace;
+
+      /* Dark Mode Surfaces & Geometry */
+      --color-surface: 15 19 29;
+      --color-background: 15 19 29;
+      --color-surface-dim: 10 14 23;
+      --color-surface-bright: 53 57 68;
+      --color-surface-container-lowest: 10 14 24;
+      --color-surface-container-low: 23 27 38;
+      --color-surface-container: 28 31 42;
+      --color-surface-container-high: 38 42 53;
+      --color-surface-container-highest: 49 53 64;
+      --color-surface-variant: 49 53 64;
+      --color-on-surface: 223 226 241;
+      --color-on-background: 223 226 241;
+      --color-on-surface-variant: 195 197 216;
+      --color-outline: 141 144 161;
+      --color-outline-variant: 67 70 85;
+      --color-inverse-surface: 223 226 241;
+      --color-inverse-on-surface: 44 48 59;
+      --color-error: 255 180 171;
+      --color-error-container: 147 0 10;
+      --color-on-error: 105 0 5;
+      --color-on-error-container: 255 218 214;
+
+      /* Active Palette (Defaults to Sapphire Blue in Dark Mode) */
+      --color-primary: 181 196 255;
+      --color-primary-container: 13 89 242;
+      --color-on-primary: 0 40 124;
+      --color-on-primary-container: 226 230 255;
+      --color-primary-fixed: 220 225 255;
+      --color-primary-fixed-dim: 181 196 255;
+      --color-on-primary-fixed: 0 22 78;
+      --color-on-primary-fixed-variant: 0 60 173;
+      --color-inverse-primary: 0 80 226;
+      --color-secondary: 70 250 156;
+      --color-secondary-container: 4 221 131;
+      --color-on-secondary: 0 57 29;
+      --color-on-secondary-container: 0 91 51;
+      --color-secondary-fixed: 89 255 164;
+      --color-secondary-fixed-dim: 28 227 136;
+      --color-on-secondary-fixed: 0 33 15;
+      --color-on-secondary-fixed-variant: 0 82 45;
+      --color-tertiary: 208 188 255;
+      --color-tertiary-container: 119 70 225;
+      --color-on-tertiary: 60 0 145;
+      --color-on-tertiary-container: 238 227 255;
+      --color-tertiary-fixed: 233 221 255;
+      --color-tertiary-fixed-dim: 208 188 255;
+      --color-on-tertiary-fixed: 35 0 92;
+      --color-on-tertiary-fixed-variant: 85 22 190;
+    }
+
+    .light {
+      /* Light Mode Surfaces & Geometry */
+      --color-surface: 248 249 254;
+      --color-background: 248 249 254;
+      --color-surface-dim: 218 220 230;
+      --color-surface-bright: 255 255 255;
+      --color-surface-container-lowest: 255 255 255;
+      --color-surface-container-low: 242 243 250;
+      --color-surface-container: 234 236 245;
+      --color-surface-container-high: 227 229 239;
+      --color-surface-container-highest: 219 222 233;
+      --color-surface-variant: 219 222 233;
+      --color-on-surface: 23 27 38;
+      --color-on-background: 23 27 38;
+      --color-on-surface-variant: 68 72 87;
+      --color-outline: 116 120 135;
+      --color-outline-variant: 198 201 216;
+      --color-inverse-surface: 23 27 38;
+      --color-inverse-on-surface: 242 243 250;
+      --color-error: 186 26 26;
+      --color-error-container: 255 218 214;
+      --color-on-error: 255 255 255;
+      --color-on-error-container: 65 0 2;
+
+      /* Active Palette (Defaults to Sapphire Blue in Light Mode) */
+      --color-primary: 13 89 242;
+      --color-primary-container: 220 225 255;
+      --color-on-primary: 255 255 255;
+      --color-on-primary-container: 0 22 78;
+      --color-primary-fixed: 220 225 255;
+      --color-primary-fixed-dim: 181 196 255;
+      --color-on-primary-fixed: 0 22 78;
+      --color-on-primary-fixed-variant: 0 60 173;
+      --color-inverse-primary: 181 196 255;
+      --color-secondary: 0 135 74;
+      --color-secondary-container: 166 246 201;
+      --color-on-secondary: 255 255 255;
+      --color-on-secondary-container: 0 33 15;
+      --color-secondary-fixed: 166 246 201;
+      --color-secondary-fixed-dim: 70 250 156;
+      --color-on-secondary-fixed: 0 33 15;
+      --color-on-secondary-fixed-variant: 0 82 45;
+      --color-tertiary: 101 56 208;
+      --color-tertiary-container: 233 221 255;
+      --color-on-tertiary: 255 255 255;
+      --color-on-tertiary-container: 35 0 92;
+      --color-tertiary-fixed: 233 221 255;
+      --color-tertiary-fixed-dim: 208 188 255;
+      --color-on-tertiary-fixed: 35 0 92;
+      --color-on-tertiary-fixed-variant: 85 22 190;
+    }
+
+    /* Fluid theme transitions across UI chrome and cards */
+    body, header, nav, section, footer, main, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select {
+      transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 220ms;
+    }
+
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: var(--md-sys-body-font-family);
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      main > :first-child {
+        margin-top: 0 !important;
+      }
+      main > :last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* Fix 1: Heading Serif Font Clash - Enforce Sans-Serif / Space Grotesk globally across all headings & sub-headlines */
+    h1, h2, h3, h4, h5, h6,
+    h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
+    .font-headline-sm, .font-headline-md, .font-headline-lg,
+    .font-display-sm, .font-display-md, .font-display-lg,
+    .font-title-lg,
+    .sub-headline,
+    [class*="text-headline-"],
+    [class*="text-display-"] {
+      font-family: var(--md-sys-typescale-font-family) !important;
+    }
+
+    /* Prevent default browser serif fallback across all textual elements */
+    body, p, span, a, input, select, textarea {
+      font-family: var(--md-sys-body-font-family);
+    }
+
+    code, pre, .font-mono, [class*="label-"] {
+      font-family: var(--md-sys-code-font-family);
+    }
+
+    /* Fix 2: Icon & Text Alignment Shift - Lock button & badge structures with inline-flex items-center justify-center in CSS */
+    button,
+    a[role="button"],
+    .btn,
+    .action-btn,
+    #cvModalBtn,
+    #submitBtn,
+    .project-filter-btn,
+    .nav-item,
+    .social-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-sizing: border-box;
+    }
+
+    /* Circular social icon badges */
+    a[title*="Instagram"],
+    a[title*="LinkedIn"],
+    a[title*="X "],
+    a[title*="GitHub"],
+    .social-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* Lock icons and child elements from shifting */
+    button > span,
+    button > svg,
+    button > .material-symbols-outlined,
+    a > span,
+    a > svg,
+    a > .material-symbols-outlined,
+    .action-btn > span,
+    .action-btn > svg,
+    .action-btn > .material-symbols-outlined {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .marquee-track { animation: none !important; } }
+
+    /* Tech marquee */
+    .marquee-mask { -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+    .marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+    .marquee-mask:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* Typing caret */
+    .type-caret { display: inline-block; margin-left: 2px; animation: caret 1s steps(1) infinite; }
+    @keyframes caret { 50% { opacity: 0; } }
+
+    /* Animated gradient border */
+    .glow-border { position: relative; isolation: isolate; }
+    .glow-border::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; z-index: -1;
+      background: linear-gradient(120deg, rgb(var(--color-primary)), rgb(var(--color-secondary)), rgb(var(--color-tertiary)), rgb(var(--color-primary)));
+      background-size: 300% 300%; animation: glowshift 8s ease infinite;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+    @keyframes glowshift { 50% { background-position: 100% 50%; } }
+
+    /* 3D tilt + glare */
+    .tilt { transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; will-change: transform; position: relative; }
+    .tilt.tilting { transition: transform .08s linear, box-shadow .35s; box-shadow: 0 30px 60px -20px rgb(0 0 0 / .55); }
+    .tilt::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s;
+      background: radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgb(255 255 255 / .14), transparent 55%); }
+    .tilt.tilting::after { opacity: 1; }
+    .float-3d { animation: float3d 7s ease-in-out infinite; }
+    @keyframes float3d { 0%,100% { transform: translateY(0) rotateX(0) rotateY(0); } 50% { transform: translateY(-12px) rotateX(3deg) rotateY(-4deg); } }
+    @media (prefers-reduced-motion: reduce) { .float-3d { animation: none; } }
+
+    /* Hero background patterns (set per design) */
+    [data-pattern="dots"] .hero-bg { background-image: radial-gradient(rgb(var(--color-outline-variant) / .4) 1px, transparent 1px); background-size: 22px 22px; }
+    [data-pattern="grid"] .hero-bg { background-image: linear-gradient(rgb(var(--color-primary) / .09) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--color-primary) / .09) 1px, transparent 1px); background-size: 44px 44px; }
+    [data-pattern="scan"] .hero-bg { background-image: repeating-linear-gradient(0deg, rgb(var(--color-primary) / .06) 0 1px, transparent 1px 4px); }
+    [data-pattern="glow"] .hero-bg { background-image: radial-gradient(60% 50% at 80% 20%, rgb(var(--color-tertiary) / .16), transparent 70%), radial-gradient(50% 50% at 10% 90%, rgb(var(--color-primary) / .14), transparent 70%); }
+    .design-card { display: flex !important; flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important; width: 100%; }
+    .design-card > * { width: 100%; }
+    .design-card.design-active { border-color: rgb(var(--color-primary)); box-shadow: 0 0 0 2px rgb(var(--color-primary) / .6); }
+
+    /* Subtle dot grid background */
+    .dot-grid { background-image: radial-gradient(rgb(var(--color-outline-variant) / .35) 1px, transparent 1px); background-size: 22px 22px; }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      "darkMode": "class",
+      "theme": {
+        "extend": {
+          "colors": {
+            "surface": "rgb(var(--color-surface) / <alpha-value>)",
+            "background": "rgb(var(--color-background) / <alpha-value>)",
+            "surface-dim": "rgb(var(--color-surface-dim) / <alpha-value>)",
+            "surface-bright": "rgb(var(--color-surface-bright) / <alpha-value>)",
+            "surface-container-lowest": "rgb(var(--color-surface-container-lowest) / <alpha-value>)",
+            "surface-container-low": "rgb(var(--color-surface-container-low) / <alpha-value>)",
+            "surface-container": "rgb(var(--color-surface-container) / <alpha-value>)",
+            "surface-container-high": "rgb(var(--color-surface-container-high) / <alpha-value>)",
+            "surface-container-highest": "rgb(var(--color-surface-container-highest) / <alpha-value>)",
+            "surface-variant": "rgb(var(--color-surface-variant) / <alpha-value>)",
+            "on-surface": "rgb(var(--color-on-surface) / <alpha-value>)",
+            "on-background": "rgb(var(--color-on-background) / <alpha-value>)",
+            "on-surface-variant": "rgb(var(--color-on-surface-variant) / <alpha-value>)",
+            "outline": "rgb(var(--color-outline) / <alpha-value>)",
+            "outline-variant": "rgb(var(--color-outline-variant) / <alpha-value>)",
+            "inverse-surface": "rgb(var(--color-inverse-surface) / <alpha-value>)",
+            "inverse-on-surface": "rgb(var(--color-inverse-on-surface) / <alpha-value>)",
+            "primary": "rgb(var(--color-primary) / <alpha-value>)",
+            "primary-container": "rgb(var(--color-primary-container) / <alpha-value>)",
+            "on-primary": "rgb(var(--color-on-primary) / <alpha-value>)",
+            "on-primary-container": "rgb(var(--color-on-primary-container) / <alpha-value>)",
+            "primary-fixed": "rgb(var(--color-primary-fixed, var(--color-primary)) / <alpha-value>)",
+            "primary-fixed-dim": "rgb(var(--color-primary-fixed-dim, var(--color-primary)) / <alpha-value>)",
+            "on-primary-fixed": "rgb(var(--color-on-primary-fixed, var(--color-on-primary)) / <alpha-value>)",
+            "on-primary-fixed-variant": "rgb(var(--color-on-primary-fixed-variant, var(--color-on-primary)) / <alpha-value>)",
+            "secondary": "rgb(var(--color-secondary) / <alpha-value>)",
+            "secondary-container": "rgb(var(--color-secondary-container) / <alpha-value>)",
+            "on-secondary": "rgb(var(--color-on-secondary) / <alpha-value>)",
+            "on-secondary-container": "rgb(var(--color-on-secondary-container) / <alpha-value>)",
+            "secondary-fixed": "rgb(var(--color-secondary-fixed, var(--color-secondary)) / <alpha-value>)",
+            "secondary-fixed-dim": "rgb(var(--color-secondary-fixed-dim, var(--color-secondary)) / <alpha-value>)",
+            "on-secondary-fixed": "rgb(var(--color-on-secondary-fixed, var(--color-on-secondary)) / <alpha-value>)",
+            "on-secondary-fixed-variant": "rgb(var(--color-on-secondary-fixed-variant, var(--color-on-secondary)) / <alpha-value>)",
+            "tertiary": "rgb(var(--color-tertiary) / <alpha-value>)",
+            "tertiary-container": "rgb(var(--color-tertiary-container) / <alpha-value>)",
+            "on-tertiary": "rgb(var(--color-on-tertiary) / <alpha-value>)",
+            "on-tertiary-container": "rgb(var(--color-on-tertiary-container) / <alpha-value>)",
+            "tertiary-fixed": "rgb(var(--color-tertiary-fixed, var(--color-tertiary)) / <alpha-value>)",
+            "tertiary-fixed-dim": "rgb(var(--color-tertiary-fixed-dim, var(--color-tertiary)) / <alpha-value>)",
+            "on-tertiary-fixed": "rgb(var(--color-on-tertiary-fixed, var(--color-on-tertiary)) / <alpha-value>)",
+            "on-tertiary-fixed-variant": "rgb(var(--color-on-tertiary-fixed-variant, var(--color-on-tertiary)) / <alpha-value>)",
+            "error": "rgb(var(--color-error) / <alpha-value>)",
+            "error-container": "rgb(var(--color-error-container) / <alpha-value>)",
+            "on-error": "rgb(var(--color-on-error) / <alpha-value>)",
+            "on-error-container": "rgb(var(--color-on-error-container) / <alpha-value>)",
+            "surface-tint": "rgb(var(--color-primary) / <alpha-value>)",
+            "inverse-primary": "rgb(var(--color-inverse-primary, var(--color-primary-container)) / <alpha-value>)"
+          },
+          "borderRadius": {
+            "DEFAULT": "var(--r-md, 1rem)",
+            "lg": "var(--r-lg, 2rem)",
+            "xl": "var(--r-xl, 3rem)",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-sm": "1rem",
+            "margin-lg": "4rem",
+            "margin": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "gutter-lg": "2rem",
+            "gutter-sm": "1rem",
+            "space-lg": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "label-md": ["var(--md-sys-code-font-family)"],
+            "body-sm": ["var(--md-sys-body-font-family)"],
+            "label-sm": ["var(--md-sys-code-font-family)"],
+            "headline-md": ["var(--md-sys-typescale-font-family)"],
+            "display-md": ["var(--md-sys-typescale-font-family)"],
+            "headline-lg": ["var(--md-sys-typescale-font-family)"],
+            "display-lg": ["var(--md-sys-typescale-font-family)"],
+            "title-md": ["var(--md-sys-body-font-family)"],
+            "title-sm": ["var(--md-sys-body-font-family)"],
+            "body-md": ["var(--md-sys-body-font-family)"],
+            "headline-sm": ["var(--md-sys-typescale-font-family)"],
+            "title-lg": ["var(--md-sys-typescale-font-family)"],
+            "display-sm": ["var(--md-sys-typescale-font-family)"],
+            "headline-lg-mobile": ["var(--md-sys-typescale-font-family)"],
+            "body-lg": ["var(--md-sys-body-font-family)"],
+            "label-lg": ["var(--md-sys-code-font-family)"]
+          },
+          "fontSize": {
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+            "display-md": ["45px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.015em", "fontWeight": "400" }],
+            "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+            "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+            "display-sm": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_1px_8px_rgba(0,0,0,0.15)]">
+    <div class="h-20 max-w-[1440px] mx-auto px-margin-sm lg:px-margin-lg flex items-center justify-between gap-space-md">
+      <a href="#" class="flex flex-col group min-w-0">
+        <div class="flex items-center gap-space-xs">
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold group-hover:text-secondary transition-colors">Jeevan J Shine</span>
+          <span class="font-label-md text-label-md text-secondary hidden sm:inline">// builder</span>
+        </div>
+        <span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline-block">B.Tech CSE (AI) • Joy University × NIAT</span>
+      </a>
+
+      <nav id="navbar-links" class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-low/70 backdrop-blur-md rounded-full border border-outline-variant/30">
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="about" href="#about">About</a>
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="projects" href="#projects">Projects</a>
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="activity" href="#activity">Activity</a>
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="skills" href="#skills">Skills</a>
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="contact" href="#contact">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-space-sm">
+        <button id="mobileMenuBtn" type="button" class="xl:hidden w-10 h-10 rounded-full bg-surface-container-high/90 border border-outline-variant/30 text-on-surface hover:border-primary transition-all" aria-label="Open menu" aria-expanded="false">
+          <span class="material-symbols-outlined text-[20px]" id="mobileMenuIcon">menu</span>
+        </button>
+        <button id="designBtn" type="button" class="flex items-center gap-space-xs px-space-md py-2 bg-surface-container-high/90 backdrop-blur-md rounded-full border border-outline-variant/30 text-on-surface hover:border-primary transition-all font-label-md text-label-md" title="Change theme" aria-label="Change theme">
+          <span class="material-symbols-outlined text-[18px] text-primary">palette</span>
+          <span id="designBtnLabel" class="hidden md:inline max-w-[140px] truncate">Theme</span>
+        </button>
+        <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md hidden sm:block">
+          <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top profile-photo" src="profile.jpg">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="hidden xl:hidden fixed top-20 inset-x-0 z-40 bg-surface/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-xl">
+    <nav class="flex flex-col p-space-md gap-1">
+      <a href="#about" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">About</a>
+      <a href="#projects" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Projects</a>
+      <a href="#activity" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Activity</a>
+      <a href="#skills" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Skills</a>
+      <a href="#contact" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Contact</a>
+      <a href="Jeevan-J-Shine-Resume.pdf" target="_blank" rel="noopener noreferrer" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-primary hover:bg-surface-container-high">Resume (PDF)</a>
+    </nav>
+  </div>
+
+  <main class="w-full pt-20 bg-surface">
+    <div class="flex flex-col w-full relative overflow-x-hidden">
+
+      <!-- ===================== HERO ===================== -->
+      <section class="relative w-full overflow-hidden bg-surface hero-bg text-on-surface py-16 lg:py-24 flex flex-col justify-center items-center min-h-[calc(100vh-80px)]">
+        <canvas class="absolute inset-0 w-full h-full pointer-events-auto opacity-60 z-0" id="neuralCanvas"></canvas>
+        <canvas class="absolute inset-0 w-full h-full pointer-events-none z-0" id="hero3d" aria-hidden="true"></canvas>
+        <div class="absolute -top-32 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-[30rem] h-[30rem] rounded-full bg-secondary/10 blur-[120px] pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-[1200px] w-full mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            <!-- Portrait -->
+            <div class="lg:col-span-5 flex justify-center lg:justify-end order-1">
+              <div class="relative group float-3d" style="perspective:1000px">
+                <div class="absolute -inset-1.5 bg-gradient-to-r from-primary via-secondary to-tertiary rounded-2xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-1000"></div>
+                <div data-tilt-max="12" class="tilt relative rounded-2xl overflow-hidden bg-surface-container-high border-2 border-outline-variant/30 shadow-2xl w-64 sm:w-72 md:w-80 aspect-[3/4]">
+                  <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-1000 ease-out profile-photo" src="profile.jpg">
+                  <div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-transparent pointer-events-none"></div>
+                  <div class="absolute bottom-3 left-3 right-3 p-space-sm rounded-DEFAULT bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 flex items-center justify-between">
+                    <span class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface">
+                      <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span>
+                      Tamil Nadu, India
+                    </span>
+                    <span class="font-label-sm text-label-sm text-secondary font-bold">Open to collabs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Intro -->
+            <div class="lg:col-span-7 flex flex-col items-start order-2">
+              <div class="inline-flex items-center gap-space-xs px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-secondary mb-space-md">
+                <span class="material-symbols-outlined text-[16px]">school</span>
+                1st Year B.Tech CSE (AI) @ Joy University × NIAT
+              </div>
+              <h1 class="font-display-lg text-display-sm sm:text-display-md lg:text-display-lg font-bold text-on-surface tracking-tight leading-none">
+                Hi, I'm <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-fixed to-secondary">Jeevan</span>.
+                <span class="block mt-space-sm text-headline-md sm:text-headline-lg font-medium text-on-surface-variant sub-headline">
+                  I build <span class="text-primary" id="roleTyper">web apps</span><span class="type-caret text-secondary">|</span><br>and learn by shipping.
+                </span>
+              </h1>
+              <p class="mt-space-md font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                First-year computer science student from Tamil Nadu. I learn by building real projects and putting them online: a productivity app, a hackathon &amp; workshop finder, campus tools, and AI vision experiments. Everything I build ends up on GitHub, and this page updates itself when it does.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-space-md mt-space-lg">
+                <a class="action-btn px-space-xl py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg shadow-lg hover:shadow-primary/30 hover:scale-[1.02] transition-all gap-space-xs group" href="#projects">
+                  <span>See my projects</span>
+                  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+                <a class="action-btn px-space-xl py-3 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-lg text-label-lg shadow-md hover:bg-surface-container-highest transition-all gap-space-xs" href="#contact">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">waving_hand</span> <span>Say hi</span>
+                </a>
+                <a class="action-btn px-space-lg py-3 rounded-full bg-surface-container-low border border-outline-variant/30 text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:border-primary/50 transition-all gap-space-xs" href="Jeevan-J-Shine-Resume.pdf" target="_blank" rel="noopener noreferrer">
+                  <span class="material-symbols-outlined text-[18px] text-primary">description</span> <span>Resume</span>
+                </a>
+                <div class="flex items-center gap-space-xs" id="heroSocials"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live stats (from GitHub) -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-space-md w-full mt-16">
+            <div class="tilt p-space-lg rounded-lg bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 shadow-md flex flex-col items-center text-center">
+              <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">folder_code</span> Public repos</span>
+              <span class="font-display-md text-display-md font-bold text-on-surface mt-space-xs tracking-tight" id="statRepos">–</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Live from GitHub</span>
+            </div>
+            <div class="tilt p-space-lg rounded-lg bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 shadow-md flex flex-col items-center text-center">
+              <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">code</span> Languages</span>
+              <span class="font-display-md text-display-md font-bold text-on-surface mt-space-xs tracking-tight" id="statLangs">–</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Used across my repos</span>
+            </div>
+            <div class="tilt p-space-lg rounded-lg bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 shadow-md flex flex-col items-center text-center">
+              <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">commit</span> Last push</span>
+              <span class="font-headline-md text-headline-md font-bold text-on-surface mt-space-xs tracking-tight" id="statLastPush">–</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Most recent code update</span>
+            </div>
+            <div class="tilt p-space-lg rounded-lg bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 shadow-md flex flex-col items-center text-center">
+              <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_month</span> In college since</span>
+              <span class="font-headline-md text-headline-md font-bold text-on-surface mt-space-xs tracking-tight">Jul 2026</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Joy University × NIAT</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TECH MARQUEE ===================== -->
+      <div class="w-full bg-surface-container-lowest border-y border-outline-variant/20 py-space-lg marquee-mask overflow-hidden" aria-label="Technologies I use">
+        <div class="marquee-track"><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">JavaScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">TypeScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Python</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">HTML &amp; CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">React</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Vite</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">FastAPI</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">YOLOv8</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">LangGraph</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Tailwind CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">PWAs</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Git &amp; GitHub</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">GitHub Pages</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Claude Code</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Google AI Studio</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Lovable</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">JavaScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">TypeScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Python</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">HTML &amp; CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">React</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Vite</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">FastAPI</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">YOLOv8</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">LangGraph</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Tailwind CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">PWAs</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Git &amp; GitHub</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">GitHub Pages</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Claude Code</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Google AI Studio</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Lovable</span></div>
+      </div>
+
+      <!-- ===================== ABOUT ===================== -->
+      <section class="w-full bg-surface-container-lowest py-24" id="about">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+            <span class="material-symbols-outlined text-[16px]">person</span> About me
+          </div>
+          <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mb-space-xl">Learning fast, building in public</h2>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+            <div class="lg:col-span-7 flex flex-col gap-space-lg">
+              <div class="p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+                <div class="flex items-center gap-space-md mb-space-lg">
+                  <div class="w-14 h-14 rounded-2xl bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+                    <span class="material-symbols-outlined text-[32px]">school</span>
+                  </div>
+                  <div>
+                    <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Joy University × NIAT</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">B.Tech Computer Science &amp; Engineering (AI) • 1st year</p>
+                  </div>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  I started my B.Tech in July 2026 through NIAT, with Joy University as my campus. Before that I attended a NIAT bootcamp at AMET College, Chennai. I'm most interested in AI and web development, and my goal is to build products people actually use, not just class assignments.
+                </p>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mt-space-md">
+                  My approach is simple: pick a real problem, build a first version quickly, put it online, and keep improving it. I use modern AI coding tools heavily and focus on understanding what they produce.
+                </p>
+              </div>
+
+              <div class="p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+                <div class="flex items-center gap-space-xs mb-space-md">
+                  <span class="material-symbols-outlined text-primary text-[22px]">bolt</span>
+                  <h3 class="font-title-lg text-title-lg text-on-surface font-bold">What I'm into</h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+                  <div class="p-space-md rounded-DEFAULT bg-surface-container border border-outline-variant/20">
+                    <span class="font-title-sm text-title-sm text-on-surface">AI vision &amp; agents</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Object detection and agent workflows applied to real problems like accessibility and safety.</p>
+                  </div>
+                  <div class="p-space-md rounded-DEFAULT bg-surface-container border border-outline-variant/20">
+                    <span class="font-title-sm text-title-sm text-on-surface">Web apps &amp; PWAs</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Fast, installable apps with clean UIs that work on any device.</p>
+                  </div>
+                  <div class="p-space-md rounded-DEFAULT bg-surface-container border border-outline-variant/20">
+                    <span class="font-title-sm text-title-sm text-on-surface">Productivity tools</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Apps that help people focus, track work and build discipline.</p>
+                  </div>
+                  <div class="p-space-md rounded-DEFAULT bg-surface-container border border-outline-variant/20">
+                    <span class="font-title-sm text-title-sm text-on-surface">Hackathons &amp; workshops</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Always looking for events and teams to build with.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Journey timeline -->
+            <div class="lg:col-span-5 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+              <div class="flex items-center gap-space-xs mb-space-lg">
+                <span class="material-symbols-outlined text-secondary text-[22px]">timeline</span>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold">My journey so far</h3>
+              </div>
+              <div class="relative pl-6 space-y-8 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container-highest">
+                <div class="relative">
+                  <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-secondary ring-4 ring-surface-container-low"></div>
+                  <span class="font-label-sm text-label-sm text-secondary font-bold">OCT 2026 • CERTIFICATE</span>
+                  <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">Vibe Coding Workshop 2026 — Google for Developers × StartupTN</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Certificate of Participation, 30 Oct 2026. Hands-on with Google AI Studio at Noorul Islam Centre for Higher Education, Kumaracoil.</p>
+                  <a class="inline-flex items-center gap-1 mt-space-sm px-space-md py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-primary font-label-sm text-label-sm font-semibold hover:border-primary/50 transition-all" href="certificates/vibe-coding-workshop-2026.pdf" target="_blank" rel="noopener noreferrer">
+                    <span class="material-symbols-outlined text-[14px]">workspace_premium</span> View certificate
+                  </a>
+                </div>
+                <div class="relative">
+                  <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-primary ring-4 ring-surface-container-low"></div>
+                  <span class="font-label-sm text-label-sm text-primary font-bold">OCT 2026 • SHIPPED</span>
+                  <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">Event Radar goes live</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">An installable app that tracks hackathons, workshops and tech events, hosted on GitHub Pages.</p>
+                </div>
+                <div class="relative">
+                  <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-tertiary ring-4 ring-surface-container-low"></div>
+                  <span class="font-label-sm text-label-sm text-tertiary font-bold">OCT 2026 • FIRST PROJECT</span>
+                  <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">Task Tracker, built from scratch</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Plain HTML, CSS and JavaScript: add, edit, complete, filter, dark mode and saving between visits.</p>
+                </div>
+                <div class="relative">
+                  <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-on-surface-variant ring-4 ring-surface-container-low"></div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant font-bold">JUL 2026 • STARTED</span>
+                  <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">Joined NIAT × Joy University</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Began my B.Tech in Computer Science, after a NIAT bootcamp at AMET College, Chennai.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CERTIFICATES ===================== -->
+      <section class="w-full bg-surface-container-lowest pb-24" id="certificates">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex items-center gap-space-xs text-tertiary font-label-md text-label-md uppercase tracking-wider mb-space-md">
+            <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Certificates
+          </div>
+          <div data-tilt-max="4" class="tilt glow-border rounded-lg bg-surface-container-low shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2">
+            <a href="certificates/vibe-coding-workshop-2026.pdf" target="_blank" rel="noopener noreferrer" class="block p-space-lg bg-surface-container group" title="Open certificate (PDF)">
+              <img src="certificates/vibe-coding-workshop-2026.jpg" alt="Vibe Coding Workshop 2026 certificate of participation for Jeevan J Shine" class="w-full rounded-DEFAULT shadow-lg group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
+            </a>
+            <div class="p-space-xl flex flex-col justify-center">
+              <span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">Certificate of Participation • 30 Oct 2026</span>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-space-xs">Vibe Coding Workshop 2026</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-space-sm leading-relaxed">Organised by StartupTN in collaboration with Google for Developers at Noorul Islam Centre for Higher Education, Kumaracoil. Built apps hands-on with Google AI Studio.</p>
+              <div class="flex flex-wrap gap-space-xs mt-space-md">
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface">Google for Developers</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface">StartupTN</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant font-mono">ID: VCW26-7R5XM</span>
+              </div>
+              <a href="certificates/vibe-coding-workshop-2026.pdf" target="_blank" rel="noopener noreferrer" class="action-btn self-start mt-space-lg px-space-lg py-2.5 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-semibold hover:shadow-lg transition-all gap-space-xs">
+                <span class="material-symbols-outlined text-[18px]">open_in_new</span> View certificate
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== PROJECTS (auto from GitHub) ===================== -->
+      <section class="w-full bg-surface py-24" id="projects">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-lg gap-space-md">
+            <div>
+              <div class="flex items-center gap-space-xs text-primary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+                <span class="material-symbols-outlined text-[16px]">folder_special</span> Synced from GitHub
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Projects</h2>
+            </div>
+            <div id="projectFilters" class="flex flex-wrap gap-space-xs bg-surface-container-low border border-outline-variant/30 p-1.5 rounded-full shadow-inner empty:hidden"></div>
+          </div>
+          <div class="glow-border rounded-lg bg-surface-container-low shadow-md p-space-xl mb-space-lg relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-secondary/10 blur-3xl pointer-events-none"></div>
+            <div class="relative flex flex-col md:flex-row md:items-center gap-space-lg">
+              <div class="w-full md:w-80 aspect-[2/1] rounded-DEFAULT overflow-hidden border border-outline-variant/30 shrink-0" id="campusPilotThumb"></div>
+              <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+                  <span class="px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Currently building</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">CampusPilot</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed max-w-3xl">An AI vision assistant to help visually impaired students navigate campus: the camera detects objects and obstacles, and an AI agent turns that into guidance.</p>
+              </div>
+              <div class="flex flex-wrap gap-space-xs md:max-w-[260px] md:justify-end">
+                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">React + Vite</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">FastAPI</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">YOLOv8</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">LangGraph</span>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg" id="projectsGrid">
+            <div class="md:col-span-2 lg:col-span-3 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 text-center font-body-md text-body-md text-on-surface-variant">Loading projects from GitHub…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ACTIVITY ===================== -->
+      <section class="w-full bg-surface-container-lowest py-24" id="activity">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
+            <div>
+              <div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+                <span class="material-symbols-outlined text-[16px]">sensors</span> Recent activity
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">What I've been working on</h2>
+            </div>
+            <a class="flex items-center gap-1 text-primary font-label-md text-label-md hover:underline" href="https://github.com/jeevanxx" rel="noopener noreferrer" target="_blank">
+              Full profile on GitHub <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+            </a>
+          </div>
+          <div class="contrib-card p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md mb-space-lg overflow-x-auto">
+            <div class="flex items-center justify-between mb-space-md">
+              <span class="font-title-md text-title-md text-on-surface font-bold flex items-center gap-space-xs"><span class="material-symbols-outlined text-primary text-[20px]">grid_view</span> GitHub contributions</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Last 12 months</span>
+            </div>
+            <img src="https://ghchart.rshah.org/2f9e68/jeevanxx" alt="GitHub contribution graph for jeevanxx" class="min-w-[680px] w-full" loading="lazy" onerror="this.closest('.contrib-card').remove()">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="githubActivityStream">
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Loading recent activity…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SKILLS ===================== -->
+      <section class="w-full bg-surface py-24" id="skills">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex items-center gap-space-xs text-primary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+            <span class="material-symbols-outlined text-[16px]">construction</span> Toolbox
+          </div>
+          <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mb-space-xl">Skills &amp; tools I've worked with</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+            <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+              <div class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center mb-space-md"><span class="material-symbols-outlined text-[26px]">code</span></div>
+              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Languages</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-space-md">Measured from my GitHub code, so it updates automatically.</p>
+              <div class="space-y-space-sm" id="languageBars">
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Loading…</p>
+              </div>
+            </div>
+
+            <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+              <div class="w-12 h-12 rounded-2xl bg-secondary-container text-on-secondary-container flex items-center justify-center mb-space-md"><span class="material-symbols-outlined text-[26px]">layers</span></div>
+              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Frameworks &amp; libraries</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-space-md">Used in my projects.</p>
+              <div class="flex flex-wrap gap-space-xs">
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">React</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Vite</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">FastAPI</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">YOLOv8</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">LangGraph</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Tailwind CSS</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Service Workers / PWA</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">localStorage</span>
+              </div>
+            </div>
+
+            <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+              <div class="w-12 h-12 rounded-2xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center mb-space-md"><span class="material-symbols-outlined text-[26px]">terminal</span></div>
+              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Tools &amp; platforms</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-space-md">What my workflow runs on.</p>
+              <div class="flex flex-wrap gap-space-xs">
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Git &amp; GitHub</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">GitHub Pages</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Claude Code</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Google Antigravity</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Google AI Studio</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Lovable</span>
+                <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Notion</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONTACT ===================== -->
+      <section class="w-full bg-surface-container-lowest py-24" id="contact">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="p-space-xl lg:p-16 rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md text-center relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-secondary/10 blur-3xl pointer-events-none"></div>
+            <div class="relative">
+              <div class="flex items-center justify-center gap-space-xs text-secondary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+                <span class="material-symbols-outlined text-[16px]">alternate_email</span> Get in touch
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Let's build something</h2>
+              <p class="font-body-lg text-body-lg text-on-surface-variant mt-space-md max-w-xl mx-auto">
+                I'm open to hackathon teams, project collaborations and learning opportunities. Email me or send a message on any of these:
+              </p>
+              <div class="flex flex-wrap justify-center gap-space-md mt-space-xl" id="contactLinks"></div>
+              <a class="action-btn mt-space-lg px-space-xl py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-semibold hover:shadow-lg transition-all gap-space-xs" href="Jeevan-J-Shine-Resume.pdf" download>
+                <span class="material-symbols-outlined text-[18px]">download</span> Download my resume (PDF)
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-space-xs pointer-events-none" id="toastContainer"></div>
+
+      <!-- Design gallery -->
+      <div id="designPanel" class="hidden fixed inset-0 z-[60] bg-surface-dim/80 backdrop-blur-md overflow-y-auto">
+        <div class="max-w-[1000px] mx-auto px-margin-sm lg:px-margin-lg py-space-xl">
+          <div class="flex items-center justify-between gap-space-md mb-space-lg sticky top-0 py-space-sm bg-surface-dim/0">
+            <div>
+              <h2 class="font-headline-md text-headline-md text-on-surface font-bold">Choose a theme</h2>
+              <p class="font-body-md text-body-md text-on-surface-variant">Pick the look you like. Each theme changes the colours, fonts and 3D scene.</p>
+            </div>
+            <button id="designClose" type="button" class="w-11 h-11 shrink-0 rounded-full bg-surface-container-high border border-outline-variant/40 text-on-surface hover:border-primary" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div id="designGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full bg-surface-container-low border-t border-outline-variant/20 py-space-xl">
+    <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg flex flex-col md:flex-row items-center justify-between gap-space-md">
+      <span class="font-title-md text-title-md text-on-surface">Jeevan J Shine</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">Projects on this page update automatically from GitHub.</span>
+    </div>
+  </footer>
+
+  <script>
+    /* =====================================================================
+       0. EDIT ME: your details live here
+       ===================================================================== */
+    const SITE_CONFIG = {
+      github: {
+        username: 'jeevanxx',
+        includeForks: false,   // true = also show repos you forked
+        hideRepos: [],         // repo names to hide, e.g. ['class-project-']
+        // Shown first, in this order. Everything else follows, newest first.
+        pinned: ['Event-Rader', 'focus-forge-hq', 'campusaid-v2', 'Task-Tracker'],
+        cacheMinutes: 10       // keeps visitors under GitHub's 60 requests/hour limit
+      },
+      // Optional nicer names / descriptions for repos. If a repo isn't listed,
+      // its GitHub name and description are used automatically.
+      // Add  thumbnail: 'thumbnails/my-app.png'  to show a real screenshot.
+      projectNotes: {
+        'Event-Rader': {
+          title: 'Event Radar',
+          description: 'An installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.'
+        },
+        'focus-forge-hq': {
+          title: 'Focus Forge',
+          description: 'A productivity and discipline app to help you focus and build better habits. Built with React and Vite.'
+        },
+        'campusaid-v2': {
+          title: 'CampusAid v2',
+          description: 'A rebuilt step-free campus guide for Joy University, focused on map-based accessible routes and a cleaner design.'
+        },
+        'Task-Tracker': {
+          title: 'Task Tracker',
+          description: 'My first project, in plain HTML, CSS and JavaScript: add, edit, complete and delete tasks, filters, a task counter, dark mode, and tasks saved between visits.'
+        }
+      },
+      socials: [
+        { label: 'Gmail', handle: 'jeevanshine2008@gmail.com', url: 'mailto:jeevanshine2008@gmail.com', icon: 'M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z' },
+        { label: 'GitHub', handle: '@jeevanxx', url: 'https://github.com/jeevanxx', icon: 'M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z' },
+        { label: 'LinkedIn', handle: 'Jeevan Shine', url: 'https://www.linkedin.com/in/jeevan-shine-708377372', icon: 'M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z' },
+        { label: 'Instagram', handle: '@jxvn_shn__', url: 'https://www.instagram.com/jxvn_shn__/', icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z' },
+        { label: 'X', handle: '@jxvn_shn_', url: 'https://x.com/jxvn_shn_', icon: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' }
+      ]
+    };
+
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const svgIcon = (d, cls = 'w-4 h-4') => `<svg class="${cls} fill-current" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="${d}"></path></svg>`;
+
+    /* Social buttons (hero + contact) */
+    (function renderSocials() {
+      const hero = document.getElementById('heroSocials');
+      const contact = document.getElementById('contactLinks');
+      if (hero) hero.innerHTML = SITE_CONFIG.socials.map(s => `
+        <a class="social-badge w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all" href="${esc(s.url)}" ${s.url.startsWith('mailto:') ? '' : 'rel="noopener noreferrer" target="_blank"'} title="${esc(s.label)}" aria-label="${esc(s.label)}">${svgIcon(s.icon)}</a>`).join('');
+      if (contact) contact.innerHTML = SITE_CONFIG.socials.map(s => `
+        <a class="flex items-center gap-space-sm px-space-lg py-3 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:border-primary/50 hover:text-primary hover:scale-[1.03] transition-all" href="${esc(s.url)}" ${s.url.startsWith('mailto:') ? '' : 'rel="noopener noreferrer" target="_blank"'}>
+          ${svgIcon(s.icon, 'w-5 h-5')}
+          <span class="flex flex-col items-start leading-tight"><span class="font-title-sm text-title-sm">${esc(s.label)}</span><span class="font-label-sm text-label-sm text-on-surface-variant">${esc(s.handle)}</span></span>
+        </a>`).join('');
+    })();
+
+    /* Scroll reveal animations */
+    (function initReveal() {
+      if (typeof IntersectionObserver !== 'function') return;
+      const io = new IntersectionObserver(entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      }), { threshold: 0.12 });
+      window.observeReveal = els => els.forEach((el, i) => {
+        el.classList.add('reveal'); el.style.transitionDelay = `${Math.min(i % 6, 5) * 70}ms`; io.observe(el);
+      });
+      window.observeReveal(document.querySelectorAll('main section:not(:first-child) > div > *'));
+    })();
+
+    /* Typing effect in the hero */
+    (function initTyper() {
+      const el = document.getElementById('roleTyper');
+      if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const words = ['web apps', 'AI tools', 'PWAs', 'hackathon projects', 'productivity apps'];
+      let w = 0, c = words[0].length, deleting = true;
+      setTimeout(function tick() {
+        const word = words[w];
+        c += deleting ? -1 : 1;
+        el.textContent = word.slice(0, c);
+        if (deleting && c === 0) { deleting = false; w = (w + 1) % words.length; }
+        else if (!deleting && c === words[w].length) { deleting = true; return setTimeout(tick, 1800); }
+        setTimeout(tick, deleting ? 45 : 85);
+      }, 1800);
+    })();
+
+    /* =====================================================================
+       Project thumbnails: drawn in SVG so they follow the colour theme.
+       Known projects get a custom illustration; new repos get a generated one.
+       To use a real screenshot instead, add  thumbnail: 'thumbnails/name.png'
+       to that project in SITE_CONFIG.projectNotes.
+       ===================================================================== */
+    const Thumbs = (function () {
+      const C = n => `rgb(var(--color-${n}))`;
+      const A = (n, a) => `rgb(var(--color-${n}) / ${a})`;
+      let uid = 0;
+
+      function frame(inner, accent = 'primary') {
+        const id = 't' + (++uid);
+        return `<svg viewBox="0 0 600 300" class="w-full h-full block" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">
+          <defs>
+            <linearGradient id="${id}bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="${C('surface-container-high')}"/><stop offset="1" stop-color="${C('surface-container-lowest')}"/>
+            </linearGradient>
+            <radialGradient id="${id}glow" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="${A(accent, .35)}"/><stop offset="1" stop-color="${A(accent, 0)}"/></radialGradient>
+            <radialGradient id="${id}glow2" cx=".05" cy="1" r=".6"><stop offset="0" stop-color="${A('secondary', .22)}"/><stop offset="1" stop-color="${A('secondary', 0)}"/></radialGradient>
+            <pattern id="${id}dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.2" fill="${A('outline-variant', .5)}"/></pattern>
+          </defs>
+          <rect width="600" height="300" fill="url(#${id}bg)"/>
+          <rect width="600" height="300" fill="url(#${id}dots)"/>
+          <rect width="600" height="300" fill="url(#${id}glow)"/>
+          <rect width="600" height="300" fill="url(#${id}glow2)"/>
+          ${inner}
+        </svg>`;
+      }
+      const win = (x, y, w, h, title = '') => `
+        <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="${C('surface-container-low')}" stroke="${A('outline-variant', .7)}"/>
+        <circle cx="${x + 20}" cy="${y + 18}" r="5" fill="${A('error', .8)}"/><circle cx="${x + 36}" cy="${y + 18}" r="5" fill="${A('tertiary', .8)}"/><circle cx="${x + 52}" cy="${y + 18}" r="5" fill="${A('secondary', .8)}"/>
+        ${title ? `<text x="${x + w / 2}" y="${y + 22}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="${C('on-surface-variant')}">${title}</text>` : ''}
+        <line x1="${x}" y1="${y + 34}" x2="${x + w}" y2="${y + 34}" stroke="${A('outline-variant', .5)}"/>`;
+      const bar = (x, y, w, c = 'on-surface-variant', a = .35, h = 8) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" fill="${A(c, a)}"/>`;
+
+      const designs = {
+        // Task Tracker: checklist app
+        'Task-Tracker': () => frame(`
+          ${win(150, 30, 300, 245, 'task-tracker')}
+          <text x="172" y="96" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="22" fill="${C('on-surface')}">My Tasks</text>
+          <rect x="370" y="80" width="58" height="22" rx="11" fill="${A('primary', .2)}"/><text x="399" y="95" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="${C('primary')}">3 left</text>
+          <rect x="172" y="112" width="200" height="30" rx="10" fill="${C('surface-container-high')}"/>${bar(184, 123, 90)}
+          <rect x="380" y="112" width="48" height="30" rx="10" fill="${C('primary-container')}"/><text x="404" y="132" text-anchor="middle" font-size="18" font-weight="700" fill="${C('on-primary-container')}">+</text>
+          ${[0, 1, 2, 3].map(i => {
+            const y = 156 + i * 26, done = i === 1 || i === 3;
+            return `<rect x="172" y="${y}" width="16" height="16" rx="5" fill="${done ? C('secondary') : 'none'}" stroke="${done ? C('secondary') : A('outline', .8)}" stroke-width="1.5"/>
+              ${done ? `<path d="M176 ${y + 8} l3 3 l6 -6" stroke="${C('on-secondary')}" stroke-width="2" fill="none" stroke-linecap="round"/>` : ''}
+              ${bar(198, y + 4, [150, 120, 170, 100][i], done ? 'on-surface-variant' : 'on-surface', done ? .25 : .55)}
+              ${done ? `<line x1="196" y1="${y + 8}" x2="${200 + [150, 120, 170, 100][i]}" y2="${y + 8}" stroke="${A('on-surface-variant', .6)}" stroke-width="1.5"/>` : ''}`;
+          }).join('')}
+          ${['All', 'Active', 'Done'].map((t, i) => `<rect x="${172 + i * 62}" y="252" width="56" height="16" rx="8" fill="${i === 0 ? C('secondary-container') : A('outline-variant', .4)}"/><text x="${200 + i * 62}" y="263.5" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="${i === 0 ? C('on-secondary-container') : C('on-surface-variant')}">${t}</text>`).join('')}
+        `, 'secondary'),
+
+        // Event Radar: radar sweep + event cards
+        'Event-Rader': () => frame(`
+          <g transform="translate(160 150)">
+            ${[110, 80, 50, 20].map(r => `<circle r="${r}" fill="none" stroke="${A('primary', .35)}" stroke-width="1.2"/>`).join('')}
+            <line x1="-110" y1="0" x2="110" y2="0" stroke="${A('primary', .2)}"/><line x1="0" y1="-110" x2="0" y2="110" stroke="${A('primary', .2)}"/>
+            <path d="M0 0 L110 0 A110 110 0 0 0 77.8 -77.8 Z" fill="${A('secondary', .25)}"/>
+            <line x1="0" y1="0" x2="110" y2="0" stroke="${C('secondary')}" stroke-width="2"/>
+            ${[[45, -40, 'secondary'], [-60, 30, 'primary'], [20, 70, 'tertiary'], [-30, -75, 'primary'], [80, 25, 'secondary']].map(([x, y, c]) =>
+              `<circle cx="${x}" cy="${y}" r="9" fill="${A(c, .25)}"/><circle cx="${x}" cy="${y}" r="4.5" fill="${C(c)}"/>`).join('')}
+          </g>
+          ${[['NOV', '08', 'Hackathon', 'secondary'], ['NOV', '15', 'Workshop', 'primary'], ['NOV', '22', 'Meetup', 'tertiary']].map(([m, d, t, c], i) => `
+            <rect x="320" y="${48 + i * 70}" width="240" height="58" rx="14" fill="${C('surface-container-low')}" stroke="${A('outline-variant', .7)}"/>
+            <rect x="332" y="${58 + i * 70}" width="40" height="38" rx="10" fill="${A(c, .2)}"/>
+            <text x="352" y="${73 + i * 70}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="${C(c)}">${m}</text>
+            <text x="352" y="${90 + i * 70}" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${C('on-surface')}">${d}</text>
+            <text x="386" y="${75 + i * 70}" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="14" fill="${C('on-surface')}">${t}</text>
+            ${bar(386, 84 + i * 70, 120 - i * 15, 'on-surface-variant', .35, 7)}`).join('')}
+        `),
+
+        // Focus Forge: focus timer + streak chart
+        'focus-forge-hq': () => frame(`
+          ${win(70, 30, 460, 245, 'focus-forge')}
+          <g transform="translate(200 160)">
+            <circle r="72" fill="none" stroke="${A('outline-variant', .6)}" stroke-width="12"/>
+            <circle r="72" fill="none" stroke="${C('primary')}" stroke-width="12" stroke-linecap="round" stroke-dasharray="452" stroke-dashoffset="140" transform="rotate(-90)"/>
+            <text y="8" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="34" fill="${C('on-surface')}">25:00</text>
+            <text y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="${C('on-surface-variant')}">DEEP WORK</text>
+          </g>
+          <text x="320" y="92" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${C('on-surface')}">This week</text>
+          <text x="500" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="${C('secondary')}">🔥 6 day streak</text>
+          ${[40, 65, 50, 90, 75, 100, 30].map((h, i) => `<rect x="${322 + i * 26}" y="${230 - h}" width="16" height="${h}" rx="5" fill="${i === 5 ? C('secondary') : A('primary', .55)}"/>`).join('')}
+          ${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => `<text x="${330 + i * 26}" y="248" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="${C('on-surface-variant')}">${d}</text>`).join('')}
+        `),
+
+        // CampusAid: accessible route map
+        'campusaid-v2': () => frame(`
+          ${win(110, 26, 380, 252, 'campusaid')}
+          <g opacity=".9">
+            ${[[140, 80, 90, 60], [250, 80, 120, 45], [390, 80, 75, 95], [140, 160, 70, 95], [230, 145, 95, 55], [345, 195, 120, 60], [230, 215, 95, 45]].map(([x, y, w, h]) =>
+              `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${C('surface-container-high')}" stroke="${A('outline-variant', .6)}"/>`).join('')}
+          </g>
+          <path d="M185 145 L185 135 L240 135 L240 210 L335 210 L335 180 L410 180" fill="none" stroke="${A('secondary', .35)}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M185 145 L185 135 L240 135 L240 210 L335 210 L335 180 L410 180" fill="none" stroke="${C('secondary')}" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="185" cy="148" r="9" fill="${C('primary')}"/><circle cx="185" cy="148" r="4" fill="${C('on-primary')}"/>
+          <path d="M410 152 a14 14 0 0 1 14 14 c0 11 -14 24 -14 24 s-14 -13 -14 -24 a14 14 0 0 1 14 -14z" fill="${C('tertiary')}"/><circle cx="410" cy="166" r="5" fill="${C('on-tertiary')}"/>
+          <rect x="300" y="44" width="170" height="26" rx="13" fill="${A('secondary', .2)}"/>
+          <text x="385" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="${C('secondary')}">♿ step-free route • 3 min</text>
+        `, 'tertiary'),
+
+        // Class project: Python editor
+        'class-project-': () => frame(`
+          ${win(90, 30, 420, 245, 'main.py')}
+          ${[[0, 'def ', 'solve', '(n):'], [1, 'for ', 'i', ' in range(n):'], [2, 'if ', 'i % 2 == 0', ':'], [3, 'print', '(i)', ''], [1, 'return ', 'n * 2', ''], [0, '', '', ''], [0, 'print', '(solve(5))', '']].map(([ind, k, a, b], i) => {
+            const y = 92 + i * 24, x = 140 + ind * 24;
+            return `<text x="108" y="${y}" font-family="JetBrains Mono, monospace" font-size="12" fill="${A('on-surface-variant', .5)}">${i + 1}</text>
+              <text x="${x}" y="${y}" font-family="JetBrains Mono, monospace" font-size="14"><tspan fill="${C('tertiary')}">${k}</tspan><tspan fill="${C('primary')}">${a}</tspan><tspan fill="${C('on-surface')}">${b}</tspan></text>`;
+          }).join('')}
+          <rect x="380" y="200" width="110" height="56" rx="12" fill="${C('surface-container-high')}" stroke="${A('outline-variant', .6)}"/>
+          <text x="392" y="222" font-family="JetBrains Mono, monospace" font-size="11" fill="${C('secondary')}">&gt;&gt;&gt; 0 2 4</text>
+          <text x="392" y="242" font-family="JetBrains Mono, monospace" font-size="11" fill="${C('secondary')}">&gt;&gt;&gt; 10</text>
+        `, 'tertiary'),
+
+        // CampusPilot: AI vision detection
+        'campuspilot': () => frame(`
+          <rect x="60" y="30" width="480" height="240" rx="18" fill="${C('surface-container-lowest')}" stroke="${A('outline-variant', .7)}"/>
+          <path d="M60 230 L220 140 L380 140 L540 230 L540 270 L60 270 Z" fill="${A('outline-variant', .25)}"/>
+          <rect x="250" y="70" width="100" height="120" rx="4" fill="${A('on-surface-variant', .15)}"/>
+          <circle cx="160" cy="135" r="18" fill="${A('on-surface-variant', .3)}"/><rect x="140" y="155" width="40" height="70" rx="12" fill="${A('on-surface-variant', .3)}"/>
+          <rect x="420" y="170" width="60" height="45" rx="6" fill="${A('on-surface-variant', .25)}"/>
+          ${[[128, 108, 66, 126, 'person 0.94', 'secondary'], [242, 62, 116, 136, 'door 0.88', 'primary'], [410, 160, 80, 64, 'bench 0.81', 'tertiary']].map(([x, y, w, h, l, c]) => `
+            <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="none" stroke="${C(c)}" stroke-width="2.5"/>
+            <rect x="${x}" y="${y - 18}" width="${l.length * 7 + 10}" height="18" rx="5" fill="${C(c)}"/>
+            <text x="${x + 5}" y="${y - 5}" font-family="JetBrains Mono, monospace" font-size="11" fill="${C('surface')}">${l}</text>`).join('')}
+          <rect x="140" y="236" width="320" height="26" rx="13" fill="${A('surface-dim', .85)}" stroke="${A('secondary', .5)}"/>
+          <text x="300" y="253" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="${C('on-surface')}">🔊 "Door ahead, 3 steps to your right"</text>
+          <circle cx="82" cy="50" r="5" fill="${C('error')}"/><text x="94" y="54" font-family="JetBrains Mono, monospace" font-size="10" fill="${C('on-surface-variant')}">LIVE</text>
+        `, 'secondary')
+      };
+
+      // Generated thumbnail for any new repo
+      function generic(title, lang) {
+        const lines = [70, 140, 110, 180, 90, 150];
+        return frame(`
+          ${win(110, 40, 380, 220, (lang || 'code').toLowerCase())}
+          ${lines.map((w, i) => `${bar(140 + (i % 3) * 16, 96 + i * 22, 30, 'tertiary', .6)}${bar(178 + (i % 3) * 16, 96 + i * 22, w, i % 2 ? 'primary' : 'on-surface', .45)}`).join('')}
+          <text x="300" y="250" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="0">${esc(title)}</text>
+        `);
+      }
+
+      return {
+        for(repoName, title, lang, imageUrl) {
+          if (imageUrl) return `<img src="${esc(imageUrl)}" alt="" loading="lazy" class="w-full h-full object-cover">`;
+          const d = designs[repoName];
+          return d ? d() : generic(title, lang);
+        }
+      };
+    })();
+
+    (function () { const el = document.getElementById('campusPilotThumb'); if (el) el.innerHTML = Thumbs.for('campuspilot'); })();
+
+    /* =====================================================================
+       3. GitHub Auto-Sync: projects, filters, stats, activity, languages
+       ===================================================================== */
+    (function initGitHubSync() {
+      const G = SITE_CONFIG.github;
+      const $ = id => document.getElementById(id);
+      const grid = $('projectsGrid'), filters = $('projectFilters'), stream = $('githubActivityStream'), langBox = $('languageBars');
+      if (!grid) return;
+
+      const timeAgo = iso => {
+        const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+        for (const [u, sec] of [['year',31536000],['month',2592000],['week',604800],['day',86400],['hour',3600],['minute',60]]) {
+          const v = Math.floor(s / sec); if (v >= 1) return `${v} ${u}${v > 1 ? 's' : ''} ago`;
+        }
+        return 'just now';
+      };
+      const pretty = n => n.replace(/[-_]+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+      const note = r => SITE_CONFIG.projectNotes[r.name] || {};
+      const titleOf = r => note(r).title || pretty(r.name);
+      const descOf = r => note(r).description || r.description || '';
+
+      async function cached(key, loader) {
+        try {
+          const c = JSON.parse(sessionStorage.getItem(key) || 'null');
+          if (c && Date.now() - c.t < G.cacheMinutes * 60000) return c.data;
+        } catch (e) {}
+        const data = await loader();
+        try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), data })); } catch (e) {}
+        return data;
+      }
+      const getJSON = async url => { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); };
+
+      function card(r, i) {
+        const live = r.homepage || (r.has_pages ? `https://${G.username}.github.io/${r.name}/` : '');
+        const lang = r.language || 'Other';
+        const desc = descOf(r);
+        const topics = (r.topics || []).slice(0, 3).map(t =>
+          `<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant">${esc(t)}</span>`).join('');
+        return `
+          <article data-tilt-max="6" class="tilt project-card ${i === 0 ? 'md:col-span-2' : ''} rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md flex flex-col justify-between group hover:bg-surface-container hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden" data-category="${esc(lang)}">
+            <a href="${esc(live || r.html_url)}" target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden bg-surface-container-high aspect-[2/1] border-b border-outline-variant/30" tabindex="-1" aria-hidden="true">
+              <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">${Thumbs.for(r.name, titleOf(r), r.language, note(r).thumbnail)}</div>
+              ${i === 0 ? '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 font-label-sm text-label-sm text-secondary font-bold">★ Featured</span>' : ''}
+            </a>
+            <div class="p-space-xl pb-0 flex-1">
+              <div class="flex items-start justify-between gap-space-sm">
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold group-hover:text-primary transition-colors">${esc(titleOf(r))}</h3>
+                ${live ? '<span class="shrink-0 mt-1 px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Live</span>' : ''}
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed">${desc ? esc(desc) : '<span class="italic opacity-70">Description coming soon.</span>'}</p>
+              <div class="flex flex-wrap items-center gap-space-xs mt-space-md">
+                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">${esc(lang)}</span>${topics}
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-space-md mt-space-lg mx-space-xl mb-space-lg border-t border-outline-variant/30">
+              <span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">update</span>${timeAgo(r.pushed_at)}</span>
+              <div class="flex items-center gap-space-xs">
+                ${live ? `<a class="px-space-md py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold hover:shadow-md transition-all gap-1" href="${esc(live)}" rel="noopener noreferrer" target="_blank"><span class="material-symbols-outlined text-[14px]">launch</span> Open</a>` : ''}
+                <a class="w-9 h-9 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary transition-colors" href="${esc(r.html_url)}" rel="noopener noreferrer" target="_blank" title="Source code on GitHub" aria-label="Source code on GitHub">${svgIcon(SITE_CONFIG.socials.find(x => x.label === 'GitHub').icon)}</a>
+              </div>
+            </div>
+          </article>`;
+      }
+
+      const BTN_OFF = 'project-filter-btn px-space-md py-space-xs rounded-full font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface';
+      const BTN_ON = 'project-filter-btn px-space-md py-space-xs rounded-full font-label-md text-label-md transition-all bg-secondary-container text-on-secondary-container font-semibold';
+
+      function renderFilters(repos) {
+        const counts = {};
+        repos.forEach(r => { const l = r.language || 'Other'; counts[l] = (counts[l] || 0) + 1; });
+        const opts = [['all', `All (${repos.length})`], ...Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([l, n]) => [l, `${l} (${n})`])];
+        if (opts.length <= 2) { filters.innerHTML = ''; return; }
+        filters.innerHTML = opts.map(([v, label], i) => `<button class="${i ? BTN_OFF : BTN_ON}" data-filter="${esc(v)}" type="button">${esc(label)}</button>`).join('');
+        filters.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+          const f = btn.dataset.filter;
+          filters.querySelectorAll('button').forEach(b => b.className = BTN_OFF);
+          btn.className = BTN_ON;
+          grid.querySelectorAll('.project-card').forEach(c => c.style.display = (f === 'all' || c.dataset.category === f) ? 'flex' : 'none');
+        }));
+      }
+
+      function renderStream(repos) {
+        const recent = [...repos].sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at)).slice(0, 4);
+        stream.innerHTML = recent.map(r => `
+          <a href="${esc(r.html_url)}" target="_blank" rel="noopener noreferrer" class="p-space-md rounded-DEFAULT bg-surface-container-low border border-outline-variant/30 flex items-center gap-space-md hover:border-primary/40 hover:bg-surface-container transition-all">
+            <div class="w-10 h-10 rounded-full bg-surface-container-highest text-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[20px]">commit</span></div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-title-sm text-title-sm text-on-surface truncate">${esc(titleOf(r))}</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant shrink-0">${timeAgo(r.pushed_at)}</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-secondary font-mono">pushed to ${esc(r.full_name)}</span>
+            </div>
+          </a>`).join('');
+      }
+
+      function renderLanguages(totals) {
+        const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+        const sum = entries.reduce((s, [, v]) => s + v, 0) || 1;
+        const colors = ['bg-primary', 'bg-secondary', 'bg-tertiary', 'bg-primary/60', 'bg-secondary/60', 'bg-tertiary/60'];
+        langBox.innerHTML = entries.slice(0, 6).map(([l, v], i) => {
+          const pct = Math.max(1, Math.round(v / sum * 100));
+          return `<div>
+            <div class="flex justify-between font-label-sm text-label-sm mb-1"><span class="text-on-surface font-semibold">${esc(l)}</span><span class="text-on-surface-variant font-mono">${pct}%</span></div>
+            <div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden"><div class="h-full rounded-full ${colors[i % colors.length]}" style="width:${pct}%"></div></div>
+          </div>`;
+        }).join('') + '<p class="font-label-sm text-label-sm text-on-surface-variant pt-space-xs">Share of code across my public repos.</p>';
+      }
+
+      function showError() {
+        grid.innerHTML = `<div class="md:col-span-2 lg:col-span-3 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 text-center font-body-md text-body-md text-on-surface-variant">
+          Couldn't load projects from GitHub right now. <a class="text-primary hover:underline" href="https://github.com/${G.username}?tab=repositories" target="_blank" rel="noopener noreferrer">See them on GitHub</a>.</div>`;
+        stream.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant">Activity unavailable right now.</p>';
+        if (langBox) langBox.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant">Unavailable right now.</p>';
+        filters.innerHTML = '';
+      }
+
+      cached('gh_repos_' + G.username, () => getJSON(`https://api.github.com/users/${G.username}/repos?per_page=100&sort=pushed`))
+        .then(all => {
+          const repos = all.filter(r => (G.includeForks || !r.fork) && !G.hideRepos.includes(r.name) && r.name.toLowerCase() !== `${G.username}.github.io`.toLowerCase());
+          if (!repos.length) return showError();
+          const rank = r => { const i = G.pinned.indexOf(r.name); return i === -1 ? 999 : i; };
+          repos.sort((a, b) => rank(a) - rank(b) || new Date(b.pushed_at) - new Date(a.pushed_at));
+
+          grid.innerHTML = repos.map(card).join('');
+          window.observeReveal && window.observeReveal(grid.querySelectorAll('.project-card'));
+          renderFilters(repos);
+          renderStream(repos);
+
+          const langs = new Set(repos.map(r => r.language).filter(Boolean));
+          $('statRepos').textContent = repos.length;
+          $('statLangs').textContent = langs.size;
+          $('statLastPush').textContent = timeAgo(repos.map(r => r.pushed_at).sort().pop());
+
+          // Language breakdown: real byte counts per repo, falling back to repo counts
+          if (langBox) {
+            cached('gh_langs_' + G.username, async () => {
+              const totals = {};
+              const results = await Promise.all(repos.map(r => getJSON(r.languages_url).catch(() => null)));
+              results.forEach((res, i) => {
+                if (res && Object.keys(res).length) Object.entries(res).forEach(([l, b]) => totals[l] = (totals[l] || 0) + b);
+                else if (repos[i].language) totals[repos[i].language] = (totals[repos[i].language] || 0) + 1;
+              });
+              return totals;
+            }).then(renderLanguages).catch(() => {
+              const totals = {}; repos.forEach(r => r.language && (totals[r.language] = (totals[r.language] || 0) + 1));
+              renderLanguages(totals);
+            });
+          }
+        })
+        .catch(showError);
+    })();
+
+    /* Mobile menu */
+    (function initMobileMenu() {
+      const btn = document.getElementById('mobileMenuBtn'), menu = document.getElementById('mobileMenu'), icon = document.getElementById('mobileMenuIcon');
+      if (!btn || !menu) return;
+      const set = open => { menu.classList.toggle('hidden', !open); icon.textContent = open ? 'close' : 'menu'; btn.setAttribute('aria-expanded', open); };
+      btn.addEventListener('click', () => set(menu.classList.contains('hidden')));
+      menu.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', () => set(false)));
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+    })();
+
+    /* Toast helper (used by the theme switcher) */
+    function showToast(text, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'px-space-lg py-3 rounded-full bg-surface-container-highest/95 backdrop-blur-md text-on-surface border border-outline-variant/30 font-body-sm text-body-sm shadow-xl flex items-center gap-space-sm pointer-events-auto transform translate-y-4 opacity-0 transition-all duration-300';
+      toast.innerHTML = `<span class="material-symbols-outlined text-[18px] ${type === 'success' ? 'text-secondary' : 'text-primary'}">${type === 'success' ? 'check_circle' : 'info'}</span><span>${esc(text)}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.remove('translate-y-4', 'opacity-0'));
+      setTimeout(() => { toast.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+/* =====================================================================
+       1. Neural Network Constellation Interactive Canvas
+       ===================================================================== */
+    function initNeuralCanvas2D() {
+      const canvas = document.getElementById('neuralCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = canvas.parentElement.offsetWidth;
+      let height = canvas.height = canvas.parentElement.offsetHeight;
+
+      window.addEventListener('resize', () => {
+        if (!canvas.parentElement) return;
+        width = canvas.width = canvas.parentElement.offsetWidth;
+        height = canvas.height = canvas.parentElement.offsetHeight;
+      });
+
+      const nodeCount = Math.floor(Math.min(width, 1440) / 18);
+      const nodes = [];
+      const mouse = { x: -9999, y: -9999, radius: 140 };
+
+      canvas.parentElement.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+
+      canvas.parentElement.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+      });
+
+      for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.75,
+          vy: (Math.random() - 0.5) * 0.75,
+          radius: Math.random() * 2 + 1.2
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+        const theme = (window.ThemeManager && window.ThemeManager.getColors) ? window.ThemeManager.getColors() : {
+          mode: 'dark',
+          primaryRgb: '181, 196, 255',
+          secondaryRgb: '70, 250, 156',
+          tertiaryRgb: '208, 188, 255'
+        };
+        const isDark = theme.mode === 'dark';
+        const lineMaxAlpha = isDark ? 0.28 : 0.45;
+        const mouseMaxAlpha = isDark ? 0.6 : 0.8;
+
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 110) {
+              const alpha = (1 - dist / 110) * lineMaxAlpha;
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(${theme.primaryRgb}, ${alpha})`;
+              ctx.lineWidth = 0.8;
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.stroke();
+            }
+          }
+
+          const mdx = nodes[i].x - mouse.x;
+          const mdy = nodes[i].y - mouse.y;
+          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mdist < mouse.radius) {
+            const mAlpha = (1 - mdist / mouse.radius) * mouseMaxAlpha;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(${theme.secondaryRgb}, ${mAlpha})`;
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+          }
+
+          nodes[i].x += nodes[i].vx;
+          nodes[i].y += nodes[i].vy;
+
+          if (nodes[i].x < 0 || nodes[i].x > width) nodes[i].vx *= -1;
+          if (nodes[i].y < 0 || nodes[i].y > height) nodes[i].vy *= -1;
+
+          const nodeColor = i % 3 === 0 ? theme.primaryRgb : (i % 3 === 1 ? theme.secondaryRgb : theme.tertiaryRgb);
+          ctx.beginPath();
+          ctx.arc(nodes[i].x, nodes[i].y, nodes[i].radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${nodeColor}, ${isDark ? 0.8 : 0.95})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    /* =====================================================================
+       2. Active Navbar ScrollSpy & Navigation State
+       ===================================================================== */
+    (function initNavScrollSpy() {
+      const navLinks = document.querySelectorAll('#navbar-links .nav-item');
+      const sections = ['about', 'projects', 'activity', 'skills', 'contact'];
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        const scrollPos = window.scrollY + 160;
+
+        sections.forEach(secId => {
+          const sec = document.getElementById(secId);
+          if (sec && sec.offsetTop <= scrollPos) {
+            current = secId;
+          }
+        });
+
+        navLinks.forEach(link => {
+          if (link.getAttribute('data-target') === current) {
+            link.className = 'nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md transition-all bg-primary-container text-on-primary-container font-bold';
+          } else {
+            link.className = 'nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all';
+          }
+        });
+      });
+    })();
+
+    /* =====================================================================
+       6. THEME SWITCHER — 6 looks visitors can choose (colours, fonts, shapes, background, 3D)
+       ===================================================================== */
+    const DESIGNS = [
+      { id: 'sapphire',  name: 'Neural Sapphire',  vibe: 'Techy & confident',     mode: 'dark',  bg: '#0f131d', fg: '#dfe2f1', p: '#0d59f2', s: '#04dd83', t: '#7746e1', fonts: ['Space Grotesk', 'Geist', 'JetBrains Mono'], radius: [1, 2],     pattern: 'dots', scene: 'sphere' },
+      { id: 'mono',      name: 'Minimal Mono',     vibe: 'Clean & professional',  mode: 'light', bg: '#fafafa', fg: '#111111', p: '#111111', s: '#2f6fed', t: '#888888', fonts: ['Inter', 'Inter', 'IBM Plex Mono'],          radius: [.5, .75], pattern: 'none', scene: 'shapes' },
+      { id: 'ocean',     name: 'Deep Ocean',       vibe: 'Calm & deep',           mode: 'dark',  bg: '#04141c', fg: '#dff6ff', p: '#0ea5e9', s: '#2dd4bf', t: '#6366f1', fonts: ['Manrope', 'Manrope', 'Fira Code'],          radius: [1, 1.75], pattern: 'dots', scene: 'blob' },
+      { id: 'gold',      name: 'Royal Gold',       vibe: 'Luxury & premium',      mode: 'dark',  bg: '#0b0b0d', fg: '#f3ecdc', p: '#d4af37', s: '#f5d78e', t: '#b08d57', fonts: ['Playfair Display', 'Lato', 'IBM Plex Mono'], radius: [.375, .75], pattern: 'glow', scene: 'crystal' },
+      { id: 'paper',     name: 'Paper & Ink',      vibe: 'Warm, writerly',        mode: 'light', bg: '#f6f1e7', fg: '#1f2a44', p: '#1f3a93', s: '#c2410c', t: '#6b7280', fonts: ['Fraunces', 'Inter', 'IBM Plex Mono'],       radius: [.5, 1],   pattern: 'dots', scene: 'rings' },
+      { id: 'candy',     name: 'Candy Pop',        vibe: 'Playful & friendly',    mode: 'light', bg: '#fff6fb', fg: '#2b1838', p: '#ec4899', s: '#3b82f6', t: '#a855f7', fonts: ['Poppins', 'Nunito', 'Fira Code'],           radius: [1.5, 2.5], pattern: 'dots', scene: 'shapes' }
+    ];
+
+    const FONT_WEIGHTS = { 'Bebas Neue': '400', 'Righteous': '400', 'Share Tech Mono': '400', 'DM Serif Display': '400', 'Space Mono': '400;700', 'DM Mono': '400;500', 'Fira Code': '400;600', 'IBM Plex Mono': '400;600', 'Roboto Mono': '400;600', 'Playfair Display': '400;700', 'Lato': '400;700', 'Syne': '400;700', 'Fraunces': '400;700', 'Orbitron': '400;700' };
+
+    const DesignManager = (function () {
+      const KEY = 'portfolio_design';
+      const loaded = new Set(['Space Grotesk', 'Geist', 'JetBrains Mono']);
+      const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+      const mix = (a, b, w) => a.map((v, i) => Math.round(v * (1 - w) + b[i] * w));
+      const str = c => c.join(' ');
+      const lum = ([r, g, b]) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      const on = c => lum(c) > 0.55 ? [17, 17, 17] : [255, 255, 255];
+      const W = [255, 255, 255], K = [0, 0, 0];
+
+      function loadFonts(fonts) {
+        fonts.filter(f => !loaded.has(f)).forEach(f => {
+          loaded.add(f);
+          const l = document.createElement('link');
+          l.rel = 'stylesheet';
+          l.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@${FONT_WEIGHTS[f] || '400;600;700'}&display=swap`;
+          document.head.appendChild(l);
+        });
+      }
+
+      function vars(d) {
+        const bg = hex(d.bg), fg = hex(d.fg), P = hex(d.p), S = hex(d.s), T = hex(d.t), dark = d.mode === 'dark';
+        const sf = w => str(mix(bg, fg, w));
+        const accent = c => dark ? mix(c, W, lum(c) < 0.45 ? 0.35 : 0.1) : mix(c, K, lum(c) > 0.6 ? 0.35 : 0.05);
+        const pA = accent(P), sA = accent(S), tA = accent(T);
+        const v = {
+          'surface': str(bg), 'background': str(bg),
+          'surface-dim': dark ? str(mix(bg, K, .3)) : sf(.12),
+          'surface-bright': dark ? sf(.2) : str(W),
+          'surface-container-lowest': dark ? str(mix(bg, K, .25)) : str(mix(bg, W, .7)),
+          'surface-container-low': dark ? sf(.045) : str(mix(bg, W, .45)),
+          'surface-container': dark ? sf(.075) : sf(.04),
+          'surface-container-high': dark ? sf(.11) : sf(.07),
+          'surface-container-highest': dark ? sf(.16) : sf(.11),
+          'surface-variant': dark ? sf(.16) : sf(.11),
+          'on-surface': str(fg), 'on-background': str(fg),
+          'on-surface-variant': str(mix(fg, bg, dark ? .25 : .3)),
+          'outline': str(mix(fg, bg, .5)), 'outline-variant': str(mix(fg, bg, dark ? .78 : .8)),
+          'inverse-surface': str(fg), 'inverse-on-surface': str(bg),
+          'error': dark ? '255 180 171' : '186 26 26', 'error-container': dark ? '147 0 10' : '255 218 214',
+          'on-error': dark ? '105 0 5' : '255 255 255', 'on-error-container': dark ? '255 218 214' : '65 0 2',
+          'primary': str(pA), 'on-primary': str(on(pA)),
+          'primary-container': str(P), 'on-primary-container': str(on(P)),
+          'primary-fixed': str(mix(P, W, .55)), 'primary-fixed-dim': str(mix(P, W, .3)),
+          'on-primary-fixed': str(mix(P, K, .7)), 'on-primary-fixed-variant': str(mix(P, K, .4)), 'inverse-primary': str(P),
+          'secondary': str(sA), 'on-secondary': str(on(sA)),
+          'secondary-container': str(S), 'on-secondary-container': str(on(S)),
+          'secondary-fixed': str(mix(S, W, .4)), 'secondary-fixed-dim': str(S),
+          'on-secondary-fixed': str(mix(S, K, .7)), 'on-secondary-fixed-variant': str(mix(S, K, .4)),
+          'tertiary': str(tA), 'on-tertiary': str(on(tA)),
+          'tertiary-container': str(T), 'on-tertiary-container': str(on(T)),
+          'tertiary-fixed': str(mix(T, W, .5)), 'tertiary-fixed-dim': str(mix(T, W, .3)),
+          'on-tertiary-fixed': str(mix(T, K, .7)), 'on-tertiary-fixed-variant': str(mix(T, K, .4))
+        };
+        return v;
+      }
+
+      let current = null;
+      function apply(id, notify) {
+        const d = DESIGNS.find(x => x.id === id) || DESIGNS[0];
+        current = d;
+        const root = document.documentElement;
+        root.classList.toggle('dark', d.mode === 'dark');
+        root.classList.toggle('light', d.mode !== 'dark');
+        root.dataset.pattern = d.pattern;
+        root.dataset.design = d.id;
+        Object.entries(vars(d)).forEach(([k, v]) => root.style.setProperty('--color-' + k, v));
+        loadFonts(d.fonts);
+        root.style.setProperty('--md-sys-typescale-font-family', `'${d.fonts[0]}', system-ui, sans-serif`);
+        root.style.setProperty('--md-sys-body-font-family', `'${d.fonts[1]}', system-ui, sans-serif`);
+        root.style.setProperty('--md-sys-code-font-family', `'${d.fonts[2]}', ui-monospace, monospace`);
+        root.style.setProperty('--r-md', d.radius[0] + 'rem');
+        root.style.setProperty('--r-lg', d.radius[1] + 'rem');
+        root.style.setProperty('--r-xl', (d.radius[1] * 1.5) + 'rem');
+        const label = document.getElementById('designBtnLabel');
+        if (label) label.textContent = d.name;
+        document.querySelectorAll('[data-design-card]').forEach(c => c.classList.toggle('design-active', c.dataset.designCard === d.id));
+        try { localStorage.setItem(KEY, d.id); } catch (e) {}
+        window.dispatchEvent(new CustomEvent('designchange', { detail: d }));
+        if (notify) showToast(`Theme: ${d.name}`, 'info');
+      }
+
+      function buildGallery() {
+        const grid = document.getElementById('designGrid');
+        if (!grid || grid.childElementCount) return;
+        DESIGNS.forEach(d => loadFonts(d.fonts));
+        grid.innerHTML = DESIGNS.map((d, i) => {
+          const r0 = d.radius[0], dark = d.mode === 'dark';
+          const card = dark ? `color-mix(in srgb, ${d.bg} 88%, ${d.fg})` : `color-mix(in srgb, ${d.bg} 70%, #fff)`;
+          return `<button type="button" data-design-card="${d.id}" class="design-card text-left rounded-lg overflow-hidden border border-outline-variant/40 hover:border-primary transition-all hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <div style="background:${d.bg};color:${d.fg};padding:16px;height:150px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle, ${d.p}88, transparent 70%)"></div>
+              <div style="position:absolute;left:-20px;bottom:-40px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle, ${d.s}55, transparent 70%)"></div>
+              <div style="font-family:'${d.fonts[2]}',monospace;font-size:10px;opacity:.7;letter-spacing:.05em">${String(i + 1).padStart(2, '0')} • ${d.mode.toUpperCase()}</div>
+              <div style="font-family:'${d.fonts[0]}',sans-serif;font-size:24px;font-weight:700;line-height:1.1;margin-top:8px">Hi, I'm <span style="color:${d.p}">Jeevan</span></div>
+              <div style="font-family:'${d.fonts[1]}',sans-serif;font-size:11px;opacity:.75;margin-top:4px">I build web apps &amp; AI tools</div>
+              <div style="display:flex;gap:6px;margin-top:14px;align-items:center">
+                <span style="background:${d.p};color:${lum(hex(d.p)) > .55 ? '#111' : '#fff'};font-family:'${d.fonts[1]}',sans-serif;font-size:10px;font-weight:700;padding:5px 10px;border-radius:${r0 * 16 > 20 ? 999 : r0 * 16}px">Projects</span>
+                <span style="background:${card};font-size:10px;padding:5px 10px;border-radius:${r0 * 16 > 20 ? 999 : r0 * 16}px;font-family:'${d.fonts[1]}',sans-serif">Say hi</span>
+              </div>
+            </div>
+            <div class="p-space-md bg-surface-container-low flex items-center justify-between gap-2">
+              <div class="min-w-0"><div class="font-title-sm text-title-sm text-on-surface truncate">${i + 1}. ${d.name}</div><div class="font-label-sm text-label-sm text-on-surface-variant truncate">${d.vibe} • ${d.fonts[0]}</div></div>
+              <div class="flex -space-x-1 shrink-0">${[d.p, d.s, d.t].map(c => `<span class="w-4 h-4 rounded-full border-2 border-surface-container-low" style="background:${c}"></span>`).join('')}</div>
+            </div>
+          </button>`;
+        }).join('');
+        grid.querySelectorAll('[data-design-card]').forEach(b => b.addEventListener('click', () => { apply(b.dataset.designCard, true); setTimeout(close, 250); }));
+        apply(current.id);
+      }
+
+      function open() { buildGallery(); document.getElementById('designPanel').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+      function close() { document.getElementById('designPanel').classList.add('hidden'); document.body.style.overflow = ''; }
+      function step(dir) { const i = DESIGNS.indexOf(current); apply(DESIGNS[(i + dir + DESIGNS.length) % DESIGNS.length].id, true); }
+
+      function init() {
+        let id = new URLSearchParams(location.search).get('design');
+        if (!id) { try { id = localStorage.getItem(KEY); } catch (e) {} }
+        apply(id || 'sapphire');
+        document.getElementById('designBtn')?.addEventListener('click', open);
+        document.getElementById('designFab')?.addEventListener('click', open);
+        document.getElementById('designClose')?.addEventListener('click', close);
+        document.getElementById('designPanel')?.addEventListener('click', e => { if (e.target.id === 'designPanel') close(); });
+        document.getElementById('designPrev')?.addEventListener('click', () => step(-1));
+        document.getElementById('designNext')?.addEventListener('click', () => step(1));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+      }
+
+      function getColors() {
+        const cs = getComputedStyle(document.documentElement);
+        const g = n => cs.getPropertyValue('--color-' + n).trim().split(/\s+/).join(', ');
+        return { mode: current ? current.mode : 'dark', primaryRgb: g('primary'), secondaryRgb: g('secondary'), tertiaryRgb: g('tertiary'), scene: current ? current.scene : 'sphere' };
+      }
+      return { init, apply, getColors, get current() { return current; } };
+    })();
+
+    window.DesignManager = DesignManager;
+    window.ThemeManager = { getColors: DesignManager.getColors };
+    DesignManager.init();
+
+    /* =====================================================================
+       7. 3D hero scene (Three.js) — the shape changes with each design.
+          Falls back to the 2D canvas if WebGL is unavailable.
+       ===================================================================== */
+    (function initHero3D() {
+      const canvas = document.getElementById('hero3d');
+      const hero = canvas && canvas.parentElement;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let renderer;
+      try {
+        if (!window.THREE || !canvas) throw new Error('no three');
+        renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      } catch (e) {
+        if (canvas) canvas.remove();
+        initNeuralCanvas2D();
+        return;
+      }
+      document.getElementById('neuralCanvas')?.remove();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+      camera.position.set(0, 0, 9);
+      const rgb = s => new THREE.Color(...s.split(',').map(v => +v / 255));
+      const pts = (size, opacity = 0.9) => new THREE.PointsMaterial({ size, transparent: true, opacity, depthWrite: false });
+      const wire = (opacity = 0.4) => new THREE.MeshBasicMaterial({ wireframe: true, transparent: true, opacity });
+      const mats = { p: [], s: [], t: [] };
+      const reg = (m, role) => { mats[role].push(m); return m; };
+
+      function particleRing(radius, count, spread = 0.25) {
+        const a = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          const ang = (i / count) * Math.PI * 2, r = radius + (Math.random() - .5) * spread;
+          a.set([Math.cos(ang) * r, (Math.random() - .5) * .12, Math.sin(ang) * r], i * 3);
+        }
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(a, 3)); return g;
+      }
+
+      // ---- Scene variants ----
+      const BUILDERS = {
+        sphere() {
+          const g = new THREE.Group();
+          const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 1), reg(wire(.35), 'p'));
+          const innerGeo = new THREE.IcosahedronGeometry(1.55, 4), base = innerGeo.attributes.position.array.slice();
+          const inner = new THREE.Points(innerGeo, reg(pts(.045), 's'));
+          const r1 = new THREE.Points(particleRing(3.3, 420), reg(pts(.04, .85), 't')); r1.rotation.set(1.2, 0, .3);
+          const r2 = new THREE.Points(particleRing(3.9, 300), reg(pts(.04, .85), 'p')); r2.rotation.set(1.9, 0, -.5);
+          g.add(shell, inner, r1, r2);
+          return { g, update(t) {
+            shell.rotation.z = t * .05; r1.rotation.y = t * .25; r2.rotation.y = -t * .18;
+            const p = innerGeo.attributes.position.array;
+            for (let i = 0; i < p.length; i += 3) { const k = 1 + .06 * Math.sin(t * 1.6 + base[i] * 2.2 + base[i + 1] * 1.7); p[i] = base[i] * k; p[i + 1] = base[i + 1] * k; p[i + 2] = base[i + 2] * k; }
+            innerGeo.attributes.position.needsUpdate = true;
+          } };
+        },
+        knot() {
+          const g = new THREE.Group();
+          const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(1.6, .45, 160, 18, 2, 3), reg(wire(.45), 'p'));
+          const knotPts = new THREE.Points(new THREE.TorusKnotGeometry(1.6, .75, 200, 10, 2, 3), reg(pts(.035, .8), 's'));
+          const ring = new THREE.Points(particleRing(3.6, 500, .5), reg(pts(.035, .7), 't')); ring.rotation.x = 1.3;
+          g.add(knot, knotPts, ring);
+          return { g, update(t) { knot.rotation.x = t * .2; knot.rotation.y = t * .3; knotPts.rotation.copy(knot.rotation); ring.rotation.z = t * .1; } };
+        },
+        waves() {
+          const g = new THREE.Group();
+          const N = 70, geo = new THREE.BufferGeometry(), a = new Float32Array(N * N * 3);
+          for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) a.set([(i - N / 2) * .16, 0, (j - N / 2) * .16], (i * N + j) * 3);
+          geo.setAttribute('position', new THREE.BufferAttribute(a, 3));
+          const field = new THREE.Points(geo, reg(pts(.045, .85), 's'));
+          const field2 = new THREE.Points(geo, reg(pts(.02, .5), 'p')); field2.position.y = -.35;
+          g.add(field, field2); g.rotation.x = .55;
+          return { g, fixedRotation: true, update(t) {
+            const p = geo.attributes.position.array;
+            for (let i = 1; i < p.length; i += 3) { const x = p[i - 1], z = p[i + 1]; p[i] = Math.sin(x * 1.1 + t * 1.2) * .35 + Math.cos(z * 1.3 + t * .9) * .3; }
+            geo.attributes.position.needsUpdate = true; g.rotation.y = t * .05;
+          } };
+        },
+        grid() {
+          const g = new THREE.Group();
+          const floor = new THREE.GridHelper(40, 40); floor.material.transparent = true; floor.material.opacity = .6; reg(floor.material, 'p');
+          floor.position.y = -1.6; floor.rotation.x = 0;
+          const sunMat = reg(new THREE.MeshBasicMaterial({ transparent: true, opacity: .9 }), 's');
+          const sun = new THREE.Mesh(new THREE.CircleGeometry(2, 64), sunMat); const sx = window.innerWidth >= 1024 ? -4.6 : 0; sun.position.set(sx, .9, -8);
+          const bands = new THREE.Group();
+          for (let i = 0; i < 5; i++) { const b = new THREE.Mesh(new THREE.PlaneGeometry(4.2, .12 + i * .04), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .55 })); b.position.set(sx, .5 - i * .38, -7.95); bands.add(b); }
+          const mts = new THREE.Mesh(new THREE.ConeGeometry(3, 2.2, 4, 1, true), reg(wire(.6), 't')); mts.position.set(-4, -.6, -6);
+          const mts2 = mts.clone(); mts2.position.set(4.5, -.8, -6.5); mts2.scale.set(1.2, .8, 1);
+          g.add(floor, sun, bands, mts, mts2);
+          return { g, fixedRotation: true, noScale: true, update(t) { floor.position.z = (t * 1.2) % 1; } };
+        },
+        shapes() {
+          const g = new THREE.Group(), items = [];
+          const geos = [new THREE.BoxGeometry(1, 1, 1), new THREE.OctahedronGeometry(.75), new THREE.TorusGeometry(.55, .2, 12, 32), new THREE.IcosahedronGeometry(.7, 0), new THREE.TetrahedronGeometry(.8)];
+          for (let i = 0; i < 11; i++) {
+            const m = new THREE.Mesh(geos[i % geos.length], reg(wire(.55), ['p', 's', 't'][i % 3]));
+            const ang = (i / 11) * Math.PI * 2;
+            m.position.set(Math.cos(ang) * (1.6 + (i % 3) * .8), Math.sin(i * 1.7) * 1.4, Math.sin(ang) * (1.2 + (i % 2)));
+            m.userData = { s: .3 + Math.random() * .6, o: Math.random() * 6 };
+            g.add(m); items.push(m);
+          }
+          return { g, update(t) { items.forEach(m => { m.rotation.x = t * m.userData.s; m.rotation.y = t * m.userData.s * .8; m.position.y += Math.sin(t + m.userData.o) * .002; }); } };
+        },
+        rings() {
+          const g = new THREE.Group(), rings = [];
+          [[2.6, 'p'], [2.15, 's'], [1.7, 't'], [1.25, 'p']].forEach(([r, role], i) => {
+            const m = new THREE.Mesh(new THREE.TorusGeometry(r, .025, 8, 120), reg(new THREE.MeshBasicMaterial({ transparent: true, opacity: .8 }), role));
+            m.rotation.x = i * .7; g.add(m); rings.push(m);
+          });
+          const core = new THREE.Points(new THREE.SphereGeometry(.8, 28, 28), reg(pts(.035, .9), 's'));
+          const dust = new THREE.Points(particleRing(3.4, 600, 1.2), reg(pts(.03, .6), 't')); dust.rotation.x = 1.1;
+          g.add(core, dust);
+          return { g, update(t) { rings.forEach((m, i) => { m.rotation.x += .003 * (i + 1); m.rotation.y += .004 * (4 - i); }); core.rotation.y = t * .3; dust.rotation.z = t * .05; } };
+        },
+        crystal() {
+          const g = new THREE.Group();
+          const c1 = new THREE.Mesh(new THREE.OctahedronGeometry(2.1, 0), reg(wire(.7), 'p'));
+          const c2 = new THREE.Mesh(new THREE.OctahedronGeometry(1.4, 0), reg(wire(.5), 's'));
+          const c3 = new THREE.Mesh(new THREE.IcosahedronGeometry(2.9, 0), reg(wire(.18), 't'));
+          const sparkle = new THREE.Points(new THREE.IcosahedronGeometry(3.4, 3), reg(pts(.03, .7), 's'));
+          g.add(c1, c2, c3, sparkle);
+          return { g, update(t) { c1.rotation.y = t * .3; c2.rotation.y = -t * .5; c2.rotation.x = t * .2; c3.rotation.z = t * .05; sparkle.rotation.y = -t * .04; } };
+        },
+        blob() {
+          const g = new THREE.Group();
+          const geo = new THREE.IcosahedronGeometry(2, 5), base = geo.attributes.position.array.slice();
+          const blob = new THREE.Points(geo, reg(pts(.04, .9), 's'));
+          const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(2.7, 2), reg(wire(.15), 'p'));
+          const ring = new THREE.Points(particleRing(3.5, 400, .6), reg(pts(.035, .7), 't')); ring.rotation.x = 1.4;
+          g.add(blob, shell, ring);
+          return { g, update(t) {
+            const p = geo.attributes.position.array;
+            for (let i = 0; i < p.length; i += 3) { const k = 1 + .12 * Math.sin(t * 1.1 + base[i] * 1.5) * Math.cos(t * .8 + base[i + 1] * 1.8); p[i] = base[i] * k; p[i + 1] = base[i + 1] * k; p[i + 2] = base[i + 2] * k; }
+            geo.attributes.position.needsUpdate = true; shell.rotation.y = -t * .06; ring.rotation.z = t * .08;
+          } };
+        }
+      };
+
+      // Stars (shared)
+      const starA = new Float32Array(700 * 3);
+      for (let i = 0; i < 700; i++) starA.set([(Math.random() - .5) * 30, (Math.random() - .5) * 18, -Math.random() * 20], i * 3);
+      const starGeo = new THREE.BufferGeometry(); starGeo.setAttribute('position', new THREE.BufferAttribute(starA, 3));
+      const starMat = pts(.035, .6); const stars = new THREE.Points(starGeo, starMat); scene.add(stars);
+
+      let active = null, activeName = '', lastColors = '';
+      function disposeGroup(g) { g.traverse(o => { o.geometry && o.geometry.dispose(); o.material && o.material.dispose && o.material.dispose(); }); }
+      function setScene(name) {
+        if (name === activeName) return;
+        if (active) { scene.remove(active.g); disposeGroup(active.g); }
+        mats.p = []; mats.s = []; mats.t = [];
+        active = (BUILDERS[name] || BUILDERS.sphere)(); activeName = name; lastColors = '';
+        scene.add(active.g); layout();
+      }
+      function colorize() {
+        const c = window.ThemeManager.getColors();
+        const key = c.mode + c.primaryRgb + c.secondaryRgb + c.tertiaryRgb;
+        if (key === lastColors) return; lastColors = key;
+        mats.p.forEach(m => m.color = rgb(c.primaryRgb)); mats.s.forEach(m => m.color = rgb(c.secondaryRgb)); mats.t.forEach(m => m.color = rgb(c.tertiaryRgb));
+        starMat.color = rgb(c.mode === 'dark' ? '255,255,255' : c.primaryRgb); starMat.opacity = c.mode === 'dark' ? .6 : .3;
+      }
+      function layout() {
+        const w = hero.clientWidth, h = hero.clientHeight;
+        renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+        if (!active) return;
+        const wide = w >= 1024;
+        if (active.noScale) { active.g.position.set(0, 0, 0); active.g.scale.setScalar(1); return; }
+        active.g.position.set(wide ? -2.35 * (w / h) / 1.6 : 0, wide ? .3 : 1.6, 0);
+        active.g.scale.setScalar(wide ? .95 : .72);
+      }
+      window.addEventListener('resize', layout);
+      window.addEventListener('designchange', e => setScene(e.detail.scene));
+      setScene(DesignManager.current ? DesignManager.current.scene : 'sphere');
+
+      const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+      hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); mouse.tx = ((e.clientX - r.left) / r.width - .5) * 2; mouse.ty = ((e.clientY - r.top) / r.height - .5) * 2; });
+      let visible = true;
+      if (typeof IntersectionObserver === 'function') new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
+
+      const clock = new THREE.Clock();
+      (function frame() {
+        requestAnimationFrame(frame);
+        if (!visible) return;
+        colorize();
+        const t = reduce ? 0 : clock.getElapsedTime();
+        mouse.x += (mouse.tx - mouse.x) * .05; mouse.y += (mouse.ty - mouse.y) * .05;
+        if (active.fixedRotation) { camera.position.x = mouse.x * .6; camera.position.y = -mouse.y * .3; camera.lookAt(0, 0, 0); }
+        else { camera.position.set(0, 0, 9); camera.lookAt(0, 0, 0); active.g.rotation.y = t * .15 + mouse.x * .5; active.g.rotation.x = mouse.y * .35; }
+        active.update(t);
+        stars.rotation.y = t * .01 + mouse.x * .05;
+        renderer.render(scene, camera);
+      })();
+    })();
+
+    /* =====================================================================
+       8. 3D tilt + glare on cards
+       ===================================================================== */
+    (function initTilt() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce), (hover: none)').matches) return;
+      const MAX = 8;
+      document.addEventListener('pointermove', e => {
+        const el = e.target.closest && e.target.closest('.tilt');
+        document.querySelectorAll('.tilt.tilting').forEach(t => { if (t !== el) reset(t); });
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        const max = el.dataset.tiltMax ? +el.dataset.tiltMax : MAX;
+        el.classList.add('tilting');
+        el.style.transform = `perspective(900px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateZ(0)`;
+        el.style.setProperty('--gx', `${px * 100}%`); el.style.setProperty('--gy', `${py * 100}%`);
+      });
+      function reset(t) { t.classList.remove('tilting'); t.style.transform = ''; }
+      document.addEventListener('pointerleave', () => document.querySelectorAll('.tilt.tilting').forEach(reset));
+    })();
+
+  </script>
+</body>
+</html>
