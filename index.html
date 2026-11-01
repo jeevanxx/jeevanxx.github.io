@@ -412,6 +412,9 @@
           <span class="material-symbols-outlined text-[18px] text-primary">palette</span>
           <span id="designBtnLabel" class="hidden md:inline max-w-[140px] truncate">Theme</span>
         </button>
+        <button id="modeToggle" type="button" class="w-10 h-10 rounded-full bg-surface-container-high/90 border border-outline-variant/30 text-on-surface hover:border-primary hover:text-primary transition-all" title="Switch to light mode" aria-label="Switch to light mode">
+          <span id="modeIcon" class="material-symbols-outlined text-[20px]">light_mode</span>
+        </button>
         <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md hidden sm:block">
           <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top profile-photo" src="profile.jpg">
         </div>
@@ -716,10 +719,10 @@
           </div>
           <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mb-space-xl">Skills &amp; tools I've worked with</h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
             <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
               <div class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center mb-space-md"><span class="material-symbols-outlined text-[26px]">code</span></div>
-              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Languages</h3>
+              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Coding languages</h3>
               <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-space-md">Measured from my GitHub code, so it updates automatically.</p>
               <div class="space-y-space-sm" id="languageBars">
                 <p class="font-body-sm text-body-sm text-on-surface-variant">Loading…</p>
@@ -754,6 +757,17 @@
                 <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Google AI Studio</span>
                 <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Lovable</span>
                 <span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-md text-label-md text-on-surface">Notion</span>
+              </div>
+            </div>
+
+            <div class="tilt p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+              <div class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center mb-space-md"><span class="material-symbols-outlined text-[26px]">translate</span></div>
+              <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Languages I speak</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-space-md">Comfortable working with people in:</p>
+              <div class="space-y-space-sm">
+                <div class="flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container border border-outline-variant/20"><span class="font-title-sm text-title-sm text-on-surface">English</span><span class="font-label-sm text-label-sm text-on-surface-variant">Hello</span></div>
+                <div class="flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container border border-outline-variant/20"><span class="font-title-sm text-title-sm text-on-surface">Tamil</span><span class="font-label-sm text-label-sm text-on-surface-variant">வணக்கம்</span></div>
+                <div class="flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container border border-outline-variant/20"><span class="font-title-sm text-title-sm text-on-surface">Malayalam</span><span class="font-label-sm text-label-sm text-on-surface-variant">നമസ്കാരം</span></div>
               </div>
             </div>
           </div>
@@ -791,7 +805,7 @@
           <div class="flex items-center justify-between gap-space-md mb-space-lg sticky top-0 py-space-sm bg-surface-dim/0">
             <div>
               <h2 class="font-headline-md text-headline-md text-on-surface font-bold">Choose a theme</h2>
-              <p class="font-body-md text-body-md text-on-surface-variant">Pick the look you like. Each theme changes the colours, fonts and 3D scene.</p>
+              <p class="font-body-md text-body-md text-on-surface-variant">Pick the look you like. Each theme changes the colours, fonts and 3D scene, and works in both light and dark mode (use the ☀/🌙 button).</p>
             </div>
             <button id="designClose" type="button" class="w-11 h-11 shrink-0 rounded-full bg-surface-container-high border border-outline-variant/40 text-on-surface hover:border-primary" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
           </div>
@@ -824,6 +838,9 @@
       // Optional nicer names / descriptions for repos. If a repo isn't listed,
       // its GitHub name and description are used automatically.
       // Add  thumbnail: 'thumbnails/my-app.png'  to show a real screenshot.
+      // "Open app" button: shown automatically when the repo has GitHub Pages on, or a
+      // Website link set in its GitHub "About" box. For apps hosted elsewhere (Vercel,
+      // Lovable, Netlify...) add  liveUrl: 'https://...'  to that project here.
       projectNotes: {
         'Event-Rader': {
           title: 'Event Radar',
@@ -1082,7 +1099,7 @@
       const getJSON = async url => { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); };
 
       function card(r, i) {
-        const live = r.homepage || (r.has_pages ? `https://${G.username}.github.io/${r.name}/` : '');
+        const live = note(r).liveUrl || r.homepage || (r.has_pages ? `https://${G.username}.github.io/${r.name}/` : '');
         const lang = r.language || 'Other';
         const desc = descOf(r);
         const topics = (r.topics || []).slice(0, 3).map(t =>
@@ -1103,11 +1120,11 @@
                 <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">${esc(lang)}</span>${topics}
               </div>
             </div>
-            <div class="flex items-center justify-between pt-space-md mt-space-lg mx-space-xl mb-space-lg border-t border-outline-variant/30">
-              <span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">update</span>${timeAgo(r.pushed_at)}</span>
-              <div class="flex items-center gap-space-xs">
-                ${live ? `<a class="px-space-md py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold hover:shadow-md transition-all gap-1" href="${esc(live)}" rel="noopener noreferrer" target="_blank"><span class="material-symbols-outlined text-[14px]">launch</span> Open</a>` : ''}
-                <a class="w-9 h-9 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary transition-colors" href="${esc(r.html_url)}" rel="noopener noreferrer" target="_blank" title="Source code on GitHub" aria-label="Source code on GitHub">${svgIcon(SITE_CONFIG.socials.find(x => x.label === 'GitHub').icon)}</a>
+            <div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-md mt-space-lg mx-space-xl mb-space-lg border-t border-outline-variant/30">
+              <span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[16px] text-tertiary">update</span>${timeAgo(r.pushed_at)}</span>
+              <div class="flex items-center gap-space-xs ml-auto">
+                ${live ? `<a class="px-space-md py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold whitespace-nowrap hover:shadow-lg hover:scale-[1.04] transition-all gap-1" href="${esc(live)}" rel="noopener noreferrer" target="_blank" title="Open the live app"><span class="material-symbols-outlined text-[16px]">rocket_launch</span> Open app</a>` : ''}
+                <a class="px-space-md py-2 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary/50 transition-all font-label-md text-label-md whitespace-nowrap gap-1" href="${esc(r.html_url)}" rel="noopener noreferrer" target="_blank" title="See the source code on GitHub">${svgIcon(SITE_CONFIG.socials.find(x => x.label === 'GitHub').icon)} Code</a>
               </div>
             </div>
           </article>`;
@@ -1387,8 +1404,11 @@
         });
       }
 
+      // Make an accent readable on the background (e.g. Minimal Mono's black in dark mode)
+      const readable = (c, bg, dark) => Math.abs(lum(c) - lum(bg)) < 0.2 ? mix(c, dark ? W : K, dark ? 0.6 : 0.45) : c;
       function vars(d) {
-        const bg = hex(d.bg), fg = hex(d.fg), P = hex(d.p), S = hex(d.s), T = hex(d.t), dark = d.mode === 'dark';
+        const bg = hex(d.bg), fg = hex(d.fg), dark = d.mode === 'dark';
+        const P = readable(hex(d.p), bg, dark), S = readable(hex(d.s), bg, dark), T = readable(hex(d.t), bg, dark);
         const sf = w => str(mix(bg, fg, w));
         const accent = c => dark ? mix(c, W, lum(c) < 0.45 ? 0.35 : 0.1) : mix(c, K, lum(c) > 0.6 ? 0.35 : 0.05);
         const pA = accent(P), sA = accent(S), tA = accent(T);
@@ -1425,9 +1445,38 @@
       }
 
       let current = null;
+      const MODE_KEY = 'portfolio_mode';
+      let modePref = null;
+      try { modePref = localStorage.getItem(MODE_KEY); } catch (e) {}
+      const toHex = c => '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+      // A theme shown in the opposite of its native mode gets tinted backgrounds from its accent
+      function withMode(base) {
+        const mode = modePref || base.mode;
+        if (mode === base.mode) return base;
+        const P = hex(base.p);
+        return mode === 'light'
+          ? { ...base, mode, bg: toHex(mix(W, P, .045)), fg: toHex(mix([17, 20, 28], P, .15)) }
+          : { ...base, mode, bg: toHex(mix([13, 16, 23], P, .07)), fg: toHex(mix(W, P, .08)) };
+      }
+      function updateModeButton(mode) {
+        const icon = document.getElementById('modeIcon'), btn = document.getElementById('modeToggle');
+        if (!icon || !btn) return;
+        icon.textContent = mode === 'dark' ? 'light_mode' : 'dark_mode';
+        btn.title = mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        btn.setAttribute('aria-label', btn.title);
+      }
+      function toggleMode() {
+        modePref = (current && current.mode === 'dark') ? 'light' : 'dark';
+        try { localStorage.setItem(MODE_KEY, modePref); } catch (e) {}
+        apply(current.id);
+        showToast(modePref === 'dark' ? 'Dark mode on' : 'Light mode on', 'info');
+      }
+
       function apply(id, notify) {
-        const d = DESIGNS.find(x => x.id === id) || DESIGNS[0];
+        const base = DESIGNS.find(x => x.id === id) || DESIGNS[0];
+        const d = withMode(base);
         current = d;
+        updateModeButton(d.mode);
         const root = document.documentElement;
         root.classList.toggle('dark', d.mode === 'dark');
         root.classList.toggle('light', d.mode !== 'dark');
@@ -1487,6 +1536,7 @@
         if (!id) { try { id = localStorage.getItem(KEY); } catch (e) {} }
         apply(id || 'sapphire');
         document.getElementById('designBtn')?.addEventListener('click', open);
+        document.getElementById('modeToggle')?.addEventListener('click', toggleMode);
         document.getElementById('designFab')?.addEventListener('click', open);
         document.getElementById('designClose')?.addEventListener('click', close);
         document.getElementById('designPanel')?.addEventListener('click', e => { if (e.target.id === 'designPanel') close(); });
