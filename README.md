@@ -1,6 +1,16 @@
 # Jeevan J Shine — Portfolio
 
-Personal portfolio site. Plain HTML + Tailwind (CDN), no build step.
+Personal portfolio site. Plain HTML + Tailwind CSS, compiled to `styles.css`.
+
+## Styles (important)
+Styling comes from `styles.css`, built from the Tailwind classes used in `index.html`.
+If you add **new** Tailwind classes, rebuild it (needs Node.js):
+
+```
+npx tailwindcss@3 -c tailwind.config.js -i tailwind.input.css -o styles.css --minify
+```
+
+Theme colours, fonts and spacing live in `tailwind.config.js`.
 
 ## Preview locally
 Open `index.html` in a browser, or run `node server.js` and visit http://localhost:3000
