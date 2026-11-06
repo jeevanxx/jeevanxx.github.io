@@ -7,7 +7,7 @@
 <style>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #1c2230; font-size: 8.9pt; line-height: 1.32; }
+  body { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #1c2230; font-size: var(--fs, 8.9pt); line-height: 1.32; }
   .page { width: 210mm; padding: 9mm 15mm 6mm; }
   header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2.5px solid #0d59f2; padding-bottom: 9px; }
   h1 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 25pt; line-height: 1; letter-spacing: -.5px; color: #0f131d; }
@@ -33,6 +33,12 @@
   a.link { color: #0d59f2; text-decoration: none; }
 </style>
 </head>
+<!--
+  Resume TEMPLATE. Edit the summary, education, skills and interests here.
+  The Projects and Certificates sections are filled in automatically from GitHub
+  (projects.json + the certificates folder) by scripts/build.py, and the PDF
+  Jeevan-J-Shine-Resume.pdf is rebuilt by GitHub Actions. Do not edit the PDF directly.
+-->
 <body>
 <div class="page">
   <header>
@@ -66,47 +72,10 @@
   </div>
 
   <h2>Projects</h2>
-  <div class="item">
-    <div class="row"><span class="title">Event Radar <span class="tag">LIVE</span></span><a class="meta link" href="https://github.com/jeevanxx/Event-Rader">github.com/jeevanxx/Event-Rader</a></div>
-    <ul>
-      <li>Installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.</li>
-      <li>Built and deployed on GitHub Pages so it works on any phone or laptop.</li>
-    </ul>
-    <div class="tech"><b>Tech:</b> JavaScript, HTML, CSS, Service Workers / PWA, GitHub Pages</div>
-  </div>
-  <div class="item">
-    <div class="row"><span class="title">CampusPilot <span class="tag" style="color:#7746e1;background:#efe8ff">IN PROGRESS</span></span><span class="meta">AI vision project</span></div>
-    <ul>
-      <li>AI vision assistant to help visually impaired students navigate campus: the camera detects objects and obstacles, and an AI agent turns detections into spoken guidance.</li>
-    </ul>
-    <div class="tech"><b>Tech:</b> React, Vite, FastAPI, YOLOv8, LangGraph</div>
-  </div>
-  <div class="item">
-    <div class="row"><span class="title">Focus Forge <span class="tag">LIVE</span></span><a class="meta link" href="https://bloom-focus-aid.lovable.app/">bloom-focus-aid.lovable.app</a></div>
-    <ul><li>Discipline web app to plan, focus and ship: calendar, focus timer, habit tracker and an AI coach in one place.</li></ul>
-    <div class="tech"><b>Tech:</b> TypeScript, React, Vite, Lovable</div>
-  </div>
-  <div class="item">
-    <div class="row"><span class="title">CampusAid v2</span><a class="meta link" href="https://github.com/jeevanxx/campusaid-v2">github.com/jeevanxx/campusaid-v2</a></div>
-    <ul><li>Rebuilt step-free campus guide for Joy University, focused on map-based accessible routes and a cleaner design.</li></ul>
-    <div class="tech"><b>Tech:</b> JavaScript, HTML, CSS</div>
-  </div>
-  <div class="item">
-    <div class="row"><span class="title">Task Tracker <span class="tag">LIVE</span></span><a class="meta link" href="https://github.com/jeevanxx/Task-Tracker">github.com/jeevanxx/Task-Tracker</a></div>
-    <ul><li>First project, built from scratch: add, edit, complete and delete tasks, filters, task counter, dark mode, and tasks saved between visits with localStorage.</li></ul>
-    <div class="tech"><b>Tech:</b> HTML, CSS, JavaScript, localStorage</div>
-  </div>
-  <div class="item">
-    <div class="row"><span class="title">Personal Portfolio</span><a class="meta link" href="https://jeevanxx.github.io">jeevanxx.github.io</a></div>
-    <ul><li>Portfolio that automatically lists my GitHub projects using the GitHub API, with a Three.js 3D scene and six switchable themes.</li></ul>
-    <div class="tech"><b>Tech:</b> JavaScript, Tailwind CSS, Three.js, GitHub API</div>
-  </div>
+<!--PROJECTS-->
 
   <h2>Certificates &amp; Events</h2>
-  <div class="item">
-    <div class="row"><span class="title">Vibe Coding Workshop 2026 — Certificate of Participation</span><span class="meta">30 Oct 2026</span></div>
-    <div class="sub">StartupTN × Google for Developers · Noorul Islam Centre for Higher Education, Kumaracoil · ID: VCW26-7R5XM</div>
-  </div>
+<!--CERTIFICATES-->
 
   <h2>Skills</h2>
   <dl class="skills">

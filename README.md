@@ -1,37 +1,43 @@
 # Jeevan J Shine — Portfolio
 
-Personal portfolio site. Plain HTML + Tailwind CSS, compiled to `styles.css`.
+Live at **https://jeevanxx.github.io**. Plain HTML + Tailwind CSS (compiled to `styles.css`), hosted free on GitHub Pages.
 
-## Styles (important)
-Styling comes from `styles.css`, built from the Tailwind classes used in `index.html`.
-If you add **new** Tailwind classes, rebuild it (needs Node.js):
+## What updates by itself (no code, no AI needed)
 
-```
-npx tailwindcss@3 -c tailwind.config.js -i tailwind.input.css -o styles.css --minify
-```
+| What | How it updates |
+|---|---|
+| **Projects, stats, activity, coding-language bars** | Loaded live from GitHub every time someone opens the page. New public repos appear on their own. |
+| **"Open app" button** | Appears when a repo has GitHub Pages on, or a link in its GitHub **About → Website** box. |
+| **Certificates** | Upload a PDF or image into the `certificates` folder. It appears on the site and in the resume. |
+| **Resume PDF** | Rebuilt by GitHub Actions after every change and every Monday, with your latest projects and certificates. |
+| **Styles** | `styles.css` is recompiled automatically. |
 
-Theme colours, fonts and spacing live in `tailwind.config.js`.
+The robot is `.github/workflows/auto-update.yml`. See it run in the **Actions** tab.
+To run it right now: **Actions → Auto-update portfolio → Run workflow**.
 
-## Preview locally
-Open `index.html` in a browser, or run `node server.js` and visit http://localhost:3000
+## Everyday tasks (all on github.com, click the ✏️ pencil to edit a file, then "Commit changes")
 
-## What updates automatically
-The **Projects**, **Activity**, **Languages** and stats sections load live from
-GitHub (`github.com/jeevanxx`) every time someone opens the page.
-New public repos appear on their own; forks are skipped.
+- **Add a certificate:** open the `certificates` folder → **Add file → Upload files** → drop the PDF/image → **Commit changes**.
+  The title comes from the file name (`python-basics-2027.pdf` → "Python Basics 2027").
+  For a nicer title, date, issuer or ID, add an entry in `certificates/details.json`.
+- **Change a project's title / description / live link, or the pinned order:** edit `projects.json`.
+  A repo with no description anywhere is left off the resume (it still shows on the site).
+- **Change your summary, education, skills or interests in the resume:** edit `resume-template.html`.
+  (Projects and certificates in it are filled in automatically. Don't edit the PDF itself.)
+- **Change website text (bio, timeline, skills):** edit `index.html` and search (Ctrl+F) for the words.
+- **Change social links:** `socials` near the top of the `<script>` in `index.html`.
+- **Profile photo:** replace `profile.jpg`.
 
-## How to edit
-Everything personal is in `SITE_CONFIG` at the top of the `<script>` in `index.html`:
+Changes go live about 1–3 minutes after you commit (a little longer when the robot rebuilds the resume).
 
-- `github.pinned` — which repos show first, in order
-- `github.hideRepos` — repo names to hide
-- `projectNotes` — nicer titles/descriptions for repos (repos not listed use their GitHub description)
-- `socials` — links shown in the hero and contact section
-
-Text (bio, journey timeline, skills) is plain HTML in `index.html` — search for the words you want to change.
-
-## Profile photo
-Your photo is `profile.jpg` next to `index.html`. Replace that file to change it.
+## Good to know
+- GitHub pauses scheduled robots in repos with no commits for 60 days. It emails you first;
+  just click **Enable workflow** on the Actions tab. Committing anything also keeps it active.
+- The site itself never stops working, even if the robot is paused.
+- Run the build locally (optional): `pip install playwright pypdf && python -m playwright install chromium`,
+  install poppler (`pdftoppm`), then `python scripts/build.py`.
 
 ## Project thumbnails
-Each project gets an illustrated thumbnail (drawn in code, follows the colour theme). New repos get a generated one automatically. To use a real screenshot, put it in a `thumbnails/` folder and add `thumbnail: 'thumbnails/name.png'` for that repo in `projectNotes`.
+Each project gets an illustrated thumbnail drawn in code. New repos get a generated one.
+To use a real screenshot, put it in a `thumbnails/` folder and add `"thumbnail": "thumbnails/name.png"`
+for that repo in the `notes` of `projects.json`.

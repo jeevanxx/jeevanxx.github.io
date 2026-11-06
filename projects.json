@@ -1,0 +1,59 @@
+{
+  "_help": [
+    "This file controls how your GitHub projects appear on the website AND in the resume.",
+    "Any public repo NOT listed here still appears automatically, using its GitHub name and description.",
+    "pinned: repos shown first, in this order. hide: repos to leave out everywhere.",
+    "notes: optional nicer title, description, live app link (liveUrl), tech list, and resume bullet points.",
+    "resumeExtras: projects that are not GitHub repos (or should appear in the resume in a special place).",
+    "Edit on GitHub with the pencil icon, then Commit. The site and resume update by themselves."
+  ],
+  "pinned": ["Event-Rader", "focus-forge-hq", "campusaid-v2", "Task-Tracker"],
+  "hide": [],
+  "resumeMaxProjects": 6,
+  "notes": {
+    "Event-Rader": {
+      "title": "Event Radar",
+      "description": "An installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.",
+      "tech": ["JavaScript", "HTML", "CSS", "Service Workers / PWA", "GitHub Pages"],
+      "resume": [
+        "Installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.",
+        "Built and deployed on GitHub Pages so it works on any phone or laptop."
+      ]
+    },
+    "focus-forge-hq": {
+      "title": "Focus Forge",
+      "description": "A discipline app to plan, focus and ship: calendar, focus timer, habit tracker and an AI coach in one place. Built with React and Vite.",
+      "liveUrl": "https://bloom-focus-aid.lovable.app/",
+      "tech": ["TypeScript", "React", "Vite", "Lovable"],
+      "resume": ["Discipline web app to plan, focus and ship: calendar, focus timer, habit tracker and an AI coach in one place."]
+    },
+    "campusaid-v2": {
+      "title": "CampusAid v2",
+      "description": "A rebuilt step-free campus guide for Joy University, focused on map-based accessible routes and a cleaner design.",
+      "tech": ["JavaScript", "HTML", "CSS"]
+    },
+    "Task-Tracker": {
+      "title": "Task Tracker",
+      "description": "My first project, in plain HTML, CSS and JavaScript: add, edit, complete and delete tasks, filters, a task counter, dark mode, and tasks saved between visits.",
+      "tech": ["HTML", "CSS", "JavaScript", "localStorage"],
+      "resume": ["First project, built from scratch: add, edit, complete and delete tasks, filters, task counter, dark mode, and tasks saved between visits with localStorage."]
+    }
+  },
+  "resumeExtras": [
+    {
+      "title": "CampusPilot",
+      "status": "IN PROGRESS",
+      "label": "AI vision project",
+      "position": 1,
+      "resume": ["AI vision assistant to help visually impaired students navigate campus: the camera detects objects and obstacles, and an AI agent turns detections into spoken guidance."],
+      "tech": ["React", "Vite", "FastAPI", "YOLOv8", "LangGraph"]
+    },
+    {
+      "title": "Personal Portfolio",
+      "url": "https://jeevanxx.github.io",
+      "position": 99,
+      "resume": ["Portfolio that automatically lists my GitHub projects and certificates, with a Three.js 3D scene and six switchable themes. Rebuilt weekly by GitHub Actions."],
+      "tech": ["JavaScript", "Tailwind CSS", "Three.js", "GitHub API", "GitHub Actions"]
+    }
+  ]
+}

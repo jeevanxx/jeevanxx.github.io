@@ -1,0 +1,19 @@
+{
+  "_help": [
+    "To add a certificate: upload its PDF or image into this certificates folder on GitHub. That's all.",
+    "It appears on the website and in the resume automatically (title is taken from the file name,",
+    "e.g. 'python-basics-2027.pdf' becomes 'Python Basics 2027').",
+    "Optional: add an entry below (keyed by the exact file name) for a nicer title, date, issuer, ID or description.",
+    "Dates must look like '30 Oct 2026'. Newest certificates are shown first."
+  ],
+  "vibe-coding-workshop-2026.pdf": {
+    "title": "Vibe Coding Workshop 2026",
+    "type": "Certificate of Participation",
+    "date": "30 Oct 2026",
+    "issuer": "StartupTN × Google for Developers",
+    "place": "Noorul Islam Centre for Higher Education, Kumaracoil",
+    "id": "VCW26-7R5XM",
+    "description": "Organised by StartupTN in collaboration with Google for Developers at Noorul Islam Centre for Higher Education, Kumaracoil. Built apps hands-on with Google AI Studio.",
+    "tags": ["Google for Developers", "StartupTN"]
+  }
+}

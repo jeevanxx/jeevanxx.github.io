@@ -536,8 +536,9 @@
       <section class="w-full bg-surface-container-lowest pb-24" id="certificates">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex items-center gap-space-xs text-tertiary font-label-md text-label-md uppercase tracking-wider mb-space-md">
-            <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Certificates
+            <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Certificates <span id="certCount"></span>
           </div>
+          <div id="certList">
           <div data-tilt-max="4" class="tilt glow-border rounded-lg bg-surface-container-low shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2">
             <a href="certificates/vibe-coding-workshop-2026.pdf" target="_blank" rel="noopener noreferrer" class="block p-space-lg bg-surface-container group" title="Open certificate (PDF)">
               <img src="certificates/vibe-coding-workshop-2026.jpg" alt="Vibe Coding Workshop 2026 certificate of participation for Jeevan J Shine" class="w-full rounded-DEFAULT shadow-lg group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
@@ -555,6 +556,7 @@
                 <span class="material-symbols-outlined text-[18px]">open_in_new</span> View certificate
               </a>
             </div>
+          </div>
           </div>
         </div>
       </section>
@@ -742,36 +744,13 @@
       github: {
         username: 'jeevanxx',
         includeForks: false,   // true = also show repos you forked
-        hideRepos: [],         // repo names to hide, e.g. ['class-project-']
-        // Shown first, in this order. Everything else follows, newest first.
-        pinned: ['Event-Rader', 'focus-forge-hq', 'campusaid-v2', 'Task-Tracker'],
+        hideRepos: [],         // filled from projects.json ("hide")
+        pinned: [],            // filled from projects.json ("pinned")
         cacheMinutes: 10       // keeps visitors under GitHub's 60 requests/hour limit
       },
-      // Optional nicer names / descriptions for repos. If a repo isn't listed,
-      // its GitHub name and description are used automatically.
-      // Add  thumbnail: 'thumbnails/my-app.png'  to show a real screenshot.
-      // "Open app" button: shown automatically when the repo has GitHub Pages on, or a
-      // Website link set in its GitHub "About" box. For apps hosted elsewhere (Vercel,
-      // Lovable, Netlify...) add  liveUrl: 'https://...'  to that project here.
-      projectNotes: {
-        'Event-Rader': {
-          title: 'Event Radar',
-          description: 'An installable web app (PWA) that tracks hackathons, workshops, meetups and competitions across Tamil Nadu, Kerala, Bengaluru and online.'
-        },
-        'focus-forge-hq': {
-          title: 'Focus Forge',
-          description: 'A discipline app to plan, focus and ship: calendar, focus timer, habit tracker and an AI coach in one place. Built with React and Vite.',
-          liveUrl: 'https://bloom-focus-aid.lovable.app/'
-        },
-        'campusaid-v2': {
-          title: 'CampusAid v2',
-          description: 'A rebuilt step-free campus guide for Joy University, focused on map-based accessible routes and a cleaner design.'
-        },
-        'Task-Tracker': {
-          title: 'Task Tracker',
-          description: 'My first project, in plain HTML, CSS and JavaScript: add, edit, complete and delete tasks, filters, a task counter, dark mode, and tasks saved between visits.'
-        }
-      },
+      // Project titles, descriptions, live links, pinned order and hidden repos
+      // now live in projects.json (shared with the auto-built resume).
+      projectNotes: {},
       socials: [
         { label: 'Gmail', handle: 'jeevanshine2008@gmail.com', url: 'mailto:jeevanshine2008@gmail.com', icon: 'M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z' },
         { label: 'GitHub', handle: '@jeevanxx', url: 'https://github.com/jeevanxx', icon: 'M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z' },
@@ -980,6 +959,54 @@
     (function () { const el = document.getElementById('campusPilotThumb'); if (el) el.innerHTML = Thumbs.for('campuspilot'); })();
 
     /* =====================================================================
+       Certificates: built automatically from certificates/index.json, which
+       GitHub Actions generates from every PDF/image in the certificates folder.
+       ===================================================================== */
+    (function initCertificates() {
+      const list = document.getElementById('certList');
+      if (!list) return;
+      const chip = t => `<span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface">${esc(t)}</span>`;
+      const meta = c => [c.type, c.date].filter(Boolean).join(' • ');
+      function big(c) {
+        return `<div data-tilt-max="4" class="tilt glow-border rounded-lg bg-surface-container-low shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2">
+          <a href="${esc(c.file)}" target="_blank" rel="noopener noreferrer" class="block p-space-lg bg-surface-container group" title="Open certificate">
+            <img src="${esc(c.preview)}" alt="${esc(c.title)} certificate for Jeevan J Shine" class="w-full rounded-DEFAULT shadow-lg group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
+          </a>
+          <div class="p-space-xl flex flex-col justify-center">
+            ${meta(c) ? `<span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">${esc(meta(c))}</span>` : ''}
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-space-xs">${esc(c.title)}</h3>
+            ${c.description ? `<p class="font-body-md text-body-md text-on-surface-variant mt-space-sm leading-relaxed">${esc(c.description)}</p>` : ''}
+            <div class="flex flex-wrap gap-space-xs mt-space-md">${(c.tags || []).map(chip).join('')}${c.id ? `<span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant font-mono">ID: ${esc(c.id)}</span>` : ''}</div>
+            <a href="${esc(c.file)}" target="_blank" rel="noopener noreferrer" class="action-btn self-start mt-space-lg px-space-lg py-2.5 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-semibold hover:shadow-lg transition-all gap-space-xs">
+              <span class="material-symbols-outlined text-[18px]">open_in_new</span> View certificate
+            </a>
+          </div>
+        </div>`;
+      }
+      function small(c) {
+        return `<a href="${esc(c.file)}" target="_blank" rel="noopener noreferrer" data-tilt-max="6" class="tilt group rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md overflow-hidden flex flex-col hover:border-primary/40 transition-all">
+          <div class="p-space-md bg-surface-container"><img src="${esc(c.preview)}" alt="${esc(c.title)} certificate" class="w-full aspect-[4/3] object-contain rounded-DEFAULT group-hover:scale-[1.02] transition-transform duration-500" loading="lazy"></div>
+          <div class="p-space-lg flex-1 flex flex-col">
+            ${meta(c) ? `<span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">${esc(meta(c))}</span>` : ''}
+            <h3 class="font-title-lg text-title-lg text-on-surface font-bold mt-space-xs group-hover:text-primary transition-colors">${esc(c.title)}</h3>
+            ${c.issuer ? `<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">${esc(c.issuer)}</p>` : ''}
+            <span class="mt-auto pt-space-md font-label-md text-label-md text-primary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">open_in_new</span> View certificate</span>
+          </div>
+        </a>`;
+      }
+      fetch('certificates/index.json', { cache: 'no-cache' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(certs => {
+          if (!Array.isArray(certs) || !certs.length) return;
+          const [first, ...rest] = certs;
+          list.innerHTML = big(first) + (rest.length ? `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-lg mt-space-lg">${rest.map(small).join('')}</div>` : '');
+          const count = document.getElementById('certCount');
+          if (count && certs.length > 1) count.textContent = `(${certs.length})`;
+        })
+        .catch(() => {});  // keep the built-in fallback card
+    })();
+
+    /* =====================================================================
        3. GitHub Auto-Sync: projects, filters, stats, activity, languages
        ===================================================================== */
     (function initGitHubSync() {
@@ -1096,7 +1123,18 @@
         filters.innerHTML = '';
       }
 
-      cached('gh_repos_' + G.username, () => getJSON(`https://api.github.com/users/${G.username}/repos?per_page=100&sort=pushed`))
+      // Load projects.json (pinned order, descriptions, live links), then GitHub
+      const loadProjectConfig = () => fetch('projects.json', { cache: 'no-cache' })
+        .then(r => r.ok ? r.json() : {})
+        .then(cfg => {
+          if (Array.isArray(cfg.pinned)) G.pinned = cfg.pinned;
+          if (Array.isArray(cfg.hide)) G.hideRepos = cfg.hide;
+          if (cfg.notes && typeof cfg.notes === 'object') SITE_CONFIG.projectNotes = cfg.notes;
+        })
+        .catch(() => {});
+
+      loadProjectConfig()
+        .then(() => cached('gh_repos_' + G.username, () => getJSON(`https://api.github.com/users/${G.username}/repos?per_page=100&sort=pushed`)))
         .then(all => {
           const repos = all.filter(r => (G.includeForks || !r.fork) && !G.hideRepos.includes(r.name) && r.name.toLowerCase() !== `${G.username}.github.io`.toLowerCase());
           if (!repos.length) return showError();

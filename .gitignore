@@ -1,3 +1,5 @@
 .DS_Store
 Thumbs.db
 *.old.*
+.resume-build.html
+__pycache__/

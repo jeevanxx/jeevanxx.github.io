@@ -1,0 +1,64 @@
+# Keeps the portfolio up to date automatically:
+#  - certificates/index.json + previews  (from files in the certificates folder)
+#  - Jeevan-J-Shine-Resume.pdf          (projects from GitHub + projects.json)
+#  - styles.css                          (compiled Tailwind CSS)
+# Runs after every change you commit, every Monday morning, and when you click
+# "Run workflow" on the Actions tab. Free for public repositories.
+name: Auto-update portfolio
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "43 2 * * 1"   # Mondays 02:43 UTC (8:13 AM in India)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-update
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history, so certificate dates are correct
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+          pip install -q playwright pypdf
+          python -m playwright install --with-deps chromium
+
+      - name: Rebuild styles
+        run: npx -y tailwindcss@3 -c tailwind.config.js -i tailwind.input.css -o styles.css --minify
+
+      - name: Build certificates and resume
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/build.py
+
+      - name: Save changes
+        run: |
+          git add -A styles.css certificates Jeevan-J-Shine-Resume.pdf .resume-hash
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Auto-update certificates and resume"
+          git pull --rebase origin main
+          git push origin HEAD:main
