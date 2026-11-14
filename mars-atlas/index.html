@@ -303,6 +303,27 @@ h2{font-size:23px}
 #rt-wps p{margin:6px 0;font-size:12.5px;line-height:1.45;color:#efdcc8}#rt-wps img{display:block;max-width:100%;border-radius:8px;margin-top:6px}
 #rt-wps button{min-height:28px;padding:3px 12px;font-size:12.5px}
 .propimg{display:block;width:100%;border-radius:10px;border:1px solid var(--edge)}
+.panel.galw{width:460px}
+.g-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.g-sol{display:flex;align-items:center;gap:4px;font:12px var(--data);color:var(--dust)}
+.g-sol input{width:72px;font:14px var(--data);color:var(--sand);background:rgba(30,18,20,.8);border:1px solid var(--edge);border-radius:8px;padding:6px 8px}
+.g-sol button{min-height:32px;width:32px;padding:0}
+#g-cam{flex:1;min-width:0;font:13px var(--body);color:var(--sand);background:rgba(30,18,20,.8);border:1px solid var(--edge);border-radius:999px;padding:7px 10px}
+.g-quick{display:flex;gap:5px;flex-wrap:wrap}.g-quick button{font-size:12px;padding:4px 10px;min-height:28px}
+.g-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.g-th{position:relative;padding:0;border-radius:10px;overflow:hidden;aspect-ratio:1/1;background:#000;min-height:0;border:1px solid var(--edge)}
+.g-th img{width:100%;height:100%;object-fit:cover;display:block}
+.g-th span{position:absolute;left:0;right:0;bottom:0;padding:3px 6px;font:10px var(--data);color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.8));text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-th:hover{border-color:var(--accent)}
+.lightbox{position:absolute;inset:0;z-index:30;background:rgba(5,3,6,.86);display:grid;place-items:center;padding:20px}
+.lb-in{position:relative;width:min(920px,100%);max-height:100%;overflow:auto;background:var(--glass);border:1px solid var(--edge);border-radius:18px;padding:16px 18px;box-shadow:var(--glow)}
+.lb-in img{display:block;max-width:100%;max-height:60vh;margin:0 auto;border-radius:10px}
+.lb-in .x{position:absolute;right:10px;top:10px;z-index:2;background:rgba(0,0,0,.6)}
+.btnlink{display:inline-flex;align-items:center;min-height:36px;padding:7px 14px;border-radius:999px;border:1px solid var(--edge);background:rgba(30,18,20,.72);color:var(--sand);text-decoration:none;font-size:13.5px}
+.btnlink:hover{border-color:var(--edge2)}
+#i-pers{display:flex;flex-direction:column;gap:6px}#i-pers .note{margin:0}
+@media(max-width:760px){.panel.galw{width:auto}.g-grid{grid-template-columns:repeat(3,1fr)}}
+
 .lab.cwp.mini{font-size:0;gap:0}.lab.cwp.mini i{width:8px;height:8px}
 .lab.cwp{font:11.5px/1.2 var(--body);color:#ffe2bf;display:flex;align-items:center;gap:5px}.lab.cwp i{width:7px;height:7px;transform:rotate(45deg);background:#ffc078;display:block;border:1px solid #1a0e0c}
 
@@ -1230,7 +1251,7 @@ loadDem("tiles/hot/jezero_ctx20_dem.png",CTX20.W,CTX20.H).then(d=>{CTX20.D=d;pat
 let tracks=null,trackLine=null,showTracks=true;
 function drawTracks(){if(trackLine){scene.remove(trackLine);trackLine.geometry.dispose()}const pos=[];tracks.forEach(p=>{const v=posOf(p[1],p[0],.000015);pos.push(v.x,v.y,v.z)});
  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));trackLine=new THREE.Line(g,new THREE.LineDashedMaterial({color:0xfff1dc,dashSize:.00003,gapSize:.00002,depthTest:false,transparent:true,opacity:.9}));trackLine.computeLineDistances();trackLine.renderOrder=3;scene.add(trackLine)}
-fetch("tiles/hot/perseverance_path.json").then(r=>r.json()).then(a=>{tracks=a;drawTracks()}).catch(()=>{});
+fetch("tiles/hot/perseverance_path.json").then(r=>r.json()).then(a=>{tracks=a;window._persTracks=a;drawTracks()}).catch(()=>{});
 // water-formed minerals (Ehlmann & Edwards 2014 compilation: CRISM, OMEGA, THEMIS)
 const MINCOL={phyllosilicate:"#5aa9ff",sulfate:"#ff9a3c",silica:"#c77dff",chloride:"#ffe066",carbonate:"#5ee08a"},MINNAME={phyllosilicate:"Clays",sulfate:"Sulfates",silica:"Silica",chloride:"Chlorides",carbonate:"Carbonates"};
 let MIN=[],minPts=null,showMin=false;
@@ -1291,7 +1312,7 @@ document.querySelectorAll("[data-ov]").forEach(b=>b.onclick=()=>setOverlay(b.dat
 // science stops and place cards name the rock unit
 const prevBrief=brief;brief=function(p){const o=prevBrief(p),g=geoAt(p.lat,p.lon);
  if(g)o.splice(Math.min(1,o.length),0,["Geology",`${g.desc} (${g.code}) on the USGS geologic map. ${ERA(g.desc)}${ERA(g.desc)?".":""}`]);
- const rt=o.find(x=>x[0]==="Rover ground truth");if(rt){const sol=(rt[1].match(/sol (\d+)/)||[])[1];rt[1]+=` See what it saw in the <a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Perseverance raw images gallery</a>${sol?` (sol ${sol})`:""}.`}
+ const rt=o.find(x=>x[0]==="Rover ground truth");if(rt){const sol=(rt[1].match(/sol (\d+)/)||[])[1];rt[1]+=` See what it saw: ${sol?`<a href="#" data-gsol="${sol}">its photos from sol ${sol}</a> (in Rover images), or the <a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">official gallery</a>`:`the <a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">official gallery</a>`}.`}
  return o};
 $("i-origin").insertAdjacentHTML("afterend",`<p class="note" id="i-geo" hidden></p>`);
 const prevShowInfo=showInfo;showInfo=function(lat,lon,ft,site){prevShowInfo(lat,lon,ft,site);const g=geoAt(lat,lon),e=$("i-geo");if(!e)return;if(g){e.hidden=false;e.innerHTML=`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${g.color};margin-right:6px;vertical-align:-1px"></span>Geology: ${g.desc} (${g.code})`}else e.hidden=true};
@@ -1473,6 +1494,60 @@ function renderRoutes(){const box=$("rt-body");if(!box||$("routes").hidden)retur
 document.querySelector('#layers label[for="t-tracks"]').insertAdjacentHTML("afterend",`<label class="check" for="t-cur"><input id="t-cur" type="checkbox" checked> Curiosity's drives (to 2018)</label>`);
 $("t-cur").onchange=e=>showCur=e.target.checked;
 document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: Curiosity traverse path and 14 named waypoints with descriptions (historical, to about sol ${CUR_END_SOL})</li>`);
+})();
+</script>
+<script>// ===== Perseverance raw image gallery: live from NASA's public raw-image feed (nothing stored) =====
+(function(){
+const FEED="https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json";
+const CAM={MCZ_LEFT:"Mastcam-Z, left",MCZ_RIGHT:"Mastcam-Z, right",NAVCAM_LEFT:"Navcam, left",NAVCAM_RIGHT:"Navcam, right",FRONT_HAZCAM_LEFT_A:"Front Hazcam, left",FRONT_HAZCAM_RIGHT_A:"Front Hazcam, right",FRONT_HAZCAM_LEFT_B:"Front Hazcam, left",FRONT_HAZCAM_RIGHT_B:"Front Hazcam, right",REAR_HAZCAM_LEFT:"Rear Hazcam, left",REAR_HAZCAM_RIGHT:"Rear Hazcam, right",SKYCAM:"MEDA SkyCam",SUPERCAM_RMI:"SuperCam Remote Micro-Imager",SHERLOC_WATSON:"SHERLOC WATSON",SHERLOC_ACI:"SHERLOC context imager",CACHECAM:"CacheCam",PIXL_MCC:"PIXL micro-context camera",HELI_NAV:"Ingenuity navigation camera",HELI_RTE:"Ingenuity colour camera",LCAM:"Lander vision camera",EDL_RUCAM:"Rover up-look camera (landing)",EDL_RDCAM:"Rover down-look camera (landing)",EDL_DDCAM:"Descent stage down-look camera",EDL_PUCAM1:"Parachute up-look camera A",EDL_PUCAM2:"Parachute up-look camera B"};
+const camName=c=>CAM[c]||c.replace(/_/g," ").toLowerCase();
+const cache=new Map();let S={sol:770,cam:"all",page:0,imgs:[],latest:null,busy:false,err:"",small:false};const PER=24;
+function load(sol){if(cache.has(sol))return Promise.resolve(cache.get(sol));return fetch(`${FEED}&sol=${sol}`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{const a=(d.images||[]).map(i=>({id:i.imageid,sol:i.sol,cam:i.camera&&i.camera.instrument,title:i.title,utc:i.date_taken_utc,lmst:(i.date_taken_mars||"").replace(/^Sol-\d+M/,""),credit:i.credit,caption:i.caption,small:i.image_files&&i.image_files.small,large:i.image_files&&(i.image_files.large||i.image_files.medium),full:i.image_files&&i.image_files.full_res,link:i.link,thumb:i.sample_type==="Thumbnail",w:+(((i.extended&&i.extended.dimension)||"").match(/\((\d+)/)||[0,0])[1]}));cache.set(sol,a);return a})}
+function latest(){return fetch(`${FEED}&num=1&page=0&order=sol+desc`).then(r=>r.json()).then(d=>{const s=d.images&&d.images[0]&&d.images[0].sol;if(s!=null)S.latest=s;return s})}
+function go(sol){sol=Math.max(0,Math.round(+sol||0));S.sol=sol;S.page=0;S.busy=true;S.err="";render();load(sol).then(a=>{S.imgs=a;if(S.cam!=="all"&&!a.some(i=>i.cam===S.cam))S.cam="all"}).catch(()=>{S.imgs=[];S.err="NASA's raw-image feed didn't answer. Try again in a moment, or open the official gallery."}).finally(()=>{S.busy=false;render()})}
+window.openGallery=sol=>{openPanel("gallery",true);go(sol)};
+// panel
+document.querySelector("#more-menu").insertAdjacentHTML("afterbegin",`<button id="btn-gallery" role="menuitem" aria-expanded="false" aria-controls="gallery">Rover images</button>`);
+document.querySelector(".atlas").insertAdjacentHTML("beforeend",`<aside id="gallery" class="panel right galw" hidden aria-label="Perseverance raw images"><div class="phead"><div><h2>Perseverance raw images</h2><p class="sub">Live from NASA's public raw-image feed</p></div><button class="x" id="g-close" aria-label="Close image gallery">×</button></div><div id="g-body"></div></aside>
+<div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Image details"><div class="lb-in"><button class="x" id="lb-close" aria-label="Close image">×</button><div id="lb-body"></div></div></div>`);
+$("btn-gallery").onclick=()=>{$("more-menu").hidden=true;$("btn-more").setAttribute("aria-expanded","false");const on=$("gallery").hidden;openPanel("gallery",on);if(on&&!S.imgs.length&&!S.busy)go(S.sol)};
+$("g-close").onclick=()=>openPanel("gallery",false);
+// panel bookkeeping: share the right-hand slot with the other panels
+const STD=["surv","layers","places","cmp","cond","routes"];
+const prevOP=openPanel;openPanel=function(id,on){if(id==="gallery"){if(on)STD.forEach(p=>{if(!$(p).hidden)prevOP(p,false)});$("gallery").hidden=!on;$("btn-gallery").setAttribute("aria-expanded",on);if(!on)$("lightbox").hidden=true;return}
+ prevOP(id,on);if(on&&STD.includes(id)&&!$("gallery").hidden){$("gallery").hidden=true;$("btn-gallery").setAttribute("aria-expanded","false")}};
+const prevCA=closeAll;closeAll=function(){prevCA();openPanel("gallery",false)};
+function render(){const box=$("g-body");if(!box)return;const cams=new Map();S.imgs.forEach(i=>cams.set(i.cam,(cams.get(i.cam)||0)+1));
+ const big=i=>S.small||!i.w||i.w>=400,list=S.imgs.filter(i=>(S.cam==="all"||i.cam===S.cam)&&big(i)),nSmall=S.imgs.filter(i=>(S.cam==="all"||i.cam===S.cam)&&!big(i)).length,pages=Math.max(1,Math.ceil(list.length/PER)),pg=Math.min(S.page,pages-1),show=list.slice(pg*PER,pg*PER+PER);
+ box.innerHTML=`<div class="g-ctl"><label class="g-sol"><span>Sol</span><button id="g-prev" aria-label="Previous sol">‹</button><input id="g-sol" type="number" min="0" value="${S.sol}" inputmode="numeric"><button id="g-next" aria-label="Next sol">›</button></label>
+ <select id="g-cam" aria-label="Camera"><option value="all">All cameras (${S.imgs.length})</option>${[...cams.entries()].sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<option value="${c}" ${c===S.cam?"selected":""}>${camName(c)} (${n})</option>`).join("")}</select></div>
+ <div class="g-quick"><button data-sol="770">Belva crater · sol 770</button><button data-sol="1">First sol on Mars</button><button id="g-latest">${S.latest!=null?`Latest · sol ${S.latest}`:"Latest sol"}</button></div>
+ ${S.busy?`<p class="note">Loading sol ${S.sol} from NASA…</p>`:S.err?`<p class="warn">${S.err}</p>`:!list.length?`<p class="note">${nSmall?`Only small calibration frames on sol ${S.sol}${S.cam!=="all"?" for this camera":""}. <a href="#" id="g-showsmall">Show them</a>.`:`No raw images were released for sol ${S.sol}. Try another sol.`}</p>`:
+ `<p class="srcmini">${list.length} image${list.length>1?"s":""} on sol ${S.sol}${S.cam!=="all"?` from ${camName(S.cam)}`:""} · page ${pg+1} of ${pages}</p>${nSmall||S.small?`<label class="check" style="font-size:12.5px"><input type="checkbox" id="g-small" ${S.small?"checked":""}> Show small calibration frames${S.small?"":` (${nSmall} hidden)`}</label>`:""}
+ <div class="g-grid">${show.map((i,k)=>`<button class="g-th" data-i="${pg*PER+k}" title="${i.title.replace(/"/g,"&quot;")}"><img src="${i.small}" alt="${camName(i.cam)}, sol ${i.sol}" loading="lazy"><span>${camName(i.cam)}</span></button>`).join("")}</div>
+ <div class="row"><button id="g-pp" ${pg===0?"disabled":""}>Previous page</button><button id="g-np" ${pg>=pages-1?"disabled":""}>Next page</button></div>`}
+ <p class="srcmini">Raw images are released as taken, before the science team processes or checks them. Images: NASA/JPL-Caltech (credit lines per image). Nothing is downloaded or stored by Mars Atlas; thumbnails load from mars.nasa.gov as you scroll. <a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Official gallery</a></p>`;
+ const sol=$("g-sol");sol.onchange=()=>go(sol.value);sol.onkeydown=e=>{if(e.key==="Enter")go(sol.value)};$("g-prev").onclick=()=>go(S.sol-1);$("g-next").onclick=()=>go(S.sol+1);
+ $("g-cam").onchange=e=>{S.cam=e.target.value;S.page=0;render()};if($("g-small"))$("g-small").onchange=e=>{S.small=e.target.checked;S.page=0;render()};if($("g-showsmall"))$("g-showsmall").onclick=e=>{e.preventDefault();S.small=true;render()};
+ box.querySelectorAll("[data-sol]").forEach(b=>b.onclick=()=>go(b.dataset.sol));
+ $("g-latest").onclick=()=>{if(S.latest!=null)go(S.latest);else latest().then(s=>s!=null&&go(s))};
+ if($("g-pp"))$("g-pp").onclick=()=>{S.page=pg-1;render();box.scrollTop=0};if($("g-np"))$("g-np").onclick=()=>{S.page=pg+1;render();$("gallery").scrollTop=0};
+ box.querySelectorAll(".g-th").forEach(b=>b.onclick=()=>lightbox(list[+b.dataset.i-0]||S.imgs[+b.dataset.i]))}
+function lightbox(i){if(!i)return;const d=i.utc?new Date(i.utc+"Z"):null;
+ $("lb-body").innerHTML=`<img src="${i.large}" alt="${i.title.replace(/"/g,"&quot;")}"><h3 style="margin:10px 0 4px">${i.title}</h3>
+ <dl class="kgrid"><div><dt>Camera</dt><dd>${camName(i.cam)}</dd></div><div><dt>Sol</dt><dd>${i.sol}</dd></div><div><dt>Taken (UTC)</dt><dd>${d&&!isNaN(d)?d.toISOString().replace("T"," ").slice(0,16):"—"}</dd></div><div><dt>Local mean solar time</dt><dd>${i.lmst?i.lmst.slice(0,8):"—"}</dd></div></dl>
+ <p class="note" style="margin-top:8px">${(i.caption||"").replace(/\n+/g," ")}</p><p class="srcmini">Credit: ${i.credit||"NASA/JPL-Caltech"} · image ID ${i.id}</p>
+ <div class="row"><a class="btnlink" href="${i.link}" target="_blank" rel="noopener">View on NASA</a>${i.full?`<a class="btnlink" href="${i.full}" target="_blank" rel="noopener">Full-resolution file</a>`:""}</div>`;$("lightbox").hidden=false;$("lb-close").focus()}
+$("lb-close").onclick=()=>$("lightbox").hidden=true;$("lightbox").onclick=e=>{if(e.target.id==="lightbox")$("lightbox").hidden=true};
+addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("lightbox").hidden)$("lightbox").hidden=true});
+latest().then(()=>render()).catch(()=>{});
+// links from the map: places near Perseverance's path, science stops, the routes panel
+const prevSI=showInfo;showInfo=function(lat,lon,ft,site){prevSI(lat,lon,ft,site);const tr=window._persTracks;let e=$("i-pers");if(!e){$("i-geo").insertAdjacentHTML("afterend",`<div id="i-pers" hidden></div>`);e=$("i-pers")}
+ if(!tr){e.hidden=true;return}let best=1e9,sol=null;for(const t of tr){const d=dist(lat,lon,t[1],t[0]);if(d<best){best=d;sol=t[2]}}
+ if(best>.5){e.hidden=true;return}e.hidden=false;e.innerHTML=`<p class="note">Perseverance drove within ${n0(best*1000)} m of here around <b style="color:var(--sand)">sol ${sol}</b>.</p><button class="btn-primary" id="i-pers-go">See its photos from sol ${sol}</button>`;$("i-pers-go").onclick=()=>window.openGallery(sol)};
+document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-gsol]");if(a){e.preventDefault();window.openGallery(+a.dataset.gsol)}});
+new MutationObserver(()=>{const b=$("rt-perse");if(b&&!$("rt-gal"))b.insertAdjacentHTML("afterend",`<button id="rt-gal">Browse its photos (sol 770)</button>`),$("rt-gal").onclick=()=>window.openGallery(770)}).observe($("rt-body")||document.body,{childList:true,subtree:true});
+document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Mars Perseverance raw images</a>: loaded live from NASA's public raw-image feed in the Rover images gallery, with each image's own credit line (JPL image use policy)</li>`);
 })();
 </script>
 
