@@ -295,6 +295,17 @@ h2{font-size:23px}
 .glist button[aria-pressed=true]{background:rgba(255,236,214,.12);color:var(--sand);border-color:var(--edge2)}
 .glist span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .geo-era button{font-size:12px;padding:5px 2px}
+.histbadge{align-self:flex-start;display:inline-block;padding:3px 10px;border-radius:999px;font:600 11px var(--data);letter-spacing:.06em;text-transform:uppercase;color:#1c0b07;background:#ffc078}
+.histbadge.prop{background:#c9b8ff}
+#rt-wps{display:flex;flex-direction:column;gap:5px}
+#rt-wps details{border:1px solid var(--edge);border-radius:10px;padding:6px 9px;background:rgba(255,236,214,.03)}
+#rt-wps summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-size:13px}#rt-wps summary small{font:11px var(--data);color:var(--dust)}
+#rt-wps p{margin:6px 0;font-size:12.5px;line-height:1.45;color:#efdcc8}#rt-wps img{display:block;max-width:100%;border-radius:8px;margin-top:6px}
+#rt-wps button{min-height:28px;padding:3px 12px;font-size:12.5px}
+.propimg{display:block;width:100%;border-radius:10px;border:1px solid var(--edge)}
+.lab.cwp.mini{font-size:0;gap:0}.lab.cwp.mini i{width:8px;height:8px}
+.lab.cwp{font:11.5px/1.2 var(--body);color:#ffe2bf;display:flex;align-items:center;gap:5px}.lab.cwp i{width:7px;height:7px;transform:rotate(45deg);background:#ffc078;display:block;border:1px solid #1a0e0c}
+
 .gstrip{display:flex;height:12px;border-radius:4px;overflow:hidden;border:1px solid var(--edge)}
 
 </style>
@@ -1405,6 +1416,63 @@ new MutationObserver(()=>{const W=window._walkW;if(!W)return;const todo=W.pts.fi
  Promise.all(todo.map(p=>exact(p.lat,p.lon))).then(r=>{if(r.some(Boolean)&&window._renderWalk)window._renderWalk()})}).observe($("w-list"),{childList:true});
 // late data: refresh once the grid arrives
 const wait=setInterval(()=>{if(ready()){clearInterval(wait);paint();strip();renderLegend();if(picked&&!$("info").hidden)showInfo(picked.lat,picked.lon)}},500);
+})();
+</script>
+<script>// ===== Rover routes: Curiosity's historical traverse (NASA Mars Trek) and the 2019 proposed route (image only) =====
+(function(){
+const MY=["routes"],STD=["surv","layers","places","cmp","cond"];
+const prevOP=openPanel;openPanel=function(id,on){if(MY.includes(id)){if(on)STD.forEach(p=>{if(!$(p).hidden)prevOP(p,false)});$(id).hidden=!on;$("btn-"+id).setAttribute("aria-expanded",on);if(id==="routes")onRoutes(on);return}
+ prevOP(id,on);if(on&&STD.includes(id))MY.forEach(p=>{if(!$(p).hidden){$(p).hidden=true;$("btn-"+p).setAttribute("aria-expanded","false");if(p==="routes")onRoutes(false)}})};
+const prevCA=closeAll;closeAll=function(){prevCA();MY.forEach(p=>openPanel(p,false))};
+// data
+let PATH=null,WPS=null,cumKm=null,line=null,showCur=true;
+const CUR_END_SOL=2004;
+Promise.all([fetch("tiles/hot/curiosity_path.json").then(r=>r.json()),fetch("tiles/hot/curiosity_waypoints.json").then(r=>r.json())]).then(([p,w])=>{PATH=p;WPS=w;cumKm=[0];for(let i=1;i<p.length;i++)cumKm.push(cumKm[i-1]+dist(p[i-1][1],p[i-1][0],p[i][1],p[i][0]));draw();renderRoutes()}).catch(()=>{});
+function draw(){if(!PATH)return;if(line){scene.remove(line);line.geometry.dispose()}const pos=[];PATH.forEach(p=>{const v=posOf(p[1],p[0],.000015);pos.push(v.x,v.y,v.z)});
+ const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));line=new THREE.Line(g,new THREE.LineDashedMaterial({color:0xffc078,dashSize:.00003,gapSize:.00002,depthTest:false,transparent:true,opacity:.95}));line.computeLineDistances();line.renderOrder=3;scene.add(line)}
+const prevRT=rebuildTerrain;rebuildTerrain=function(){prevRT();draw()};
+// waypoint pins
+const pins=[];function pinsFor(){if(!WPS||pins.length)return;WPS.forEach((w,k)=>{const b=document.createElement("button");b.className="lab cwp";b.innerHTML=`<i></i>${w.name}`;b.hidden=true;b.onclick=()=>{openPanel("routes",true);focusWp(k)};labelLayer.appendChild(b);pins.push(b)})}
+const marker=new THREE.Mesh(new THREE.SphereGeometry(.0006,16,12),new THREE.MeshBasicMaterial({color:0xffc078,depthTest:false,transparent:true}));marker.visible=false;marker.renderOrder=7;scene.add(marker);
+const prevUL=updateLabels;updateLabels=function(){prevUL();const alt=altCam();if(line)line.visible=showCur&&alt<.15;pinsFor();
+ const vis=WPS&&(!$("routes").hidden||(showCur&&alt<.012)),Wd=host.clientWidth,H=host.clientHeight;
+ pins.forEach((b,k)=>{if(!vis){b.hidden=true;return}const w=WPS[k],q=posOf(w.lat,w.lon,.00003);if(facing(q)<.05){b.hidden=true;return}const sc=screenOf(q,Wd,H);if(sc.z>1||sc.x<0||sc.x>Wd||sc.y<0||sc.y>H){b.hidden=true;return}b.hidden=false;b.classList.toggle("mini",alt>.006);b.style.transform=`translate(${sc.x}px,${sc.y}px) translate(-6px,-50%)`});
+ if(marker.visible)marker.scale.setScalar(Math.max(1e-4,camera.position.distanceTo(marker.position))*12)};
+// replay along the real path
+let play=null;
+function replay(){if(!PATH)return;stopAuto();flyTo(-4.67,137.40,.011,55,190);play={t0:performance.now()+1800,dur:22000};marker.visible=true;$("rt-play").textContent="Stop replay"}
+function stopReplay(){play=null;marker.visible=false;const b=$("rt-play");if(b)b.textContent="Replay the drive";const s=$("rt-prog");if(s)s.textContent=""}
+(function tick(){requestAnimationFrame(tick);if(!play||!PATH)return;const u=Math.min(1,Math.max(0,(performance.now()-play.t0)/play.dur)),km=u*cumKm[cumKm.length-1];
+ let i=1;while(i<cumKm.length-1&&cumKm[i]<km)i++;const f=(km-cumKm[i-1])/Math.max(1e-9,cumKm[i]-cumKm[i-1]),a=PATH[i-1],b=PATH[i],lat=a[1]+(b[1]-a[1])*f,lon=a[0]+(b[0]-a[0])*f;
+ marker.position.copy(posOf(lat,lon,.00004));let near=WPS[0],d=1e9;WPS.forEach(w=>{const x=dist(lat,lon,w.lat,w.lon);if(x<d){d=x;near=w}});
+ const s=$("rt-prog");if(s)s.textContent=`Replay: ${Math.round(u*100)}% of the drive${d<.4?` · at ${near.name}`:""}`;if(u>=1)setTimeout(stopReplay,1500)})();
+function focusWp(k){const w=WPS[k];flyTo(w.lat,w.lon,.006,55,200);const el=document.querySelector(`#rt-wps details[data-k="${k}"]`);if(el){el.open=true;el.scrollIntoView({block:"nearest",behavior:"smooth"})}}
+function onRoutes(on){if(!on)stopReplay();renderRoutes()}
+// panel
+document.querySelector("#more-menu").insertAdjacentHTML("afterbegin",`<button id="btn-routes" role="menuitem" aria-expanded="false" aria-controls="routes">Rover routes</button>`);
+$("btn-routes").onclick=()=>{$("more-menu").hidden=true;$("btn-more").setAttribute("aria-expanded","false");openPanel("routes",$("routes").hidden);if(!$("routes").hidden&&PATH)flyTo(-4.67,137.40,.011,55,190)};
+document.querySelector(".atlas").insertAdjacentHTML("beforeend",`<aside id="routes" class="panel right wide" hidden aria-label="Rover routes"><div class="phead"><div><h2>Rover routes</h2><p class="sub">Real paths driven on Mars, from NASA data</p></div><button class="x" id="rt-close" aria-label="Close rover routes">×</button></div><div id="rt-body"></div></aside>`);
+$("rt-close").onclick=()=>openPanel("routes",false);
+function renderRoutes(){const box=$("rt-body");if(!box||$("routes").hidden)return;if(!PATH){box.innerHTML=`<p class="note">Loading Curiosity's path…</p>`;return}
+ const len=cumKm[cumKm.length-1];
+ box.innerHTML=`<div class="histbadge">Historical traverse · not live tracking</div>
+ <h3>Curiosity, Gale crater</h3>
+ <p class="note">The dashed amber line is the path Curiosity actually drove, from Bradbury Landing in 2012 to the Hematite Hotspot on Vera Rubin Ridge, around sol ${CUR_END_SOL} (2018). That's where NASA Mars Trek's dataset ends. Curiosity has driven much farther since.</p>
+ <dl class="facts"><div><dt>Path length</dt><dd>${fmtKm(18.77)}</dd></div><div><dt>Named stops</dt><dd>${WPS.length}</dd></div></dl>
+ <div class="row"><button id="rt-play" class="btn-primary">Replay the drive</button><button id="rt-show">Show on globe</button></div><p class="srcmini" id="rt-prog"></p>
+ <div id="rt-wps">${WPS.map((w,k)=>`<details data-k="${k}"><summary><b>${k+1}. ${w.name}</b>${w.sols.length?`<small>sol ${w.sols.join(", ")}</small>`:""}</summary>${w.img?`<a href="${w.img}" target="_blank" rel="noopener"><img src="${w.img}" alt="${(w.cap||w.name).replace(/"/g,"&quot;")}" loading="lazy"></a>${w.cap?`<p class="srcmini">${w.cap}</p>`:""}`:""}<p>${w.text}</p><button data-go="${k}">Fly here</button></details>`).join("")}</div>
+ <p class="srcmini">Path, waypoints and descriptions: NASA Mars Trek (JPL), curiosity_path and curiosity_waypoints. Path length (18.8 km) measured along Trek's full-resolution line; the globe draws a lighter version.</p>
+ <div class="sec"><div class="histbadge prop">Proposed route, 2019 · image only</div>
+ <a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener"><img class="propimg" src="https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/detail_files/2/22472_PIA23179-combo-rev_main.gif" alt="NASA map of Curiosity's proposed path up Mount Sharp (2019)" loading="lazy"></a>
+ <p class="note">NASA published this proposed route up lower Mount Sharp on 15 May 2019 (PIA23179). It's shown as NASA's own image because no map coordinates were released for it, so it isn't drawn on the globe. It was a plan, not a record of where Curiosity went.</p>
+ <p class="srcmini">Credit: NASA/JPL-Caltech/ESA/University of Arizona/JHUAPL/MSSS/USGS Astrogeology Science Center</p></div>
+ <div class="sec"><h3>Perseverance, Jezero crater</h3><p class="note">The dashed white line at Jezero is Perseverance's actual path for sols 14 to 1176, also from NASA Mars Trek. It's historical too, not live.</p><div class="row"><button id="rt-perse">Show Perseverance's path</button></div></div>`;
+ $("rt-play").onclick=()=>play?stopReplay():replay();$("rt-show").onclick=()=>flyTo(-4.67,137.40,.011,55,190);$("rt-perse").onclick=()=>flyTo(18.46,77.40,.02,45,250);
+ box.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>focusWp(+b.dataset.go))}
+// layer toggle
+document.querySelector('#layers label[for="t-tracks"]').insertAdjacentHTML("afterend",`<label class="check" for="t-cur"><input id="t-cur" type="checkbox" checked> Curiosity's drives (to 2018)</label>`);
+$("t-cur").onchange=e=>showCur=e.target.checked;
+document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: Curiosity traverse path and 14 named waypoints with descriptions (historical, to about sol ${CUR_END_SOL})</li>`);
 })();
 </script>
 
