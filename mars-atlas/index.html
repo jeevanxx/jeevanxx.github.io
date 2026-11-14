@@ -278,6 +278,11 @@ h2{font-size:23px}
 .srcmini{font:11px var(--data);color:var(--dust);margin:0}
 .walking #globe canvas{cursor:crosshair}
 @media(max-width:760px){.panel.walkp{width:auto}.presets button{padding:7px 10px}.presets button span{font-size:11px}.wsum b{font-size:21px}}
+
+.trek{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.trek button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;border-radius:12px;padding:6px 10px;min-height:0}
+.trek button b{font-weight:600;font-size:12.5px;line-height:1.2}.trek button small{font:10px var(--data);opacity:.75}
+@media(min-width:761px){#layers.panel{max-height:calc(100% - 132px)}}
 </style>
 
 <div class="atlas">
@@ -575,7 +580,7 @@ function updateLOD(){needLOD=false;camera.updateMatrixWorld();pm.multiplyMatrice
 const dist=camera.position.length(),alt=altCam(),hor=Math.acos(Math.min(1,1/dist));camDir.copy(camera.position).normalize();
 if(!BASE[layer])BASE[layer]=getTex(`tiles/base/${layer}.jpg`,true);const base=BASE[layer],pre=layer==="viking"?"v":"m";
 for(const g of REG){const ang=Math.acos(cl(camDir.dot(g.dir),-1,1)),vis=ang<hor+.62&&frustum.intersectsSphere(g.mesh.geometry.boundingSphere);
-const rect4=[g.c/8,1-(g.r+1)/4,1/8,1/4];let e4=null;if(vis&&alt<1.7&&layer!=="themis")e4=getTex(`tiles/${pre}4/${g.c}_${g.r}.jpg`);g.e4=e4;
+const rect4=[g.c/8,1-(g.r+1)/4,1/8,1/4];let e4=null;if(vis&&alt<1.7&&(layer==="viking"||layer==="mola"))e4=getTex(`tiles/${pre}4/${g.c}_${g.r}.jpg`);g.e4=e4;
 if(!setMap(g.mesh.material,e4,rect4))setMap(g.mesh.material,base,[0,0,1,1]);
 const useKids=vis&&alt<.6&&layer==="viking";
 if(useKids){ensureKids(g);for(const k of g.kids){const kv=Math.acos(cl(camDir.dot(k.dir),-1,1))<hor+.34&&frustum.intersectsSphere(k.m.geometry.boundingSphere);let ok=false;
@@ -583,7 +588,7 @@ if(kv)ok=setMap(k.m.material,getTex(`tiles/v5/${k.kc}_${k.kr}.jpg`),[k.kc/16,1-(
 else if(g.kids)g.kids.forEach(k=>k.m.visible=false);
 g.mesh.visible=!useKids}
 for(const h of HOT){const vis=frustum.intersectsSphere(h.mesh.geometry.boundingSphere),m=h.mesh.material;let ok=false;
-if(vis&&alt<.4&&layer!=="mola")ok=setMap(m,getTex(`tiles/hot/${h.id}${layer==="themis"?"_themis":""}.jpg`),h.rect);
+if(vis&&alt<.4&&(layer==="viking"||layer==="themis"))ok=setMap(m,getTex(`tiles/hot/${h.id}${layer==="themis"?"_themis":""}.jpg`),h.rect);
 if(!ok){const rg=REG[h.rr*8+h.rc];if(!(rg&&setMap(m,rg.e4,[rg.c/8,1-(rg.r+1)/4,1/8,1/4])))setMap(m,base,[0,0,1,1])}}
 evict()}
 
@@ -1267,6 +1272,68 @@ const prevShowInfo=showInfo;showInfo=function(lat,lon,ft,site){prevShowInfo(lat,
 PRESETS.gale.pts[1].note+=` NASA has published Curiosity's <a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">proposed path up Mount Sharp</a>: compare it with this plan.`;
 document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars" target="_blank" rel="noopener">USGS–NASA Planetary Geologic Mapping Program</a>: global geologic map of Mars (Tanaka et al. 2014, SIM 3292, via NASA Mars Trek)</li><li><a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Mars Perseverance raw images gallery</a>: linked from science stops along Perseverance's path</li><li><a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">Curiosity's proposed path up Mount Sharp</a>: NASA route map, compared with the Gale crater plan</li><li><a href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener">NASA Worldview</a>: Earth imagery explorer that inspired the layer-switching design (no Worldview data is used, since it covers Earth)</li>`);
 
+})();
+</script>
+<script>// ===== Live NASA Mars Trek layers: tiles streamed on demand and draped over the 3D terrain =====
+(function(){
+const TREK_BASE="https://trek.nasa.gov/tiles/Mars/EQ/",TREK_TILE=(L,z,r,c,ext)=>`${TREK_BASE}${L}/1.0.0/default/default028mm/${z}/${r}/${c}.${ext}`;
+// each entry verified against its WMTSCapabilities.xml (format, deepest zoom, coverage)
+const TREK=[
+ {id:"ctx",name:"CTX global mosaic",sub:"MRO CTX · about 5 m",url:(z,r,c)=>`https://astro.arcgis.com/arcgis/rest/services/OnMars/CTX/MapServer/tile/${z}/${r}/${c}`,ts:512,z:12,credit:"NASA/JPL/MSSS/Caltech Murray Lab/Esri (beta01 mosaic, listed in Mars Trek)"},
+ {id:"hrsc",name:"MOLA + HRSC colour relief",sub:"MGS MOLA + Mars Express HRSC · 200 m",L:"Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw",ext:"jpg",z:8,credit:"MOLA: NASA/GSFC · HRSC: ESA/DLR/FU Berlin · blend: USGS"},
+ {id:"vik",name:"Viking colour mosaic",sub:"Viking Orbiters · 232 m",L:"Mars_Viking_MDIM21_ClrMosaic_global_232m",ext:"jpg",z:7,credit:"NASA Viking Orbiter imagery, MDIM 2.1 mosaic by USGS"},
+ {id:"thd",name:"THEMIS infrared, day",sub:"Mars Odyssey THEMIS · 100 m",L:"THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018",ext:"png",z:9,bbox:[-180,-65,180,65],credit:"NASA/JPL-Caltech/Arizona State University"},
+ {id:"thn",name:"THEMIS infrared, night",sub:"Mars Odyssey THEMIS · 100 m",L:"THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018",ext:"png",z:9,bbox:[-180,-65,180,65],credit:"NASA/JPL-Caltech/Arizona State University"},
+ {id:"jhr",name:"HiRISE Jezero, 25 cm",sub:"MRO HiRISE · close-up only",L:"JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",ext:"png",z:17,bbox:[77.2229331,18.3067994,77.583964,18.669315],local:true,go:[18.44,77.45,.006,55,300],credit:"NASA/JPL-Caltech/University of Arizona"},
+ {id:"ghr",name:"HiRISE Curiosity site",sub:"MRO HiRISE · close-up only",L:"curiosity_hirise_mosaic",ext:"png",z:16,bbox:[137.1224669,-4.9254743,137.7298129,-4.2489588],local:true,go:[-4.62,137.42,.008,55,200],credit:"NASA/JPL-Caltech/University of Arizona"}];
+let T=null,errs=0,okTiles=0;const url=(t,z,r,c)=>t.url?t.url(z,r,c):TREK_TILE(t.L,z,r,c,t.ext),TS=t=>t.ts||256;
+const st={el:null};
+// global texture for far views: Trek zoom-2 tiles painted over the built-in Viking map
+function globalTex(t){const cv=document.createElement("canvas");cv.width=2048;cv.height=1024;const x=cv.getContext("2d");const vb=BASE.viking&&BASE.viking.tex&&BASE.viking.tex.image;if(vb)try{x.drawImage(vb,0,0,2048,1024)}catch(e){}
+ const tex=new THREE.CanvasTexture(cv);tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ const g=TS(t)===512?1:2,ts=TS(t),n=2**g;
+ if(!t.local)for(let r=0;r<n;r++)for(let c=0;c<2*n;c++){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{x.drawImage(im,c*ts*2048/(2*n*ts),r*ts*1024/(n*ts),2048/(2*n),1024/n);tex.needsUpdate=true;okTiles++;stat()};im.onerror=()=>{errs++;stat()};im.src=url(t,g,r,c)}
+ return{tex,ready:true,keep:true,t:0}}
+// close-up patch: tiles for the area around the camera, re-requested as you move
+const pMat=new THREE.ShaderMaterial({uniforms:{map:{value:blank},rect:{value:new THREE.Vector4(0,0,1,1)},ov:SH.ov,ovOn:SH.ovOn,haze:SH.haze},vertexShader:VS,
+ fragmentShader:FS.replace("vec3 c=texture2D(map,l).rgb;","vec4 t4=texture2D(map,l);if(t4.a<.5||l.x<0.||l.y<0.||l.x>1.||l.y>1.)discard;vec3 c=t4.rgb;"),polygonOffset:true,polygonOffsetFactor:-6,polygonOffsetUnits:-24});
+const patch={mesh:new THREE.Mesh(new THREE.BufferGeometry(),pMat),key:"",gen:0,z:0,n:0,box:null};patch.mesh.visible=false;patch.mesh.renderOrder=3;scene.add(patch.mesh);
+function wantPatch(){if(!T)return null;const altKm=altCam()*RM;if(altKm>1400)return null;
+ const ts=TS(T),mppWant=Math.max(.3,altKm*1000*2*Math.tan(camera.fov*D2R/2)/Math.max(400,host.clientHeight)*.8);
+ let z=Math.max(2,Math.min(T.z,Math.ceil(Math.log2(180*RM*D2R*1000/(ts*mppWant)))));const k=Math.floor(3072/ts),d=180/2**z;
+ const cc=Math.floor((wrapLon(CAM.lon)+180)/d),rc=Math.floor((90-CAM.lat)/d);let c0=cc-Math.floor((k-1)/2),c1=c0+k-1,r0=Math.max(0,rc-Math.floor((k-1)/2)),r1=Math.min(2**z-1,r0+k-1);
+ if(T.bbox){c0=Math.max(c0,Math.floor((T.bbox[0]+180)/d));c1=Math.min(c1,Math.floor((T.bbox[2]+180-1e-9)/d));r0=Math.max(r0,Math.floor((90-T.bbox[3])/d));r1=Math.min(r1,Math.floor((90-T.bbox[1]-1e-9)/d));if(c0>c1||r0>r1)return null}
+ c0=Math.max(0,c0);c1=Math.min(2**(z+1)-1,c1);
+ return{z,c0,c1,r0,r1,ts,box:[-180+c0*d,90-(r1+1)*d,-180+(c1+1)*d,90-r0*d],key:[T.id,z,c0,c1,r0,r1].join(",")}}
+let pendingKey="",timer=0;
+function updatePatch(){const P=wantPatch();if(!P){patch.mesh.visible=false;patch.key="";stat();return}if(P.key===patch.key||P.key===pendingKey)return;pendingKey=P.key;clearTimeout(timer);timer=setTimeout(()=>loadPatch(P),250)}
+function loadPatch(P){const gen=++patch.gen,cols=P.c1-P.c0+1,rows=P.r1-P.r0+1,cv=document.createElement("canvas"),ts=P.ts;cv.width=cols*ts;cv.height=rows*ts;const x=cv.getContext("2d"),tex=new THREE.CanvasTexture(cv);tex.anisotropy=renderer.capabilities.getMaxAnisotropy();tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;
+ let left=cols*rows,got=0;const done=()=>{if(--left>0||gen!==patch.gen)return;pendingKey="";if(!got){stat();return}const[w,s,e,n]=P.box,segs=Math.min(140,Math.max(40,Math.round(64*Math.max(cols,rows)/4)));
+  if(patch.mesh.geometry)patch.mesh.geometry.dispose();patch.mesh.geometry=buildGeo(w,e,s,n,segs,segs,Math.max(.0005,(e-w)/segs/2),false);
+  if(pMat.uniforms.map.value!==blank&&pMat.uniforms.map.value!==tex)pMat.uniforms.map.value.dispose();pMat.uniforms.map.value=tex;pMat.uniforms.rect.value.set((w+180)/360,(s+90)/180,(e-w)/360,(n-s)/180);patch.mesh.visible=true;patch.key=P.key;patch.z=P.z;patch.n=got;patch.box=P.box;stat()};
+ for(let r=P.r0;r<=P.r1;r++)for(let c=P.c0;c<=P.c1;c++){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{if(gen!==patch.gen)return;x.drawImage(im,(c-P.c0)*ts,(r-P.r0)*ts);tex.needsUpdate=true;got++;okTiles++;done()};im.onerror=()=>{errs++;done()};im.src=url(T,P.z,r,c)}
+ stat("Loading "+cols*rows+" tiles from Mars Trek…")}
+function rebuildPatch(){if(patch.box&&patch.mesh.visible){const[w,s,e,n]=patch.box;const segs=patch.mesh.geometry.parameters?100:Math.round(Math.sqrt(patch.mesh.geometry.attributes.position.count))-1;patch.mesh.geometry.dispose();patch.mesh.geometry=buildGeo(w,e,s,n,segs,segs,Math.max(.0005,(e-w)/segs/2),false)}}
+let failMsg="";function stat(msg){const el=$("tk-stat");if(!el)return;if(!T){el.innerHTML=failMsg;return}
+ if(msg){el.textContent=msg;return}
+ if(errs>=3&&okTiles===0){const name=T.name;failMsg=`<span style="color:var(--warn)">Couldn't reach Mars Trek for “${name}”, so the built-in map is back on. Check your connection and try again.</span>`;selectTrek(null);return}
+ const mpp=patch.mesh.visible?Math.round(180/2**patch.z/TS(T)*RM*D2R*1000):null;
+ el.textContent=patch.mesh.visible?`Streaming ${patch.n} tiles at zoom ${patch.z} (about ${mpp<1000?mpp+" m":(mpp/1000).toFixed(1)+" km"} per pixel)`:T.local?"Fly to the area to stream this layer (it only covers a close-up).":"Zoom in to stream sharper tiles."}
+function selectTrek(id){if(id)failMsg="";T=TREK.find(t=>t.id===id)||null;errs=0;okTiles=0;patch.key="";pendingKey="";patch.mesh.visible=false;
+ document.querySelectorAll("[data-trek]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.trek===id));
+ if(!T){if(layer==="trek")setLayer("viking");return}
+ BASE.trek=T.local?BASE.viking:globalTex(T);setLayer("trek");needLOD=true;stat();if(T.local&&T.go){flyTo(...T.go)}}
+window.selectTrek=selectTrek;
+// hooks: LOD, terrain rebuild, base-layer switch
+const baseLOD2=updateLOD;updateLOD=function(){baseLOD2();if(layer==="trek")updatePatch();else patch.mesh.visible=false};
+const baseRT2=rebuildTerrain;rebuildTerrain=function(){baseRT2();rebuildPatch()};
+const baseSL=setLayer;setLayer=function(l){baseSL(l);if(l!=="trek"){T=null;patch.mesh.visible=false;document.querySelectorAll("[data-trek]").forEach(b=>b.setAttribute("aria-pressed","false"));stat()}
+ else if(T)$("st-src").textContent=`Imagery: ${T.name} · ${T.credit} · via NASA Mars Trek`};
+// panel UI
+const seg=document.querySelector('#layers .seg.three');
+seg.insertAdjacentHTML("afterend",`<h3>Live from NASA Mars Trek</h3><div class="trek">${TREK.map(t=>`<button data-trek="${t.id}" aria-pressed="false"><b>${t.name}</b><small>${t.sub}</small></button>`).join("")}</div><p class="srcmini" id="tk-stat"></p>`);
+document.querySelectorAll("[data-trek]").forEach(b=>b.onclick=()=>selectTrek(b.getAttribute("aria-pressed")==="true"?null:b.dataset.trek));
+document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a> live tile service (WMTS): ${TREK.map(t=>`${t.name} (${t.credit})`).join("; ")}. CTX mosaic: free use with credit to NASA/JPL/MSSS/The Murray Lab.</li>`);
 })();
 </script>
 
