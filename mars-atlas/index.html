@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Mars Atlas</title>
 <meta name="description" content="Mars Atlas: plan a Marswalk on a 3D Mars built from NASA mission data. NASA Space Apps 2026, Martian Map challenge.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
 <style>/* Layout: full-bleed planet with floating glass controls, like a desktop globe viewer; panels become bottom sheets on phones. */
 :root{--space:#07050a;--glass:rgba(26,16,19,.88);--glass2:rgba(26,16,19,.7);--line:#4d3631;--sand:#f3e0c8;--dust:#bfa48f;--accent:#56e0cf;--amber:#ffc078;--warn:#ff9466;
 --display:"Saira Condensed","Arial Narrow",sans-serif;--body:"Hanken Grotesk",system-ui,sans-serif;--data:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
@@ -1659,4 +1659,44 @@ document.querySelectorAll("#about-src .src li").forEach(li=>{if(/worldview/i.tes
 })();
 </script>
 
+<style id="theme-ops">/* ===== theme layer (overrides; all features untouched) ===== */
+:root{--sand:var(--ink);--dust:var(--ink2);--accent:var(--acc);--line:var(--rule);--edge:var(--rule);--edge2:var(--rule2);--glass:var(--panel);--glass2:var(--panel);--glow:none;--display:var(--fd);--body:var(--fb);--data:var(--fm)}
+body{background:var(--bg);font-family:var(--fb)}
+.vignette{display:none}
+.panel,.brand,.search input,#sugg,.status,.tourcard,.menu,.lb-in,.toast,.hint{background:var(--panel)!important;border:1px solid var(--rule)!important;box-shadow:var(--shadow)!important;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border-radius:var(--r)!important}
+.status{border-radius:0!important;border-width:1px 0 0!important}
+button,.btnlink,#g-cam,.presets button,.trek button,.menu button,.nav button,.seg button,.seg button:first-child,.seg button:last-child{border-radius:var(--rb)!important;background:var(--btn);border:1px solid var(--rule)!important;color:var(--ink);box-shadow:none!important;font-family:var(--fb)}
+.menu button{border-color:transparent!important}
+button:hover,.btnlink:hover{background:var(--btnh)!important;color:var(--ink)}
+button[aria-pressed=true],button[aria-expanded=true],.presets button[aria-pressed=true]{background:var(--on)!important;color:var(--onink)!important;border-color:var(--on)!important}
+.btn-primary,.btn-primary:hover{background:var(--acc)!important;color:var(--accink)!important;border-color:var(--acc)!important;box-shadow:none!important;animation:none!important;outline:none}
+.brand strong,.intro h1,.big{background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink)!important;-webkit-text-fill-color:var(--ink)}
+.brand strong{font-family:var(--fd);letter-spacing:var(--brandls)}
+.intro{background:var(--introbg)!important}
+.intro h1{font-family:var(--fd);font-weight:var(--h1w);letter-spacing:var(--h1ls);line-height:1}
+.panel h2,.panel h3{font-family:var(--fd)}
+.wp,.gcard,#rt-wps details,.g-th,.propimg,.lb-in img,.tag,.chip,.simtag,.histbadge,.warn,.verdict{border-radius:var(--rs)!important}
+.verdict{background:var(--okbg)!important;border-color:var(--okline)!important}
+.verdict.bad{background:var(--badbg)!important;border-color:var(--badline)!important}
+.suitbar,.bar{border-radius:0!important;background:var(--track)!important}
+.suitbar i,.bar b,.tprog i{border-radius:0!important;background:var(--acc)!important}
+.suitbar i.over,.bar.low b{background:var(--bad)!important}
+.fitrow.best b{background:var(--acc)!important}
+.risks li.hi::before{box-shadow:none}
+.panel{animation:none}
+input[type=range]{accent-color:var(--acc)}
+.cmpt td.cbest{color:var(--acc)}
+.simtag{border-color:var(--warnc);color:var(--warnc)}
+
+/* Flight ops theme */
+:root{--bg:#0b0c0e;--panel:rgba(14,15,17,.94);--ink:#e8e9ea;--ink2:#8d9196;--rule:#2a2d31;--rule2:#3a3e43;--acc:#ff5a1f;--accink:#000;--on:#e8e9ea;--onink:#0b0c0e;--btn:#15171a;--btnh:#1f2226;
+--r:2px;--rb:2px;--rs:2px;--shadow:none;--blur:none;--fd:"IBM Plex Sans Condensed",sans-serif;--fb:"IBM Plex Sans",sans-serif;--fm:"IBM Plex Mono",monospace;--brandls:.14em;--h1w:600;--h1ls:-.01em;
+--introbg:linear-gradient(90deg,rgba(11,12,14,.97) 0,rgba(11,12,14,.85) 42%,rgba(11,12,14,0) 70%);--okbg:transparent;--okline:#2a2d31;--badbg:rgba(255,90,31,.08);--badline:#ff5a1f;--bad:#ff5a1f;--track:#1f2226;--warnc:#f2b33d;--amber:#f2b33d;--coral:#ff5a1f}
+.panel h2{text-transform:uppercase;letter-spacing:.08em;font-size:17px}
+.wsum b{color:var(--ink)!important;font-family:var(--fm)!important;font-weight:500!important;font-size:22px!important}
+.verdict{border-left:3px solid var(--acc)!important}
+/* accent colour is kept for actions and warnings; normal readings are neutral */
+.suitbar i,.bar b,.fitrow b,.fitrow.best b{background:#cfd2d6!important}
+.suitbar i.over,.bar.low b{background:var(--bad)!important}
+.verdict:not(.bad){border-left-color:#cfd2d6!important}</style>
 </body></html>
