@@ -8,23 +8,35 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 ## What it does
 - **Marswalk planner:** drop waypoints and science stops. It works out distance, climb, slopes, suit time and when you're back, and marks a **turn-back point** when a walk is too long.
 - **Safer path:** a route search over the terrain that stays under your slope limit.
-- **Science stops:** suggested objectives from the data under each stop (water-formed minerals, bedrock vs dust, ice, nearby features, Perseverance's real drives).
-- **Jezero close-up:** 5 m HiRISE imagery on 20 m CTX terrain, with Perseverance's real traverse.
-- **Conditions:** live Mars clock (Mars Year, season, local solar time, sunrise/sunset), Curiosity's latest REMS weather, radiation dose from Curiosity's RAD.
-- **Geology:** the USGS global geologic map as a layer; every science stop and place card names its rock unit and age.
+- **Science stops:** suggested objectives from the data under each stop (water-formed minerals, rock unit, bedrock vs dust, ice, Perseverance's real drives).
+- **Live NASA Mars Trek layers:** 7 map layers (CTX global mosaic, MOLA + HRSC relief, Viking, THEMIS day/night infrared, HiRISE Jezero, HiRISE Curiosity site) stream from Mars Trek as you zoom and drape over the 3D terrain, with credits and an automatic fallback.
+- **Geology:** the USGS global geologic map as a layer (filter by age or unit); place cards show the unit and its official USGS interpretation, checked live with the USGS map service; routes show the units they cross.
+- **Rover routes:** Curiosity's real drive (NASA Mars Trek) with its 14 waypoints and Trek's descriptions, a replay, and NASA's 2019 proposed Mount Sharp route shown as NASA's image. Historical, not live tracking.
+- **Rover images:** Perseverance raw images loaded live from NASA's feed by sol and camera, with time, camera and credit for each image. Nothing is downloaded or stored.
+- **Conditions:** Mars clock (Mars Year, season, local solar time, sunrise/sunset), Curiosity's latest REMS weather, radiation from Curiosity's RAD.
 - **Survival analysis:** scores the planet for a first base, a solar camp or a science mission, and compares places.
+- **About the data:** a panel listing which features show real data and which are calculations or models. NASA Worldview (Earth imagery) is kept separate from the Mars map.
 - **2-minute demo** and a full guided tour.
 
+## Real data vs models
+| Real data, shown as published | Calculated or modelled |
+|---|---|
+| Mars Trek imagery (Viking, CTX, HiRISE, THEMIS, MOLA/HRSC), MOLA/HRSC/CTX terrain, USGS geology and interpretations, CRISM/OMEGA/THEMIS minerals, TES thermal inertia and dust, SWIM ice, Perseverance and Curiosity paths, Perseverance raw images, Curiosity REMS weather and RAD dose rate, IAU names | Mars clock (Mars24 method), walking/rover speed, suit time and turn-back point, safer-path routing, radiation per walk, air pressure, survival score, science-stop suggestions. Thermal inertia and dust values are read from coloured maps, so they're relative. |
+
 ## Data sources
+- NASA Mars Trek live map tiles (WMTS), plus the Esri OnMars CTX service it lists (credit: NASA/JPL/MSSS/Caltech Murray Lab/Esri)
 - NASA Mars Trek: Viking MDIM 2.1 colour mosaic, MGS MOLA shaded relief, MRO CTX mosaics, Mars Odyssey THEMIS day IR, MGS TES thermal inertia and dust cover index, Perseverance traverse, aqueous mineral distribution (Ehlmann & Edwards 2014)
 - NASA PDS: MGS MOLA MEGDR elevation
 - USGS Astrogeology: HRSC/MOLA blended 200 m terrain; Mars 2020 HiRISE mosaic and CTX 20 m terrain of Jezero
 - USGS–NASA Planetary Geologic Mapping Program: global geologic map of Mars (Tanaka et al. 2014, SIM 3292), https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars
 - Mars Perseverance raw images gallery, linked from science stops: https://mars.nasa.gov/mars2020/multimedia/raw-images/
 - Curiosity's proposed path up Mount Sharp (NASA), compared with the Gale plan: https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/
-- NASA Worldview: inspired the layer-switching design (Earth data, so none is used): https://worldview.earthdata.nasa.gov/
+- NASA Worldview: Earth imagery, kept separate from the Mars map (explained in the app's About the data panel): https://worldview.earthdata.nasa.gov/
 - IAU/USGS Gazetteer of Planetary Nomenclature
 - SWIM project: subsurface ice consistency maps
+- NASA Mars Trek: Curiosity traverse path and waypoint descriptions
+- NASA raw-image feed for Perseverance (images credited per image, JPL image use policy)
+- USGS SIM 3292 Description of Map Units: unit interpretations
 - NASA / Centro de Astrobiología: Curiosity REMS weather (https://mars.nasa.gov/msl/mission/weather/)
 - Hassler et al. 2014, *Science* 343: Curiosity RAD surface radiation (0.67 mSv/day)
 - NASA Mars fact sheet: surface pressure and scale height

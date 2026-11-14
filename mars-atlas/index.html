@@ -303,6 +303,16 @@ h2{font-size:23px}
 #rt-wps p{margin:6px 0;font-size:12.5px;line-height:1.45;color:#efdcc8}#rt-wps img{display:block;max-width:100%;border-radius:8px;margin-top:6px}
 #rt-wps button{min-height:28px;padding:3px 12px;font-size:12.5px}
 .propimg{display:block;width:100%;border-radius:10px;border:1px solid var(--edge)}
+.about-in{width:min(760px,100%)}
+.about-in h2{margin:0 0 10px}.about-in h3{margin:14px 0 6px}
+.ab-tabs{margin-bottom:6px}
+.abt{width:100%;border-collapse:collapse;font-size:13px}
+.abt th{text-align:left;vertical-align:top;width:30%;padding:7px 10px 7px 0;color:var(--sand);font-weight:600;border-bottom:1px solid var(--edge)}
+.abt td{padding:7px 0;color:#efdcc8;line-height:1.45;border-bottom:1px solid var(--edge)}
+.abt td small{display:block;font:11px var(--data);color:var(--dust);margin-top:2px}
+#ab-earth p{font-size:14px;line-height:1.55;color:#efdcc8}
+@media(max-width:760px){.abt th{width:36%}}
+
 .panel.galw{width:460px}
 .g-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .g-sol{display:flex;align-items:center;gap:4px;font:12px var(--data);color:var(--dust)}
@@ -1548,6 +1558,50 @@ const prevSI=showInfo;showInfo=function(lat,lon,ft,site){prevSI(lat,lon,ft,site)
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-gsol]");if(a){e.preventDefault();window.openGallery(+a.dataset.gsol)}});
 new MutationObserver(()=>{const b=$("rt-perse");if(b&&!$("rt-gal"))b.insertAdjacentHTML("afterend",`<button id="rt-gal">Browse its photos (sol 770)</button>`),$("rt-gal").onclick=()=>window.openGallery(770)}).observe($("rt-body")||document.body,{childList:true,subtree:true});
 document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Mars Perseverance raw images</a>: loaded live from NASA's public raw-image feed in the Rover images gallery, with each image's own credit line (JPL image use policy)</li>`);
+})();
+</script>
+<script>// ===== About the data: what's real, what's modelled, and NASA Worldview kept separate =====
+(function(){
+const REAL=[
+ ["Imagery","Viking colour mosaic (USGS MDIM 2.1); MRO CTX close-ups and the CTX global mosaic (Murray Lab, streamed); MRO HiRISE at Jezero and the Curiosity site; Mars Odyssey THEMIS day and night infrared; MOLA + HRSC colour relief","NASA Mars Trek, USGS, Esri OnMars"],
+ ["Terrain heights","MGS MOLA laser altimetry (global), HRSC + MOLA 200 m blend (close-ups), MRO CTX 20 m terrain (Jezero)","NASA PDS, USGS"],
+ ["Geology","44 rock units and their official interpretations from the USGS global geologic map; the unit at a clicked point is checked live with the USGS map service","USGS SIM 3292 via Mars Trek"],
+ ["Minerals","Water-formed mineral detections (clays, sulfates, silica, chlorides, carbonates)","Ehlmann & Edwards 2014: CRISM, OMEGA, THEMIS"],
+ ["Ground and ice","Thermal inertia and dust cover (MGS TES); buried-ice consistency (SWIM)","NASA Mars Trek, SWIM project"],
+ ["Rover paths","Perseverance's drives (sols 14–1176); Curiosity's drives and 14 waypoint descriptions (to about sol 2004). Historical, not live","NASA Mars Trek"],
+ ["Rover images","Perseverance raw images with their camera, time and credit, loaded live","NASA raw-image feed"],
+ ["Weather and radiation","Curiosity's REMS reports (newest public report: 25 Aug 2026); RAD surface dose rate of 0.67 mSv per day","NASA/CAB, Hassler et al. 2014"],
+ ["Names","1,927 official feature names","IAU/USGS Gazetteer"]];
+const MODEL=[
+ ["Mars clock","Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
+ ["Suit time and turn-back point","Walking speed (Tobler's hiking function × a cautious suit pace), rover speed, suit time and reserve are planning guesses you can change."],
+ ["Safer path","A route search over the terrain grid that avoids slopes above your limit. Slopes are only as fine as the terrain (20 m at Jezero, 200 m in other close-ups, about 7 km elsewhere)."],
+ ["Radiation per walk","Curiosity's measured daily rate multiplied by the walk's length. No suit shielding or solar storms."],
+ ["Air pressure","Estimated from the NASA fact-sheet pressure and scale height, scaled by elevation."],
+ ["Survival score and mission fit","A weighted model of ice, landing air, flatness, sunlight and terrain variety. It shows where to look closer, not where it's safe."],
+ ["Science-stop suggestions","Simple rules applied to the real data under each stop (for example, high thermal inertia → likely bedrock)."],
+ ["Thermal inertia and dust values","Read from Mars Trek's coloured maps, so they're relative (low to high), not physical units."]];
+document.querySelector("#more-menu").insertAdjacentHTML("beforeend",`<button id="btn-about" role="menuitem">About the data</button>`);
+document.querySelector(".atlas").insertAdjacentHTML("beforeend",`<div id="about" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="About the data"><div class="lb-in about-in"><button class="x" id="ab-close" aria-label="Close">×</button>
+ <h2>About the data</h2><div class="seg two ab-tabs"><button data-tab="real" aria-pressed="true">What's real here</button><button data-tab="earth" aria-pressed="false">Earth: NASA Worldview</button></div>
+ <div id="ab-real"><h3>Real data, shown as published</h3><table class="abt">${REAL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}<small>${r[2]}</small></td></tr>`).join("")}</table>
+ <h3>Calculated or modelled (estimates)</h3><table class="abt">${MODEL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join("")}</table>
+ <p class="note">Mars Atlas is a concept prototype by Jeevan J Shine for NASA Space Apps 2026, built with AI assistance (Claude). Full source list: Layers → About this map and sources.</p></div>
+ <div id="ab-earth" hidden><div class="histbadge prop">Earth only · not used on the Mars globe</div>
+ <p>NASA Worldview shows near-real-time satellite imagery of <b>Earth</b> from NASA's Earth-observing missions. It is one of the resources listed for this challenge, but it has no Mars data, so Mars Atlas doesn't mix any of it into the Mars map.</p>
+ <p>What it offers this project is the idea behind the Layers panel: switch between data layers from different missions over the same place, and see where each one comes from.</p>
+ <p><a class="btnlink" href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener">Open NASA Worldview (Earth)</a></p>
+ <p class="srcmini">NASA Worldview is part of NASA Earthdata (EOSDIS).</p></div></div></div>`);
+const show=t=>{document.querySelectorAll(".ab-tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===t));$("ab-real").hidden=t!=="real";$("ab-earth").hidden=t!=="earth"};
+document.querySelectorAll(".ab-tabs button").forEach(b=>b.onclick=()=>show(b.dataset.tab));
+const open=t=>{show(t||"real");$("about").hidden=false;$("ab-close").focus()};window.openAbout=open;
+$("btn-about").onclick=()=>{$("more-menu").hidden=true;$("btn-more").setAttribute("aria-expanded","false");open("real")};
+$("ab-close").onclick=()=>$("about").hidden=true;$("about").onclick=e=>{if(e.target.id==="about")$("about").hidden=true};
+addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("about").hidden)$("about").hidden=true});
+// intro and sources point here; Worldview line reworded to say it's kept separate
+const sm=document.querySelector(".intro small");if(sm)sm.insertAdjacentHTML("beforeend",` · <a href="#" id="go-about">What's real here?</a>`);
+const ga=$("go-about");if(ga)ga.onclick=e=>{e.preventDefault();open("real")};
+document.querySelectorAll("#about-src .src li").forEach(li=>{if(/worldview/i.test(li.textContent))li.innerHTML=`<a href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener">NASA Worldview</a>: Earth imagery only, kept separate from the Mars map (see About the data → Earth)`});
 })();
 </script>
 
