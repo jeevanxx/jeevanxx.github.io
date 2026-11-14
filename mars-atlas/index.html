@@ -240,6 +240,7 @@ h2{font-size:23px}
 .suitbar i{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:linear-gradient(90deg,#2fb6a6,#56e0cf);transition:width .5s var(--ease)}
 .suitbar i.over{background:linear-gradient(90deg,#d85a3a,#ff9466)}
 .suitbar em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#ffc078}
+.resrow{display:grid;grid-template-columns:76px minmax(60px,1fr) auto;gap:7px;align-items:center;font:12px var(--data);color:var(--dust);margin:5px 0}.resrow b{color:var(--sand);font-weight:600;white-space:nowrap;font-size:11.5px}.simtag{display:inline-block;font:10.5px var(--data);letter-spacing:.04em;padding:2px 7px;border-radius:9px;border:1px solid rgba(255,192,120,.45);color:#ffc078;margin-bottom:4px}
 .suitlab{display:flex;justify-content:space-between;font:11.5px var(--data);color:var(--dust)}
 .verdict.bad{background:rgba(255,122,89,.08);border-color:rgba(255,122,89,.35)}
 .wlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -470,6 +471,7 @@ h2{font-size:23px}
   <div class="row" style="align-items:center;gap:14px"><label class="check" for="w-ret"><input id="w-ret" type="checkbox" checked> Return to start</label><label class="check" for="w-safe"><input id="w-safe" type="checkbox" checked> Safer path</label><button id="w-arm" aria-pressed="false" style="flex:none;margin-left:auto">★ Next click is a stop</button></div>
   <div id="w-sum" class="wsum"></div>
   <div id="w-verdict"></div>
+  <div id="w-res" class="sec" hidden></div>
   <div id="w-flags" class="sec" hidden></div>
   <div id="w-prof" class="sec" hidden>
     <h3>Route profile</h3>
@@ -486,7 +488,12 @@ h2{font-size:23px}
       <label class="sl" for="a-pace"><span>Suit walking pace</span><input id="a-pace" type="range" min=".3" max="1" step=".05"><output id="a-pace-o"></output></label>
       <label class="sl" for="a-rover"><span>Rover speed</span><input id="a-rover" type="range" min="3" max="15" step="1"><output id="a-rover-o"></output></label>
       <label class="sl" for="a-slope"><span>Slope limit</span><input id="a-slope" type="range" min="8" max="30" step="1"><output id="a-slope-o"></output></label>
+      <label class="sl" for="a-body"><span>Astronaut mass</span><input id="a-body" type="range" min="50" max="110" step="1"><output id="a-body-o"></output></label>
+      <label class="sl" for="a-load"><span>Suit + pack mass</span><input id="a-load" type="range" min="20" max="90" step="1"><output id="a-load-o"></output></label>
+      <label class="sl" for="a-suitW"><span>Suit electronics</span><input id="a-suitW" type="range" min="50" max="300" step="10"><output id="a-suitW-o"></output></label>
+      <label class="sl" for="a-rovKWh"><span>Rover battery</span><input id="a-rovKWh" type="range" min="2" max="20" step=".1"><output id="a-rovKWh-o"></output></label>
     </div>
+    <p class="note">Resource estimates (simulated, for learning): effort uses the Pandolf load-carrying equation (Pandolf, Givoni &amp; Goldman, 1977) with its weight terms scaled to Mars gravity, and a terrain factor from how firm the ground looks in the thermal-inertia layer. Oxygen assumes 20.1 kJ of energy per litre of O₂. Cooling water assumes 80% of body heat is removed by sublimating water (2.83 MJ/kg). Suit O₂ and water capacity are sized for your suit-time setting at a moderate 350 W work rate. The 8.7 kWh rover battery default matches the Apollo Lunar Roving Vehicle's two 121 Ah, 36 V batteries; rover mass 900 kg, 70% drivetrain efficiency and 200 W electronics are guesses. None of these are real spacesuit or rover specifications.</p>
     <p class="note">Why this walking model: Tobler's hiking function is a standard, well-tested formula for how slope changes human walking speed (fastest on a gentle downhill, slower up or down steep ground). Suits are stiff and heavy, so the default ×0.5 pace (about 2.5 km/h on the flat) is a deliberately cautious guess. Change it to test faster or slower crews. Rover speed is a flat cruise speed, and slopes steeper than your limit are walked. These are planning guesses, not suit or rover specifications.</p><p class="note">Safer path searches the terrain between waypoints (20 m terrain at Jezero, 200 m in the other close-ups) for the quickest route that stays under your slope limit.</p>
   </details>
   <div class="row"><button id="w-undo">Undo point</button><button id="w-clear">Clear</button><button id="w-export">Copy EVA plan</button></div>
@@ -996,7 +1003,7 @@ const season=Ls=>["Northern spring","Northern summer","Northern autumn","Norther
 const SOL_H=24.6597; // one sol in Earth hours (24 h 39 min 35 s)
 
 // ---------- planner state
-const W=window._walkW={safe:true,pts:[],mode:"foot",ret:true,start:9,suit:8,res:1,pace:.5,rover:8,slope:15,date:null,preset:null,arm:false};
+const W=window._walkW={safe:true,body:75,load:50,suitW:150,rovKWh:8.7,pts:[],mode:"foot",ret:true,start:9,suit:8,res:1,pace:.5,rover:8,slope:15,date:null,preset:null,arm:false};
 window.walkOn=false;
 const PRESETS={
  jezero:{mode:"foot",ret:true,start:9,pts:[
@@ -1041,18 +1048,34 @@ function safePath(A,B){const key=[A.lat,A.lon,B.lat,B.lon,W.slope,W.mode,W.pace,
  const out=[A,...keep.slice(1,-1).map(k=>{const[x,y]=xy(k);return toLL(x,y)}),B];pathCache.set(key,out);return out}
 function densify(poly){const o=[poly[0]];for(let i=1;i<poly.length;i++){const a=poly[i-1],b=poly[i],d=dist(a.lat,a.lon,b.lat,b.lon),n=Math.max(1,Math.ceil(d/.08));for(let k=1;k<=n;k++)o.push(slerpLL(a,b,k/n))}return o}
 
+// ---------- simulated resource model (educational estimates, not real suit data)
+// effort: Pandolf, Givoni & Goldman (1977) load-carriage equation, weight-bearing terms scaled to Mars gravity
+// oxygen: 20.1 kJ per litre O2 (mixed-diet energy equivalent), 1.429 g per litre
+// cooling water: all body heat assumed removed by sublimating water (2.83 MJ per kg)
+// rover: rolling resistance + climbing, drivetrain efficiency, constant electronics load
+const RES={gM:3.71/9.81,kJperL:20.1,gPerL:1.429,subl:2.83e6,heatFrac:.8,workW:350,stopW:250,roverKg:900,roverEff:.7,roverAuxW:200};
+const etaOf=ti=>ti==null?1.2:ti<.22?2.1:ti<.4?1.5:ti<.55?1.2:1.1;          // Pandolf terrain factor from relative firmness
+const crrOf=ti=>ti==null?.08:ti<.22?.18:ti<.4?.12:ti<.55?.08:.06;          // rover rolling resistance from firmness (assumption)
+function metW(v,s,ti){const Wb=W.body,L=W.load,G=Math.max(0,s*100);return 1.5*Wb+RES.gM*(2*(Wb+L)*(L/Wb)**2+etaOf(ti)*(Wb+L)*(1.5*v*v+.35*v*G))}
+const o2g=(M,h)=>M*h*3600/(RES.kJperL*1000)*RES.gPerL, h2og=(M,h)=>RES.heatFrac*M*h*3600/RES.subl*1000;
+function caps(){const h=W.suit;return{o2:o2g(RES.workW,h),h2o:h2og(RES.workW,h),bat:W.suitW*h,rov:W.rovKWh*1000}}
+// one step of the route: returns resources used {o2 g, h2o g, bat Wh, rov Wh, M W}
+function stepRes(dkKm,dtH,s,ti,riding){if(riding){const v=dkKm*1000/(dtH*3600),P=RES.roverKg*3.71*(crrOf(ti)+Math.max(0,Math.sin(Math.atan(s))))*v/RES.roverEff+RES.roverAuxW,M=1.5*W.body+20;
+  return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:P*dtH,M}}
+ const v=dkKm*1000/(dtH*3600),M=metW(v,s,ti);return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:0,M}}
+const isRiding=s=>W.mode==="rover"&&Math.atan(Math.abs(s))/D2R<=W.slope;
 function analyze(safe){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.length<2)return null;
  const legs=[];for(let i=1;i<P.length;i++)legs.push([i-1,i]);if(W.ret&&P.length>1)legs.push([P.length-1,0]);
- const S=[];let km=0,t=0;const mt=marsTime(planMs()),startH=W.start;
- legs.forEach(([a,b],li)=>{const A=P[a],B=P[b];if(li===0)S.push({km:0,t:0,lat:A.lat,lon:A.lon,m:elev(A.lat,A.lon),slope:0,leg:0,wp:a,ret:false});
+ const S=[];let km=0,t=0;const U={o2:0,h2o:0,bat:0,rov:0};const addR=r=>{U.o2+=r.o2;U.h2o+=r.h2o;U.bat+=r.bat;U.rov+=r.rov},snap=o=>{o.o2=U.o2;o.h2o=U.h2o;o.bat=U.bat;o.rov=U.rov};const mt=marsTime(planMs()),startH=W.start;
+ legs.forEach(([a,b],li)=>{const A=P[a],B=P[b];if(li===0)S.push({km:0,t:0,lat:A.lat,lon:A.lon,m:elev(A.lat,A.lon),slope:0,leg:0,wp:a,ret:false,o2:0,h2o:0,bat:0,rov:0});
   // dwell at the waypoint we are leaving
-  if(A.stop){t+=A.dwell/60;S[S.length-1].dwell=A.dwell/60;S[S.length-1].t=t}
+  if(A.stop){t+=A.dwell/60;S[S.length-1].dwell=A.dwell/60;S[S.length-1].t=t;addR({o2:o2g(RES.stopW,A.dwell/60),h2o:h2og(RES.stopW,A.dwell/60),bat:W.suitW*A.dwell/60,rov:W.mode==="rover"?RES.roverAuxW*A.dwell/60:0});snap(S[S.length-1])}
   const dens=densify(safe?safePath(A,B):[A,B]);
-  for(let k=1;k<dens.length;k++){const ll=dens[k],p=S[S.length-1],dk=Math.max(1e-6,dist(p.lat,p.lon,ll.lat,ll.lon)),m=elev(ll.lat,ll.lon),s=(m-p.m)/(dk*1000);km+=dk;t+=dk/speedOf(s,W.mode);
-   S.push({km,t,lat:ll.lat,lon:ll.lon,m,slope:Math.atan(Math.abs(s))/D2R,leg:li,wp:k===dens.length-1?b:null,ret:W.ret&&li===legs.length-1})}});
- if(!W.ret){const L=P[P.length-1];if(L.stop){t+=L.dwell/60;S[S.length-1].dwell=L.dwell/60;S[S.length-1].t=t}}
+  for(let k=1;k<dens.length;k++){const ll=dens[k],p=S[S.length-1],dk=Math.max(1e-6,dist(p.lat,p.lon,ll.lat,ll.lon)),m=elev(ll.lat,ll.lon),s=(m-p.m)/(dk*1000),dt=dk/speedOf(s,W.mode);km+=dk;t+=dt;addR(stepRes(dk,dt,s,gridAt(TI,ll.lat,ll.lon),isRiding(s)));
+   const smp={km,t,lat:ll.lat,lon:ll.lon,m,slope:Math.atan(Math.abs(s))/D2R,leg:li,wp:k===dens.length-1?b:null,ret:W.ret&&li===legs.length-1};snap(smp);S.push(smp)}});
+ if(!W.ret){const L=P[P.length-1];if(L.stop){t+=L.dwell/60;S[S.length-1].dwell=L.dwell/60;S[S.length-1].t=t;addR({o2:o2g(RES.stopW,L.dwell/60),h2o:h2og(RES.stopW,L.dwell/60),bat:W.suitW*L.dwell/60,rov:0});snap(S[S.length-1])}}
  // walk-back time from each sample to the start along the way you came (reverse direction speeds)
- const back=new Float64Array(S.length);for(let k=1;k<S.length;k++){const dk=S[k].km-S[k-1].km,s=(S[k-1].m-S[k].m)/(Math.max(1e-6,dk)*1000);back[k]=back[k-1]+dk/speedOf(s,W.mode)}
+ const back=new Float64Array(S.length),backR=[{o2:0,h2o:0,bat:0,rov:0}];for(let k=1;k<S.length;k++){const dk=S[k].km-S[k-1].km,s=(S[k-1].m-S[k].m)/(Math.max(1e-6,dk)*1000),dt=dk/speedOf(s,W.mode);back[k]=back[k-1]+dt;const r=stepRes(dk,dt,s,gridAt(TI,S[k].lat,S[k].lon),isRiding(s)),q=backR[k-1];backR.push({o2:q.o2+r.o2,h2o:q.h2o+r.h2o,bat:q.bat+r.bat,rov:q.rov+r.rov})}
  const total=S[S.length-1].t,lim=W.suit-W.res,endBack=W.ret?0:back[S.length-1],need=total+endBack;
  // point of no return: first spot where elapsed + quickest way home exceeds suit time minus reserve
  let pnr=null;for(let k=0;k<S.length;k++){const home=W.ret?Math.min(back[k],total-S[k].t):back[k];if(S[k].t+home>lim){pnr=k;break}}
@@ -1062,7 +1085,8 @@ function analyze(safe){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.length
   b.sun=sunElev(b.lat,mt.dec,sunH(b.t));if(b.sun<0)darkKm+=dk;const ti=gridAt(TI,b.lat,b.lon),dc=gridAt(DCI,b.lat,b.lon);if(ti!=null&&ti<.22)softKm+=dk;if(dc!=null&&dc>.6)dustKm+=dk}
  S[0].sun=sunElev(S[0].lat,mt.dec,startH);
  const dl=dayLen(lat0,mt.dec);
- return{S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
+ const endR=W.ret?{o2:0,h2o:0,bat:0,rov:0}:backR[S.length-1],used={o2:U.o2+endR.o2,h2o:U.h2o+endR.h2o,bat:U.bat+endR.bat,rov:U.rov+endR.rov};
+ return{used,caps:caps(),backR,S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
 function planMs(){return W.date?W.date.getTime():Date.now()}
 
 // ---------- science stop briefs from the data under each point
@@ -1107,6 +1131,11 @@ const basePlaceMarkers=placeMarkers;placeMarkers=function(){basePlaceMarkers();i
 // ---------- panel rendering
 const fmtH=h=>{const H=Math.floor(h+1e-9),m=Math.round((h-H)*60);return m===60?`${H+1} h`:H?`${H} h ${String(m).padStart(2,"0")}`:`${m} min`};
 window._renderWalk=()=>renderWalk();
+const fmtG=g=>g>=1000?(g/1000).toFixed(g<1e4?2:1)+" kg":n0(g)+" g",fmtWh=w=>w>=1000?(w/1000).toFixed(2)+" kWh":n0(w)+" Wh";
+function resRows(){const u=R.used,c=R.caps,rf=W.res/W.suit,rows=[["Oxygen",u.o2,c.o2,fmtG],["Cooling water",u.h2o,c.h2o,fmtG],["Suit battery",u.bat,c.bat,fmtWh]];if(W.mode==="rover")rows.push(["Rover battery",u.rov,c.rov,fmtWh]);
+ return rows.map(([n,a,b,f])=>({n,a,b,f,frac:a/b,over:a>b*(1-rf)}))}
+function renderRes(){const el=$("w-res"),rf=W.res/W.suit;el.hidden=false;
+ el.innerHTML=`<h3>Resources (estimate)</h3><span class="simtag">Simulated educational estimate — not real suit data</span>`+resRows().map(r=>`<div class="resrow"><span>${r.n}</span><div class="suitbar"><i class="${r.over?"over":""}" style="width:${Math.min(100,r.frac*100).toFixed(1)}%"></i><em style="left:${((1-rf)*100).toFixed(1)}%" title="Reserve starts here"></em></div><b>${r.f(r.a)} / ${r.f(r.b)}</b></div>`).join("")+`<p class="note">Bars show use against capacity; the yellow line is where your reserve starts. Average effort on this route: ${n0(R.used.o2/Math.max(1e-6,R.need)/1.429*20100/3600)} W. See Planning assumptions for how these are worked out.</p>`}
 function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
  const P=W.pts;$("w-empty").textContent=P.length?"":"Click anywhere on Mars to place your start point (zoom into a close-up area for the sharpest terrain).";
  $("w-undo").disabled=!P.length;$("w-clear").disabled=!P.length;$("w-export").disabled=!R;
@@ -1118,10 +1147,11 @@ function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(fal
  $("w-list").querySelectorAll("[data-dw]").forEach(s=>s.onchange=()=>{P[+s.dataset.dw].dwell=+s.value;renderWalk()});
  $("w-list").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);W.preset=null;markPreset();renderWalk()});
  $("w-list").querySelectorAll("strong[data-k]").forEach(s=>s.onclick=()=>focusWp(+s.dataset.k));
- if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-flags").hidden=true;$("w-prof").hidden=true;return}
+ if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-res").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
  const over=R.need>R.lim,pct=Math.min(100,R.need/W.suit*100);
  $("w-sum").innerHTML=`<div><b>${fmtKm(R.km)}</b><span>${W.ret?"Round trip":"One way"}</span></div><div><b>${fmtH(R.need)}</b><span>Suit time used</span></div><div><b>${n0(R.climb)} m</b><span>Total climb</span></div>
  <div class="suit"><div class="suitbar"><i class="${over?"over":""}" style="width:${pct}%"></i><em style="left:${(R.lim/W.suit*100).toFixed(1)}%" title="Reserve starts here"></em></div><div class="suitlab"><span>0 h</span><span>Reserve after ${fmtH(R.lim)}</span><span>${W.suit} h suit</span></div></div>`;
+ renderRes();
  const pk=R.pnr!=null?R.S[R.pnr]:null;
  const cmpTxt=D0?(D0.steepKm>.05||D0.maxSl>R.maxSl+1?`<br><span style="color:var(--dust)">Safer path vs a straight line: steepest ${R.maxSl.toFixed(0)}° instead of ${D0.maxSl.toFixed(0)}°, ${R.km>D0.km?"+"+fmtKm(R.km-D0.km)+" walking":"same distance"}, ${fmtH(Math.abs(R.need-D0.need))} ${R.need>D0.need?"longer":"shorter"}.</span>`:`<br><span style="color:var(--dust)">The straight line is already the safest way here.</span>`):"";
  $("w-verdict").innerHTML=(over?`<p class="verdict bad"><b>Too long for one EVA.</b> You'd need ${fmtH(R.need)}, but the suit allows ${fmtH(R.lim)} before the reserve. ${pk?`Turn back by <b>${fmtKm(pk.km)}</b> (about ${hm(R.sunH(pk.t))} Mars time), marked ↩ on the globe.`:""} ${W.mode==="foot"?"Try a rover, a closer stop, or a shorter route.":"Try a closer stop, or split it into two EVAs."}</p>`
@@ -1176,7 +1206,7 @@ $("w-clear").onclick=()=>{W.pts=[];W.preset=null;markPreset();renderWalk()};
 $("w-close").onclick=()=>openPanel("walk",false);
 $("btn-walk").onclick=()=>{const on=$("walk").hidden;openPanel("walk",on);if(on&&!W.pts.length)loadPreset("jezero")};
 // assumptions
-const AS=[["a-start","start",v=>hm(v)],["a-suit","suit",v=>v+" h"],["a-res","res",v=>fmtH(v)],["a-pace","pace",v=>"×"+v.toFixed(2)],["a-rover","rover",v=>v+" km/h"],["a-slope","slope",v=>v+"°"]];
+const AS=[["a-start","start",v=>hm(v)],["a-suit","suit",v=>v+" h"],["a-res","res",v=>fmtH(v)],["a-pace","pace",v=>"×"+v.toFixed(2)],["a-rover","rover",v=>v+" km/h"],["a-slope","slope",v=>v+"°"],["a-body","body",v=>v+" kg"],["a-load","load",v=>v+" kg"],["a-suitW","suitW",v=>v+" W"],["a-rovKWh","rovKWh",v=>v.toFixed(1)+" kWh"]];
 function syncAssume(){AS.forEach(([id,k,fm])=>{$(id).value=W[k];$(id+"-o").textContent=fm(W[k])});const d=W.date||new Date();$("a-date").value=d.toISOString().slice(0,10)}
 AS.forEach(([id,k,fm])=>$(id).addEventListener("input",e=>{W[k]=+e.target.value;$(id+"-o").textContent=fm(W[k]);renderWalk()}));
 $("a-date").addEventListener("change",e=>{const v=e.target.value;W.date=v?new Date(v+"T12:00:00Z"):null;renderWalk();renderCond()});
@@ -1189,6 +1219,7 @@ function briefingText(){const P=W.pts,mt=R.mt,pk=R.pnr!=null?R.S[R.pnr]:null,L=[
  L.push(`Mode: ${W.mode==="foot"?"on foot":"with a rover"} | ${fmtKm(R.km)} ${W.ret?"round trip":"one way"} | climb ${n0(R.climb)} m | steepest ${R.maxSl.toFixed(0)} deg`);
  L.push(`Season: Mars Year ${mt.my}, Ls ${mt.Ls.toFixed(0)} deg | sunrise ${hm(R.sunrise)}, sunset ${hm(R.sunset)} local solar time`);
  L.push(`Timing: leave ${hm(W.start)}, back by ${hm(R.endH)} | suit time ${fmtH(R.need)} of ${W.suit} h (reserve ${fmtH(W.res)})`);
+ L.push("Resources (SIMULATED educational estimate, not real suit data): "+resRows().map(r=>`${r.n.toLowerCase()} ${r.f(r.a)} of ${r.f(r.b)}`).join(", "));
  L.push(pk?`TURN BACK by ${fmtKm(pk.km)} (about ${hm(R.sunH(pk.t))}) at ${ll4(pk)}`:"Within the suit budget the whole way.");
  L.push("","Points:");
  P.forEach((p,k)=>{const s=R.S.find(x=>x.wp===k&&!(k===0&&x.km>0));L.push(`${k===0?"S":k}. ${wpName(p,k)} | ${ll4(p)} | ${fmtElev(elev(p.lat,p.lon))}${s&&k?` | arrive ${hm(R.sunH(s.t-(s.dwell||0)))}`:""}${p.stop?` | stop ${p.dwell} min`:""}`);
