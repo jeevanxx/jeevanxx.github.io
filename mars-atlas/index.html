@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Mars Atlas</title>
 <meta name="description" content="Mars Atlas: plan a Marswalk on a 3D Mars built from NASA mission data. NASA Space Apps 2026, Martian Map challenge.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=Space+Grotesk:wght@500;600&display=swap">
 <style>/* Layout: full-bleed planet with floating glass controls, like a desktop globe viewer; panels become bottom sheets on phones. */
 :root{--space:#07050a;--glass:rgba(26,16,19,.88);--glass2:rgba(26,16,19,.7);--line:#4d3631;--sand:#f3e0c8;--dust:#bfa48f;--accent:#56e0cf;--amber:#ffc078;--warn:#ff9466;
 --display:"Saira Condensed","Arial Narrow",sans-serif;--body:"Hanken Grotesk",system-ui,sans-serif;--data:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
@@ -348,7 +348,7 @@ h2{font-size:23px}
 <div id="globe" role="application" aria-label="3D globe of Mars. Drag to turn it, scroll or pinch to zoom, click a place for details."><div id="labels"></div></div>
 
 <header class="top chrome">
-  <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><defs><radialGradient id="lg1" cx=".35" cy=".35" r=".75"><stop offset="0" stop-color="#ffcf9e"/><stop offset=".55" stop-color="#e0703f"/><stop offset="1" stop-color="#5a1f14"/></radialGradient></defs><circle cx="20" cy="20" r="12" fill="url(#lg1)"/><ellipse cx="20" cy="20" rx="18.5" ry="6.5" fill="none" stroke="#56e0cf" stroke-width="1.6" transform="rotate(-22 20 20)" opacity=".9"/><circle cx="35.5" cy="13.6" r="2.2" fill="#56e0cf"/></svg><div><strong>Mars Atlas</strong><span>Interplanetary Survival Guide</span></div></div>
+  <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><defs><radialGradient id="lg1" cx=".35" cy=".35" r=".75"><stop offset="0" stop-color="#ffcf9e"/><stop offset=".55" stop-color="#e0703f"/><stop offset="1" stop-color="#5a1f14"/></radialGradient></defs><circle cx="20" cy="20" r="12" fill="url(#lg1)"/><ellipse cx="20" cy="20" rx="18.5" ry="6.5" fill="none" stroke="#56e0cf" stroke-width="1.6" transform="rotate(-22 20 20)" opacity=".9"/><circle cx="35.5" cy="13.6" r="2.2" fill="#56e0cf"/></svg><div><strong>Mars Atlas</strong><span>Interplanetary Survival Guide</span><em id="mclk" class="mclk" title="Mars Sol Date and Mars Coordinated Time, calculated with the Mars24 method (Allison &amp; McEwen 2000)"></em></div></div>
   <div class="search">
     <svg class="sicon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     <input id="q" type="search" placeholder="Search craters, mountains, rovers" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" aria-label="Search places on Mars">
@@ -525,6 +525,7 @@ h2{font-size:23px}
     <small>Concept prototype. Scores and plans show where to look closer, not where it is safe to go.<br>By <a href="https://jeevanxx.github.io" target="_blank" rel="noopener">Jeevan J Shine</a> · NASA Space Apps 2026 · Built with AI assistance (Claude)</small>
   </div>
 </section>
+<nav class="sitebar chrome" aria-label="Jump to a famous place"><span>Jump to</span><button data-jf="Olympus Mons">Olympus Mons</button><button data-jf="Valles Marineris">Valles Marineris</button><button data-jh="gale">Gale crater</button><button data-js="Perseverance">Perseverance</button><button data-jf="Hellas Planitia">Hellas Planitia</button></nav>
 <footer class="status chrome">
   <span id="st-cursor">Point at Mars to read coordinates</span>
   <span id="st-alt"></span>
@@ -586,8 +587,16 @@ const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.setClearColor(0x07050a);
 host.prepend(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(36,1,.0005,300);
-const starMat=new THREE.PointsMaterial({color:0xd8c8bc,size:.22,transparent:true,opacity:.75,depthWrite:false});
-{const n=2600,p=new Float32Array(n*3);for(let i=0;i<n;i++){const u=Math.random()*2-1,t=Math.random()*Math.PI*2,s=Math.sqrt(1-u*u),r=120;p.set([r*s*Math.cos(t),r*u,r*s*Math.sin(t)],i*3)}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(p,3));scene.add(new THREE.Points(g,starMat))}
+const starU={uT:{value:0},uO:{value:.75},uPR:{value:Math.min(2,devicePixelRatio)}};
+const starMat=new THREE.ShaderMaterial({uniforms:starU,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+ vertexShader:`attribute float ph;attribute vec3 tint;attribute float big;uniform float uT;uniform float uPR;varying vec3 vT;varying float vA;
+ void main(){vT=tint;float w=sin(uT*(.6+fract(ph*7.31)*1.8)+ph*6.2831);vA=big>.5?.25+.75*pow(max(0.,w),6.):.55+.35*w;
+ gl_PointSize=(big>.5?3.2:1.6)*uPR;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+ fragmentShader:`uniform float uO;varying vec3 vT;varying float vA;void main(){vec2 c=gl_PointCoord-.5;float d=length(c);float a=smoothstep(.5,.0,d);a+=smoothstep(.06,.0,abs(c.x))*smoothstep(.5,.0,abs(c.y))*.5+smoothstep(.06,.0,abs(c.y))*smoothstep(.5,.0,abs(c.x))*.5;gl_FragColor=vec4(vT,a*vA*uO);}`});
+{const n=2600,p=new Float32Array(n*3),ph=new Float32Array(n),tn=new Float32Array(n*3),bg=new Float32Array(n);
+ for(let i=0;i<n;i++){const u=Math.random()*2-1,t=Math.random()*Math.PI*2,s=Math.sqrt(1-u*u),r=120;p.set([r*s*Math.cos(t),r*u,r*s*Math.sin(t)],i*3);ph[i]=Math.random();
+  const g=Math.random(),c=g<.03?[1,.82,.4]:g<.05?[.88,.67,1]:[.85,.88,.95];tn.set(c,i*3);bg[i]=g<.05?1:0}
+ const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(p,3));g.setAttribute("ph",new THREE.BufferAttribute(ph,1));g.setAttribute("tint",new THREE.BufferAttribute(tn,3));g.setAttribute("big",new THREE.BufferAttribute(bg,1));scene.add(new THREE.Points(g,starMat))}
 // atmosphere glow from space, butterscotch sky when close to the ground
 const atmU={C:{value:new THREE.Vector3()},sky:{value:0}};
 scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,96,64),new THREE.ShaderMaterial({uniforms:atmU,side:THREE.BackSide,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
@@ -843,7 +852,7 @@ function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(
 new ResizeObserver(resize).observe(host);resize();
 let lastLOD=0,lastT=0;const lastCam=new THREE.Vector3();
 function loop(now){now=now||0;const dt=Math.min(64,now-lastT||16);lastT=now;stepFlight(now);if(!flight)stepCamera(now,dt);applyCamera();
-const alt=altCam(),sky=cl((.05-alt)/.038,0,1)*cl(CAM.tilt/(30*D2R),0,1);atmU.sky.value=sky;SH.haze.value=sky*.55;starMat.opacity=.75*(1-sky);
+const alt=altCam(),sky=cl((.05-alt)/.038,0,1)*cl(CAM.tilt/(30*D2R),0,1);atmU.sky.value=sky;SH.haze.value=sky*.55;starU.uO.value=.75*(1-sky);if(!reduceMotion)starU.uT.value=now/1000;
 camera.updateMatrixWorld();atmU.C.value.set(0,0,0).applyMatrix4(camera.matrixWorldInverse);
 if(!lastCam.equals(camera.position)){lastCam.copy(camera.position);needLOD=true;$("st-alt").textContent="Eye altitude "+(alt*RM<20?(alt*RM).toFixed(1):n0(alt*RM))+" km"}
 if(needLOD&&now-lastLOD>110){lastLOD=now;updateLOD()}
@@ -1117,15 +1126,16 @@ const wpName=(p,k)=>{if(p.name)return p.name;const ft=nearestFeature(p.lat,p.lon
 // ---------- globe drawing: colour-coded route, pins, turn-back flag
 let walkLine=null,R=null;const PINS=[];let pnrPin=null;
 function slopeCol(s){return s>W.slope?[1,.45,.32]:s>W.slope*.66?[1,.75,.45]:[.34,.88,.81]}
-const ribU={wid:{value:.0001}};
+const ribU={wid:{value:.0001},uT:{value:0},uL:{value:1},uP:{value:matchMedia("(prefers-reduced-motion: reduce)").matches?0:1}};
 const ribMat=new THREE.ShaderMaterial({uniforms:ribU,transparent:true,depthTest:false,vertexColors:true,
- vertexShader:`attribute vec3 sdir;attribute float side;varying vec3 vC;varying float vS;uniform float wid;void main(){vC=color;vS=side;gl_Position=projectionMatrix*modelViewMatrix*vec4(position+sdir*side*wid,1.);}`,
- fragmentShader:`varying vec3 vC;varying float vS;void main(){float e=1.-smoothstep(.55,1.,abs(vS));gl_FragColor=vec4(mix(vC*.35,vC,e),.95);}`});
+ vertexShader:`attribute vec3 sdir;attribute float side;attribute float along;varying vec3 vC;varying float vS;varying float vA;uniform float wid;void main(){vC=color;vS=side;vA=along;gl_Position=projectionMatrix*modelViewMatrix*vec4(position+sdir*side*wid,1.);}`,
+ fragmentShader:`varying vec3 vC;varying float vS;varying float vA;uniform float uT;uniform float uL;uniform float uP;void main(){float e=1.-smoothstep(.55,1.,abs(vS));float p=fract(vA/uL*3.-uT*.22);float g=uP*exp(-pow((p-.5)*22.,2.));vec3 c=mix(vC*.35,vC,e)+vec3(.55,1.,1.)*g*e;gl_FragColor=vec4(c,.95);}`});
+(function tick(t){ribU.uT.value=(t||0)/1000;requestAnimationFrame(tick)})();
 function drawWalk(){if(walkLine){scene.remove(walkLine);walkLine.geometry.dispose();walkLine=null}if(!R)return;
- const S=R.S,n=S.length,P=S.map(s=>posOf(s.lat,s.lon,.00002)),pos=[],sd=[],sg=[],col=[],idx=[],d=new THREE.Vector3(),sv=new THREE.Vector3();
+ ribU.uL.value=Math.max(.01,R.km);const S=R.S,n=S.length,P=S.map(s=>posOf(s.lat,s.lon,.00002)),pos=[],sd=[],sg=[],col=[],idx=[],al=[],d=new THREE.Vector3(),sv=new THREE.Vector3();
  for(let k=0;k<n;k++){const a=P[Math.max(0,k-1)],b=P[Math.min(n-1,k+1)];d.subVectors(b,a);sv.crossVectors(d,P[k]).normalize();const c=S[k].ret?slopeCol(S[k].slope).map(x=>x*.75):slopeCol(S[k].slope);
-  for(const s of[-1,1]){pos.push(P[k].x,P[k].y,P[k].z);sd.push(sv.x,sv.y,sv.z);sg.push(s);col.push(...c)}if(k)idx.push(2*k-2,2*k-1,2*k,2*k-1,2*k+1,2*k)}
- const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("sdir",new THREE.Float32BufferAttribute(sd,3));g.setAttribute("side",new THREE.Float32BufferAttribute(sg,1));g.setAttribute("color",new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);
+  for(const s of[-1,1]){pos.push(P[k].x,P[k].y,P[k].z);sd.push(sv.x,sv.y,sv.z);sg.push(s);col.push(...c);al.push(S[k].km)}if(k)idx.push(2*k-2,2*k-1,2*k,2*k-1,2*k+1,2*k)}
+ const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("sdir",new THREE.Float32BufferAttribute(sd,3));g.setAttribute("side",new THREE.Float32BufferAttribute(sg,1));g.setAttribute("along",new THREE.Float32BufferAttribute(al,1));g.setAttribute("color",new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);
  walkLine=new THREE.Mesh(g,ribMat);walkLine.renderOrder=4;walkLine.frustumCulled=false;scene.add(walkLine)}
 function pinEl(){const b=document.createElement("button");b.className="wpin";b.hidden=true;labelLayer.appendChild(b);return b}
 function syncPins(){while(PINS.length<W.pts.length)PINS.push(pinEl());PINS.forEach((b,k)=>{const p=W.pts[k];if(!p){b.hidden=true;b._p=null;return}b._p=p;b.innerHTML=`<span class="pin ${k===0?"s":p.stop?"st":""}">${k===0?"S":p.stop?"★":k}</span>`;b.setAttribute("aria-label",(p.stop?"Science stop: ":"Waypoint: ")+wpName(p,k));b.onclick=()=>focusWp(k)});
@@ -1631,7 +1641,7 @@ const REAL=[
  ["Weather and radiation","Curiosity's REMS reports (newest public report: 25 Aug 2026); RAD surface dose rate of 0.67 mSv per day","NASA/CAB, Hassler et al. 2014"],
  ["Names","1,927 official feature names","IAU/USGS Gazetteer"]];
 const MODEL=[
- ["Mars clock","Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
+ ["Mars clock","Mars Sol Date and Mars Coordinated Time (top left), Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
  ["Suit time and turn-back point","Walking speed (Tobler's hiking function × a cautious suit pace), rover speed, suit time and reserve are planning guesses you can change."],
  ["Path choices","A* route searches over the terrain grid: Safest terrain (quickest under your slope limit), Fastest (ignores the limit) and Resource-saving (least estimated oxygen and battery). Slopes are only as fine as the terrain (20 m at Jezero, 200 m in other close-ups, about 7 km elsewhere)."],
  ["Mission Assistant","A rule-based helper (no AI service). It matches keywords in your question and answers only from the data and calculations listed on this page, naming the source each time. When the app has no data, it says so."],
@@ -1838,6 +1848,21 @@ const baseShowInfo2=showInfo;showInfo=function(){baseShowInfo2.apply(this,argume
 window._ask=ask;
 })();
 </script>
+<script>
+// ===== HUD extras: live Mars clock, quick-jump bar, cursor glint on panels =====
+(function(){const A=window._atlasAPI,$=id=>document.getElementById(id);
+ const clk=$("mclk");function tickClock(){if(!A)return;const mt=A.marsTime(Date.now()),h=mt.mst,H=Math.floor(h),M=Math.floor((h-H)*60),S=Math.floor(((h-H)*60-M)*60);
+  clk.innerHTML=`<i></i>MSD ${Math.floor(mt.msd).toLocaleString("en-US")} · MTC ${String(H).padStart(2,"0")}:${String(M).padStart(2,"0")}:${String(S).padStart(2,"0")}`}
+ tickClock();setInterval(tickClock,1000);
+ document.querySelectorAll(".sitebar button").forEach(b=>b.onclick=()=>{
+  if(b.dataset.jh){const h=HOT.find(x=>x.id===b.dataset.jh);if(h)goHot(h);return}
+  if(b.dataset.js){const s=SITES.find(x=>x[0]===b.dataset.js);if(s)goSite(s);return}
+  const ft=FEAT.find(x=>x.name===b.dataset.jf);if(ft)goFeature(ft)});
+ if(!matchMedia("(pointer: fine)").matches)return;
+ let last=null;document.addEventListener("pointermove",e=>{const p=e.target.closest&&e.target.closest(".panel,.brand,.tourcard,.menu,.lb-in");
+  if(last&&last!==p){last.style.removeProperty("--mx");last.style.removeProperty("--my")}last=p;if(!p)return;const r=p.getBoundingClientRect();p.style.setProperty("--mx",(e.clientX-r.left)+"px");p.style.setProperty("--my",(e.clientY-r.top)+"px")},{passive:true});
+})();
+</script>
 <style id="theme-ops">/* ===== theme layer (overrides; all features untouched) ===== */
 :root{--sand:var(--ink);--dust:var(--ink2);--accent:var(--acc);--line:var(--rule);--edge:var(--rule);--edge2:var(--rule2);--glass:var(--panel);--glass2:var(--panel);--glow:none;--display:var(--fd);--body:var(--fb);--data:var(--fm)}
 body{background:var(--bg);font-family:var(--fb)}
@@ -1867,33 +1892,76 @@ input[type=range]{accent-color:var(--acc)}
 .cmpt td.cbest{color:var(--acc)}
 .simtag{border-color:var(--warnc);color:var(--warnc)}
 
-/* Flight ops theme */
-:root{--bg:#0b0c0e;--panel:rgba(14,15,17,.94);--ink:#e8e9ea;--ink2:#8d9196;--rule:#2a2d31;--rule2:#3a3e43;--acc:#ff5a1f;--accink:#000;--on:#e8e9ea;--onink:#0b0c0e;--btn:#15171a;--btnh:#1f2226;
---r:2px;--rb:2px;--rs:2px;--shadow:none;--blur:none;--fd:"IBM Plex Sans Condensed",sans-serif;--fb:"IBM Plex Sans",sans-serif;--fm:"IBM Plex Mono",monospace;--brandls:.14em;--h1w:600;--h1ls:-.01em;
---introbg:linear-gradient(90deg,rgba(11,12,14,.97) 0,rgba(11,12,14,.85) 42%,rgba(11,12,14,0) 70%);--okbg:transparent;--okline:#2a2d31;--badbg:rgba(255,90,31,.08);--badline:#ff5a1f;--bad:#ff5a1f;--track:#1f2226;--warnc:#f2b33d;--amber:#f2b33d;--coral:#ff5a1f}
-.panel h2{text-transform:uppercase;letter-spacing:.08em;font-size:17px}
-.wsum b{color:var(--ink)!important;font-family:var(--fm)!important;font-weight:500!important;font-size:22px!important}
-.verdict{border-left:3px solid var(--acc)!important}
-/* accent colour is kept for actions and warnings; normal readings are neutral */
-.suitbar i,.bar b,.fitrow b,.fitrow.best b{background:#cfd2d6!important}
+/* HUD theme: obsidian glass, Martian orange for actions and alerts, cyan for routes and readouts */
+:root{--bg:#030508;--panel:rgba(10,16,28,.74);--ink:#e9eef7;--ink2:#93a0b4;--rule:rgba(255,255,255,.12);--rule2:rgba(255,255,255,.22);--acc:#ff4d2a;--accink:#fff;--on:#00f0ff;--onink:#02121a;--btn:rgba(255,255,255,.04);--btnh:rgba(0,240,255,.08);
+--cy:#00f0ff;--gold:#ffd166;--vio:#e0aaff;--r:4px;--rb:3px;--rs:3px;--shadow:0 10px 40px rgba(0,0,0,.45);--blur:blur(18px) saturate(160%);
+--fd:"Space Grotesk",sans-serif;--fb:"IBM Plex Sans",sans-serif;--fm:"JetBrains Mono",monospace;--brandls:.14em;--h1w:600;--h1ls:-.01em;--spring:cubic-bezier(.16,1,.3,1);
+--introbg:linear-gradient(90deg,rgba(3,5,8,.96) 0,rgba(3,5,8,.8) 42%,rgba(3,5,8,0) 70%);--okbg:rgba(0,240,255,.05);--okline:rgba(0,240,255,.3);--badbg:rgba(255,77,42,.1);--badline:#ff4d2a;--bad:#ff4d2a;--track:rgba(255,255,255,.08);--warnc:#ffd166;--amber:#ffd166;--coral:#ff4d2a}
+body{background:radial-gradient(1200px 800px at 60% 45%,#0a0f1d,#030508 70%)}
+/* corner brackets + cursor glint drawn as fixed backgrounds, so they stay put while a panel scrolls */
+.panel,.brand,.tourcard,.menu,.lb-in{--bk:rgba(0,240,255,.7);background:
+ radial-gradient(260px circle at var(--mx,-400px) var(--my,-400px),rgba(255,255,255,.07),transparent 65%),
+ linear-gradient(var(--bk),var(--bk)) left top/12px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left top/1px 12px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right top/12px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right top/1px 12px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) left bottom/12px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left bottom/1px 12px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right bottom/12px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right bottom/1px 12px no-repeat,
+ var(--panel)!important}
+.panel:not([hidden]){animation:hudIn .45s var(--spring)}
+@keyframes hudIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+.panel h2,.brand strong,.tourcard h2{font-family:var(--fd)!important;text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+.panel h2{font-size:15px}
+.panel h3,.wsum span,.suitlab{font-family:var(--fm)!important;letter-spacing:.12em;color:var(--cy)!important;opacity:.85}
+.wsum b,.big,#i-score,.cmpt td{font-family:var(--fm)!important;font-variant-numeric:tabular-nums}
+.wsum b{color:var(--ink)!important;font-weight:500!important;font-size:22px!important}
+.intro h1{font-family:var(--fd)!important;text-transform:uppercase;letter-spacing:.04em;font-size:clamp(38px,5.6vw,70px)!important}
+.intro .kick{letter-spacing:.14em}
+.presets button[aria-pressed=true] small,.presets button[aria-pressed=true] span{color:rgba(233,238,247,.75)!important}
+button[aria-pressed=true],button[aria-expanded=true],.presets button[aria-pressed=true]{background:rgba(0,240,255,.14)!important;color:var(--cy)!important;border-color:rgba(0,240,255,.55)!important;box-shadow:inset 0 0 12px rgba(0,240,255,.12)!important}
+.btn-primary,.btn-primary:hover{box-shadow:0 0 18px rgba(255,77,42,.35)!important}
+button,.btnlink{transition:background .25s var(--spring),border-color .25s var(--spring),color .25s,transform .25s var(--spring)}
+button:active{transform:scale(.97)}
+.verdict{border-left:2px solid var(--cy)!important}
+.verdict.bad{border-left-color:var(--acc)!important}
+/* readings in cyan, problems in orange */
+.suitbar i,.bar b,.fitrow b,.fitrow.best b,.tprog i{background:linear-gradient(90deg,rgba(0,240,255,.55),#00f0ff)!important}
 .suitbar i.over,.bar.low b{background:var(--bad)!important}
-.verdict:not(.bad){border-left-color:#cfd2d6!important}
+.cmpt td.cbest{color:var(--cy)!important}
+.status{font-family:var(--fm)!important}
+.search input{font-family:var(--fm)!important;font-size:13.5px!important;border-radius:999px!important}
+.search input:focus{border-color:rgba(0,240,255,.6)!important;box-shadow:0 0 0 3px rgba(0,240,255,.12)!important}
+/* live Mars clock in the logo block */
+.mclk{display:block;font:500 10.5px/1.3 var(--fm);font-style:normal;letter-spacing:.08em;color:var(--cy);margin-top:3px;font-variant-numeric:tabular-nums}
+.mclk i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2ee6a6;margin-right:6px;vertical-align:1px;box-shadow:0 0 6px #2ee6a6;animation:led 2.4s ease-in-out infinite}
+@keyframes led{50%{opacity:.35}}
+/* quick-jump bar */
+.sitebar{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid var(--rule);border-radius:999px;background:rgba(10,16,28,.6);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.sitebar span{font:500 10px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--cy);padding:0 6px 0 8px}
+.sitebar button{min-height:28px;padding:3px 11px;font:500 12px var(--fd)!important;border-radius:999px!important;background:transparent;border-color:transparent!important}
+.sitebar button:hover{border-color:rgba(0,240,255,.4)!important}
+.atlas:has(#tour:not([hidden])) .sitebar,.atlas:has(.intro:not(.out)) .sitebar,.atlas:has(#hint:not(.gone)) .sitebar{opacity:0;pointer-events:none}
+.sitebar{transition:opacity .3s}
+@media(max-width:1100px){.sitebar{display:none}}
+@media(max-width:760px){.mclk{display:none}}
+/* faint scanlines over the whole screen */
+.atlas::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px);animation:scan 9s linear infinite}
+@keyframes scan{to{background-position:0 90px}}
+@media(prefers-reduced-motion:reduce){.atlas::after,.mclk i,.panel:not([hidden]){animation:none}}
 /* Mission Assistant */
 #ask{display:flex;flex-direction:column}
 #ask:not([hidden]){display:flex}
 .alog{display:flex;flex-direction:column;gap:10px;max-height:min(46vh,460px);overflow:auto;margin:10px 0 8px;padding-right:4px}
 .amsg{font-size:13px;line-height:1.5;color:var(--ink)}
-.amsg.me{align-self:flex-end;max-width:85%;background:#1f2226;border:1px solid var(--rule);padding:6px 10px;border-radius:2px}
-.amsg.bot{border-left:2px solid #cfd2d6;padding:2px 0 2px 10px}
+.amsg.me{align-self:flex-end;max-width:85%;background:rgba(0,240,255,.07);border:1px solid var(--rule);padding:6px 10px;border-radius:2px}
+.amsg.bot{border-left:2px solid var(--cy);padding:2px 0 2px 10px}
 .amsg .asrc{margin-top:5px;font:10.5px/1.4 var(--fm);color:var(--ink2);letter-spacing:.02em}
 .amsg .aacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .amsg .aacts button,.achips button{min-height:30px;padding:4px 9px;font-size:12px}
 .amsg .cmpt{margin:6px 0}
 .achips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;flex:none}#ask .phead,#ask .aform{flex:none}
 .aform{display:flex;gap:6px}
-.aform input{flex:1;min-width:0;font:14px var(--fb);color:var(--ink);background:#15171a;border:1px solid var(--rule);border-radius:2px;padding:8px 10px}
+.aform input{flex:1;min-width:0;font:14px var(--fb);color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:3px;padding:8px 10px;font-family:var(--fm)}
 .aform input:focus{outline:1px solid var(--acc);outline-offset:0}
-#ask{background:#0e0f11!important}
+#ask{--panel:rgba(8,12,22,.94)}
 @media(max-width:760px){#ask.panel{max-height:72%;overflow:hidden}#ask .alog{max-height:none;flex:1 1 auto;min-height:80px}#ask>.note{display:none}.achips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.achips button{flex:none}}
 </style>
 </body></html>
