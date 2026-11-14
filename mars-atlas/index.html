@@ -451,7 +451,7 @@ h2{font-size:23px}
     <h1>Plan the first walk on Mars.</h1>
     <p>Mars Atlas layers data from five NASA missions onto one 3D globe. Find where humans could live, then plan a Marswalk: the route, the slopes, the science stops, the suit time, the sunlight and the moment to turn back.</p>
     <div class="cta"><button id="go-tour" class="btn-primary">Start the guided tour</button><button id="go-explore" class="btn-ghost">Explore the planet</button></div>
-    <div class="stats"><div><b>5</b><span>NASA missions</span></div><div><b>9</b><span>Data layers</span></div><div><b>1,927</b><span>Named places</span></div><div><b>4</b><span>3D close-ups</span></div></div>
+    <div class="stats"><div><b>5</b><span>NASA missions</span></div><div><b>10</b><span>Data layers</span></div><div><b>1,927</b><span>Named places</span></div><div><b>4</b><span>3D close-ups</span></div></div>
     <small>Concept prototype. Scores and plans show where to look closer, not where it is safe to go.<br>By <a href="https://jeevanxx.github.io" target="_blank" rel="noopener">Jeevan J Shine</a> · NASA Space Apps 2026 · Built with AI assistance (Claude)</small>
   </div>
 </section>
@@ -1130,7 +1130,7 @@ function briefingText(){const P=W.pts,mt=R.mt,pk=R.pnr!=null?R.S[R.pnr]:null,L=[
  L.push(pk?`TURN BACK by ${fmtKm(pk.km)} (about ${hm(R.sunH(pk.t))}) at ${ll4(pk)}`:"Within the suit budget the whole way.");
  L.push("","Points:");
  P.forEach((p,k)=>{const s=R.S.find(x=>x.wp===k&&!(k===0&&x.km>0));L.push(`${k===0?"S":k}. ${wpName(p,k)} | ${ll4(p)} | ${fmtElev(elev(p.lat,p.lon))}${s&&k?` | arrive ${hm(R.sunH(s.t-(s.dwell||0)))}`:""}${p.stop?` | stop ${p.dwell} min`:""}`);
-  if(p.stop)brief(p).forEach(x=>L.push(`   - ${x[0]}: ${x[1]}`))});
+  if(p.stop)brief(p).forEach(x=>L.push(`   - ${x[0]}: ${x[1].replace(/<[^>]+>/g,"")}`))});
  L.push("","Checks:");document.querySelectorAll("#w-flags li").forEach(li=>L.push("- "+li.textContent));
  L.push("","Data: MOLA/HRSC terrain, MGS TES, SWIM ice, MRO CTX, Mars Odyssey THEMIS, Curiosity REMS and RAD. Concept plan only, not for real mission use.");
  return L.join("\n")}
@@ -1243,6 +1243,29 @@ $("go-tour").onclick=startQuick;$("go-tour").textContent="Watch the 2-minute dem
 $("go-explore").insertAdjacentHTML("afterend",`<button id="go-full" class="btn-ghost">Full tour (${FULL.length} steps)</button>`);$("go-full").onclick=startFull;
 $("btn-tour").onclick=startQuick;$("btn-tour").querySelector("span").textContent="Demo";
 // demo step 3 needs the Jezero walk even if started from elsewhere
+
+// ===== USGS global geologic map (Tanaka et al. 2014, SIM 3292), Perseverance raw images, Curiosity's route =====
+let GEO=null,GEOI=null;const GW=2880,GH=1440;
+const geoTex=new THREE.TextureLoader().load("tiles/layers/geology.png",()=>{needLOD=true});geoTex.wrapS=THREE.RepeatWrapping;
+fetch("tiles/layers/geology.json").then(r=>r.json()).then(d=>{GEO=d;return fetch("tiles/layers/geology_idx.png")}).then(r=>r.blob()).then(b=>createImageBitmap(b,{colorSpaceConversion:"none",premultiplyAlpha:"none"})).then(bm=>{const c=document.createElement("canvas");c.width=GW;c.height=GH;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(bm,0,0);const p=x.getImageData(0,0,GW,GH).data;GEOI=new Uint8Array(GW*GH);for(let i=0;i<GW*GH;i++)GEOI[i]=p[i*4];if(W.pts.length)renderWalk()}).catch(()=>{});
+function geoAt(lat,lon){if(!GEO||!GEOI)return null;const r=Math.min(GH-1,Math.max(0,Math.floor((90-lat)*GH/180))),c=Math.min(GW-1,Math.floor((((lon+180)%360+360)%360)*GW/360)),k=GEOI[r*GW+c];return k?{code:GEO.codes[k-1],desc:GEO.desc[k-1],color:GEO.color[k-1]}:null}
+const ERA=d=>{const N=/Noachian/.test(d),Hs=/Hesperian/.test(d),Am=/Amazonian/.test(d);return N&&Hs?"It spans the Noachian–Hesperian transition, around 3.7 billion years ago, when Mars was losing its surface water":Am&&Hs?"It spans the Hesperian and Amazonian periods (roughly the last 3.7 billion years)":N?"Noachian rocks are the oldest on Mars (roughly 4.1 to 3.7 billion years old), from when water was most active":Hs?"Hesperian units date from roughly 3.7 to 3 billion years ago, when Mars was drying out":Am?"Amazonian units are the youngest (roughly the last 3 billion years)":""};
+const prevSetOverlay=setOverlay;
+setOverlay=function(o){prevSetOverlay(o);SH.ov.value=o==="geo"?geoTex:ovTex;const heat=$("legend").querySelector(".heat"),sc=$("legend").querySelector(".scale-w");
+ if(o==="geo"){$("legend").hidden=false;heat.style.display="none";sc.style.display="none";$("leg-note").textContent="44 rock units, mapped by age and origin. Click any place, or add a science stop, to see its unit.";$("leg-src").textContent="Data: USGS–NASA Planetary Geologic Mapping Program · Tanaka et al. 2014, SIM 3292"}
+ else{heat.style.display="";sc.style.display=""}};
+document.querySelector('.ovgrid').insertAdjacentHTML("beforeend",`<button data-ov="geo" aria-pressed="false">Geology<small>USGS</small></button>`);
+document.querySelectorAll("[data-ov]").forEach(b=>b.onclick=()=>setOverlay(b.dataset.ov));
+// science stops and place cards name the rock unit
+const prevBrief=brief;brief=function(p){const o=prevBrief(p),g=geoAt(p.lat,p.lon);
+ if(g)o.splice(Math.min(1,o.length),0,["Geology",`${g.desc} (${g.code}) on the USGS geologic map. ${ERA(g.desc)}${ERA(g.desc)?".":""}`]);
+ const rt=o.find(x=>x[0]==="Rover ground truth");if(rt){const sol=(rt[1].match(/sol (\d+)/)||[])[1];rt[1]+=` See what it saw in the <a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Perseverance raw images gallery</a>${sol?` (sol ${sol})`:""}.`}
+ return o};
+$("i-origin").insertAdjacentHTML("afterend",`<p class="note" id="i-geo" hidden></p>`);
+const prevShowInfo=showInfo;showInfo=function(lat,lon,ft,site){prevShowInfo(lat,lon,ft,site);const g=geoAt(lat,lon),e=$("i-geo");if(!e)return;if(g){e.hidden=false;e.innerHTML=`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${g.color};margin-right:6px;vertical-align:-1px"></span>Geology: ${g.desc} (${g.code})`}else e.hidden=true};
+// Curiosity's real planned route for comparison
+PRESETS.gale.pts[1].note+=` NASA has published Curiosity's <a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">proposed path up Mount Sharp</a>: compare it with this plan.`;
+document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars" target="_blank" rel="noopener">USGS–NASA Planetary Geologic Mapping Program</a>: global geologic map of Mars (Tanaka et al. 2014, SIM 3292, via NASA Mars Trek)</li><li><a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Mars Perseverance raw images gallery</a>: linked from science stops along Perseverance's path</li><li><a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">Curiosity's proposed path up Mount Sharp</a>: NASA route map, compared with the Gale crater plan</li><li><a href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener">NASA Worldview</a>: Earth imagery explorer that inspired the layer-switching design (no Worldview data is used, since it covers Earth)</li>`);
 
 })();
 </script>

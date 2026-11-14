@@ -11,6 +11,7 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 - **Science stops:** suggested objectives from the data under each stop (water-formed minerals, bedrock vs dust, ice, nearby features, Perseverance's real drives).
 - **Jezero close-up:** 5 m HiRISE imagery on 20 m CTX terrain, with Perseverance's real traverse.
 - **Conditions:** live Mars clock (Mars Year, season, local solar time, sunrise/sunset), Curiosity's latest REMS weather, radiation dose from Curiosity's RAD.
+- **Geology:** the USGS global geologic map as a layer; every science stop and place card names its rock unit and age.
 - **Survival analysis:** scores the planet for a first base, a solar camp or a science mission, and compares places.
 - **2-minute demo** and a full guided tour.
 
@@ -18,6 +19,10 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 - NASA Mars Trek: Viking MDIM 2.1 colour mosaic, MGS MOLA shaded relief, MRO CTX mosaics, Mars Odyssey THEMIS day IR, MGS TES thermal inertia and dust cover index, Perseverance traverse, aqueous mineral distribution (Ehlmann & Edwards 2014)
 - NASA PDS: MGS MOLA MEGDR elevation
 - USGS Astrogeology: HRSC/MOLA blended 200 m terrain; Mars 2020 HiRISE mosaic and CTX 20 m terrain of Jezero
+- USGS–NASA Planetary Geologic Mapping Program: global geologic map of Mars (Tanaka et al. 2014, SIM 3292), https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars
+- Mars Perseverance raw images gallery, linked from science stops: https://mars.nasa.gov/mars2020/multimedia/raw-images/
+- Curiosity's proposed path up Mount Sharp (NASA), compared with the Gale plan: https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/
+- NASA Worldview: inspired the layer-switching design (Earth data, so none is used): https://worldview.earthdata.nasa.gov/
 - IAU/USGS Gazetteer of Planetary Nomenclature
 - SWIM project: subsurface ice consistency maps
 - NASA / Centro de Astrobiología: Curiosity REMS weather (https://mars.nasa.gov/msl/mission/weather/)
