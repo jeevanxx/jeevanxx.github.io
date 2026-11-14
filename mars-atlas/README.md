@@ -21,7 +21,7 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 ## Real data vs models
 | Real data, shown as published | Calculated or modelled |
 |---|---|
-| Mars Trek imagery (Viking, CTX, HiRISE, THEMIS, MOLA/HRSC), MOLA/HRSC/CTX terrain, USGS geology and interpretations, CRISM/OMEGA/THEMIS minerals, TES thermal inertia and dust, SWIM ice, Perseverance and Curiosity paths, Perseverance raw images, Curiosity REMS weather and RAD dose rate, IAU names | Mars clock (Mars24 method), walking/rover speed, suit time and turn-back point, safer-path routing, radiation per walk, air pressure, survival score, science-stop suggestions. Thermal inertia and dust values are read from coloured maps, so they're relative. |
+| Mars Trek imagery (Viking, CTX, HiRISE, THEMIS, MOLA/HRSC), MOLA/HRSC/CTX terrain, USGS geology and interpretations, CRISM/OMEGA/THEMIS minerals, TES thermal inertia and dust, SWIM ice, Perseverance and Curiosity paths, Perseverance raw images, Curiosity REMS weather and RAD dose rate, IAU names | Mars clock (Mars24 method), walking/rover speed, suit time and turn-back point, path choices (safest terrain, fastest, resource-saving), simulated oxygen/water/energy use and return-to-base check (Pandolf 1977 effort model; not real suit data), radiation per walk, air pressure, survival score, science-stop suggestions. Thermal inertia and dust values are read from coloured maps, so they're relative. |
 
 ## Data sources
 - NASA Mars Trek live map tiles (WMTS), plus the Esri OnMars CTX service it lists (credit: NASA/JPL/MSSS/Caltech Murray Lab/Esri)

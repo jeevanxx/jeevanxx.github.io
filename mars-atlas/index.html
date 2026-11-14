@@ -1085,6 +1085,9 @@ function analyze(safe,rm){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.len
  const total=S[S.length-1].t,lim=W.suit-W.res,endBack=W.ret?0:back[S.length-1],need=total+endBack;
  // point of no return: first spot where elapsed + quickest way home exceeds suit time minus reserve
  let pnr=null;for(let k=0;k<S.length;k++){const home=W.ret?Math.min(back[k],total-S[k].t):back[k];if(S[k].t+home>lim){pnr=k;break}}
+ // resource limits: turn back before any suit (or rover) supply would dip into the reserve on the way home (simulated estimate)
+ const C=caps(),rf=W.res/W.suit,RK=W.mode==="rover"?["o2","h2o","bat","rov"]:["o2","h2o","bat"];let pnrBy=pnr!=null?"time":null;
+ for(let k=0;k<(pnr==null?S.length:pnr);k++){let hit=null;for(const q of RK){const home=W.ret?Math.min(backR[k][q],U[q]-S[k][q]):backR[k][q];if(S[k][q]+home>C[q]*(1-rf)+1e-9){hit=q;break}}if(hit){pnr=k;pnrBy=hit;break}}
  let climb=0,desc=0,steepKm=0,maxSl=0,softKm=0,dustKm=0,darkKm=0;const lat0=P[0].lat;
  const sunH=t=>startH+t/(SOL_H/24); // elapsed Earth hours -> local Mars hours
  for(let k=1;k<S.length;k++){const a=S[k-1],b=S[k],dk=b.km-a.km,dz=b.m-a.m;if(dz>0)climb+=dz;else desc-=dz;if(b.slope>W.slope)steepKm+=dk;maxSl=Math.max(maxSl,b.slope);
@@ -1092,7 +1095,8 @@ function analyze(safe,rm){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.len
  S[0].sun=sunElev(S[0].lat,mt.dec,startH);
  const dl=dayLen(lat0,mt.dec);
  const endR=W.ret?{o2:0,h2o:0,bat:0,rov:0}:backR[S.length-1],used={o2:U.o2+endR.o2,h2o:U.h2o+endR.h2o,bat:U.bat+endR.bat,rov:U.rov+endR.rov};
- return{used,caps:caps(),backR,S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
+ const short=RK.filter(q=>used[q]>C[q]*(1-rf)+1e-9),left=Object.fromEntries(RK.map(q=>[q,1-used[q]/C[q]]));
+ return{used,caps:C,short,left,pnrBy,backR,S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
 function planMs(){return W.date?W.date.getTime():Date.now()}
 
 // ---------- science stop briefs from the data under each point
@@ -1164,14 +1168,15 @@ function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(fal
  $("w-list").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);W.preset=null;markPreset();renderWalk()});
  $("w-list").querySelectorAll("strong[data-k]").forEach(s=>s.onclick=()=>focusWp(+s.dataset.k));
  if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-res").hidden=true;$("w-cmp").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
- const over=R.need>R.lim,pct=Math.min(100,R.need/W.suit*100);
+ const over=R.need>R.lim||R.short.length>0,pct=Math.min(100,R.need/W.suit*100);
  $("w-sum").innerHTML=`<div><b>${fmtKm(R.km)}</b><span>${W.ret?"Round trip":"One way"}</span></div><div><b>${fmtH(R.need)}</b><span>Suit time used</span></div><div><b>${n0(R.climb)} m</b><span>Total climb</span></div>
  <div class="suit"><div class="suitbar"><i class="${over?"over":""}" style="width:${pct}%"></i><em style="left:${(R.lim/W.suit*100).toFixed(1)}%" title="Reserve starts here"></em></div><div class="suitlab"><span>0 h</span><span>Reserve after ${fmtH(R.lim)}</span><span>${W.suit} h suit</span></div></div>`;
  renderRes();schedCmp();
  const pk=R.pnr!=null?R.S[R.pnr]:null;
  const cmpTxt=D0?(D0.steepKm>.05||D0.maxSl>R.maxSl+1?`<br><span style="color:var(--dust)">${RNAME[W.rmode]} path vs a straight line: steepest ${R.maxSl.toFixed(0)}° instead of ${D0.maxSl.toFixed(0)}°, ${R.km>D0.km?"+"+fmtKm(R.km-D0.km)+" walking":"same distance"}, ${fmtH(Math.abs(R.need-D0.need))} ${R.need>D0.need?"longer":"shorter"}.</span>`:`<br><span style="color:var(--dust)">The straight line is already the safest way here.</span>`):"";
- $("w-verdict").innerHTML=(over?`<p class="verdict bad"><b>Too long for one EVA.</b> You'd need ${fmtH(R.need)}, but the suit allows ${fmtH(R.lim)} before the reserve. ${pk?`Turn back by <b>${fmtKm(pk.km)}</b> (about ${hm(R.sunH(pk.t))} Mars time), marked ↩ on the globe.`:""} ${W.mode==="foot"?"Try a rover, a closer stop, or a shorter route.":"Try a closer stop, or split it into two EVAs."}</p>`
-  :`<p class="verdict"><b>Doable in one EVA.</b> Back by ${hm(R.endH)} Mars time with ${fmtH(R.lim-R.need)} spare before the ${fmtH(W.res)} reserve.</p>`).replace(/<\/p>$/,cmpTxt+"</p>");
+ const RN={o2:"oxygen",h2o:"cooling water",bat:"suit battery",rov:"rover battery",time:"suit time"},tooLong=R.need>R.lim,resTxt=R.short.length?` Estimated ${(a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0])(R.short.map(q=>RN[q]))} would dip into the reserve before you get back.`:"";
+ $("w-verdict").innerHTML=(over?`<p class="verdict bad"><b>${tooLong?"Too long for one EVA.":"Not enough supplies to get back safely."}</b> ${tooLong?`You'd need ${fmtH(R.need)}, but the suit allows ${fmtH(R.lim)} before the reserve.`:""}${resTxt} ${pk?`Turn back by <b>${fmtKm(pk.km)}</b> (about ${hm(R.sunH(pk.t))} Mars time, limited by ${RN[R.pnrBy]}), marked ↩ on the globe.`:""} ${W.mode==="foot"?"Try a rover, a closer stop, or a shorter route.":"Try a closer stop, or split it into two EVAs."}</p>`
+  :`<p class="verdict"><b>Doable in one EVA.</b> Back by ${hm(R.endH)} Mars time with ${fmtH(R.lim-R.need)} spare before the ${fmtH(W.res)} reserve. Return to base looks feasible: estimated ${Object.entries(R.left).map(([q,v])=>`${Math.round(v*100)}% ${RN[q]}`).join(", ")} left (simulated).</p>`).replace(/<\/p>$/,cmpTxt+"</p>");
  // hazard flags
  const fl=[],steepPct=R.steepKm/R.km*100;
  if(R.steepKm>.05)fl.push(["hi",`${fmtKm(R.steepKm)} steeper than your ${W.slope}° limit (max ${R.maxSl.toFixed(0)}°). ${W.mode==="rover"?"The rover can't drive those parts, so they're walked.":"Look for a switchback or another line."}`]);
@@ -1237,7 +1242,7 @@ function briefingText(){const P=W.pts,mt=R.mt,pk=R.pnr!=null?R.S[R.pnr]:null,L=[
  L.push(`Season: Mars Year ${mt.my}, Ls ${mt.Ls.toFixed(0)} deg | sunrise ${hm(R.sunrise)}, sunset ${hm(R.sunset)} local solar time`);
  L.push(`Timing: leave ${hm(W.start)}, back by ${hm(R.endH)} | suit time ${fmtH(R.need)} of ${W.suit} h (reserve ${fmtH(W.res)})`);
  L.push("Resources (SIMULATED educational estimate, not real suit data): "+resRows().map(r=>`${r.n.toLowerCase()} ${r.f(r.a)} of ${r.f(r.b)}`).join(", "));
- L.push(pk?`TURN BACK by ${fmtKm(pk.km)} (about ${hm(R.sunH(pk.t))}) at ${ll4(pk)}`:"Within the suit budget the whole way.");
+ L.push(pk?`TURN BACK by ${fmtKm(pk.km)} (about ${hm(R.sunH(pk.t))}, limited by ${R.pnrBy==="time"?"suit time":R.pnrBy+" (simulated)"}) at ${ll4(pk)}`:"Within the suit budget the whole way.");
  L.push("","Points:");
  P.forEach((p,k)=>{const s=R.S.find(x=>x.wp===k&&!(k===0&&x.km>0));L.push(`${k===0?"S":k}. ${wpName(p,k)} | ${ll4(p)} | ${fmtElev(elev(p.lat,p.lon))}${s&&k?` | arrive ${hm(R.sunH(s.t-(s.dwell||0)))}`:""}${p.stop?` | stop ${p.dwell} min`:""}`);
   if(p.stop)brief(p).forEach(x=>L.push(`   - ${x[0]}: ${x[1].replace(/<[^>]+>/g,"")}`))});
@@ -1623,7 +1628,8 @@ const REAL=[
 const MODEL=[
  ["Mars clock","Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
  ["Suit time and turn-back point","Walking speed (Tobler's hiking function × a cautious suit pace), rover speed, suit time and reserve are planning guesses you can change."],
- ["Safer path","A route search over the terrain grid that avoids slopes above your limit. Slopes are only as fine as the terrain (20 m at Jezero, 200 m in other close-ups, about 7 km elsewhere)."],
+ ["Path choices","A* route searches over the terrain grid: Safest terrain (quickest under your slope limit), Fastest (ignores the limit) and Resource-saving (least estimated oxygen and battery). Slopes are only as fine as the terrain (20 m at Jezero, 200 m in other close-ups, about 7 km elsewhere)."],
+ ["Oxygen, water and energy","Simulated educational estimates, not real suit or rover data. Effort comes from the Pandolf load-carrying equation (1977) scaled to Mars gravity; oxygen from 20.1 kJ per litre of O₂; cooling water from sublimation (2.83 MJ/kg). Suit capacities are sized from your suit-time setting. Rover battery default (8.7 kWh) matches the Apollo Lunar Roving Vehicle; rover mass, efficiency and electronics load are guesses. The turn-back point uses whichever runs out first: suit time or a supply."],
  ["Radiation per walk","Curiosity's measured daily rate multiplied by the walk's length. No suit shielding or solar storms."],
  ["Air pressure","Estimated from the NASA fact-sheet pressure and scale height, scaled by elevation."],
  ["Survival score and mission fit","A weighted model of ice, landing air, flatness, sunlight and terrain variety. It shows where to look closer, not where it's safe."],
