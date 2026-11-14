@@ -241,6 +241,7 @@ h2{font-size:23px}
 .suitbar i.over{background:linear-gradient(90deg,#d85a3a,#ff9466)}
 .suitbar em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#ffc078}
 .resrow{display:grid;grid-template-columns:76px minmax(60px,1fr) auto;gap:7px;align-items:center;font:12px var(--data);color:var(--dust);margin:5px 0}.resrow b{color:var(--sand);font-weight:600;white-space:nowrap;font-size:11.5px}.simtag{display:inline-block;font:10.5px var(--data);letter-spacing:.04em;padding:2px 7px;border-radius:9px;border:1px solid rgba(255,192,120,.45);color:#ffc078;margin-bottom:4px}
+.cmpt{width:100%;border-collapse:collapse;font:11.5px var(--data);color:var(--dust)}.cmpt th,.cmpt td{padding:4px 3px;white-space:nowrap;text-align:right;border-bottom:1px solid rgba(255,236,214,.07)}.cmpt th:first-child,.cmpt td:first-child{text-align:left;white-space:normal}.cmpt th{font-weight:500;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}.cmpt tr[data-r]{cursor:pointer}.cmpt tr[data-r]:hover td{color:var(--sand)}.cmpt tr.on td{color:var(--sand);font-weight:600}.cmpt td.cbest{color:#56e0cf}
 .suitlab{display:flex;justify-content:space-between;font:11.5px var(--data);color:var(--dust)}
 .verdict.bad{background:rgba(255,122,89,.08);border-color:rgba(255,122,89,.35)}
 .wlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -468,10 +469,11 @@ h2{font-size:23px}
     <button data-preset="gale" aria-pressed="false"><b>Gale crater</b><span>Rover run to Gediz Vallis</span></button>
   </div>
   <div class="seg two" id="w-mode"><button data-mode="foot" aria-pressed="true">On foot</button><button data-mode="rover" aria-pressed="false">With a rover</button></div>
-  <div class="row" style="align-items:center;gap:14px"><label class="check" for="w-ret"><input id="w-ret" type="checkbox" checked> Return to start</label><label class="check" for="w-safe"><input id="w-safe" type="checkbox" checked> Safer path</label><button id="w-arm" aria-pressed="false" style="flex:none;margin-left:auto">★ Next click is a stop</button></div>
+  <div class="row" style="align-items:center;gap:14px"><label class="check" for="w-ret"><input id="w-ret" type="checkbox" checked> Return to start</label><label class="check" for="w-route" title="How the planner picks the path between your points">Path <select id="w-route"><option value="safe" selected>Safest terrain</option><option value="fast">Fastest</option><option value="eco">Resource-saving</option><option value="straight">Straight line</option></select></label><button id="w-arm" aria-pressed="false" style="flex:none;margin-left:auto">★ Next click is a stop</button></div>
   <div id="w-sum" class="wsum"></div>
   <div id="w-verdict"></div>
   <div id="w-res" class="sec" hidden></div>
+  <div id="w-cmp" class="sec" hidden></div>
   <div id="w-flags" class="sec" hidden></div>
   <div id="w-prof" class="sec" hidden>
     <h3>Route profile</h3>
@@ -494,7 +496,7 @@ h2{font-size:23px}
       <label class="sl" for="a-rovKWh"><span>Rover battery</span><input id="a-rovKWh" type="range" min="2" max="20" step=".1"><output id="a-rovKWh-o"></output></label>
     </div>
     <p class="note">Resource estimates (simulated, for learning): effort uses the Pandolf load-carrying equation (Pandolf, Givoni &amp; Goldman, 1977) with its weight terms scaled to Mars gravity, and a terrain factor from how firm the ground looks in the thermal-inertia layer. Oxygen assumes 20.1 kJ of energy per litre of O₂. Cooling water assumes 80% of body heat is removed by sublimating water (2.83 MJ/kg). Suit O₂ and water capacity are sized for your suit-time setting at a moderate 350 W work rate. The 8.7 kWh rover battery default matches the Apollo Lunar Roving Vehicle's two 121 Ah, 36 V batteries; rover mass 900 kg, 70% drivetrain efficiency and 200 W electronics are guesses. None of these are real spacesuit or rover specifications.</p>
-    <p class="note">Why this walking model: Tobler's hiking function is a standard, well-tested formula for how slope changes human walking speed (fastest on a gentle downhill, slower up or down steep ground). Suits are stiff and heavy, so the default ×0.5 pace (about 2.5 km/h on the flat) is a deliberately cautious guess. Change it to test faster or slower crews. Rover speed is a flat cruise speed, and slopes steeper than your limit are walked. These are planning guesses, not suit or rover specifications.</p><p class="note">Safer path searches the terrain between waypoints (20 m terrain at Jezero, 200 m in the other close-ups) for the quickest route that stays under your slope limit.</p>
+    <p class="note">Why this walking model: Tobler's hiking function is a standard, well-tested formula for how slope changes human walking speed (fastest on a gentle downhill, slower up or down steep ground). Suits are stiff and heavy, so the default ×0.5 pace (about 2.5 km/h on the flat) is a deliberately cautious guess. Change it to test faster or slower crews. Rover speed is a flat cruise speed, and slopes steeper than your limit are walked. These are planning guesses, not suit or rover specifications.</p><p class="note">Path choices search the terrain between waypoints (20 m terrain at Jezero, 200 m in the other close-ups). <b>Safest terrain</b>: quickest route that stays under your slope limit. <b>Fastest</b>: quickest route, ignoring the slope limit. <b>Resource-saving</b>: uses the least suit oxygen and battery (and rover battery), avoiding steep and soft ground, while staying under the slope limit. <b>Straight line</b>: no search.</p>
   </details>
   <div class="row"><button id="w-undo">Undo point</button><button id="w-clear">Clear</button><button id="w-export">Copy EVA plan</button></div>
   <p class="warn">A concept planner. Terrain is 200 m resolution in the close-up areas and about 7 km elsewhere, so boulders, small scarps and sand ripples don't show. Scout any real route with high-resolution imagery first.</p>
@@ -1003,7 +1005,7 @@ const season=Ls=>["Northern spring","Northern summer","Northern autumn","Norther
 const SOL_H=24.6597; // one sol in Earth hours (24 h 39 min 35 s)
 
 // ---------- planner state
-const W=window._walkW={safe:true,body:75,load:50,suitW:150,rovKWh:8.7,pts:[],mode:"foot",ret:true,start:9,suit:8,res:1,pace:.5,rover:8,slope:15,date:null,preset:null,arm:false};
+const W=window._walkW={safe:true,rmode:"safe",body:75,load:50,suitW:150,rovKWh:8.7,pts:[],mode:"foot",ret:true,start:9,suit:8,res:1,pace:.5,rover:8,slope:15,date:null,preset:null,arm:false};
 window.walkOn=false;
 const PRESETS={
  jezero:{mode:"foot",ret:true,start:9,pts:[
@@ -1018,18 +1020,21 @@ function speedOf(s,mode){const foot=6*Math.exp(-3.5*Math.abs(s+.05))*W.pace;if(m
 // ---------- safer path: slope-aware A* over the terrain between two waypoints
 const KMD=RM*D2R,pathCache=new Map();
 function inCtx(p){return window.CTX20&&CTX20.D&&inBox(CTX20.dem,p.lat,p.lon)}
-function safePath(A,B){const key=[A.lat,A.lon,B.lat,B.lon,W.slope,W.mode,W.pace,W.rover,window.CTX20&&CTX20.D?1:0,exag].join(",");if(pathCache.has(key))return pathCache.get(key);
+function safePath(A,B,rm){rm=rm||W.rmode||"safe";const eco=rm==="eco",key=[rm,A.lat,A.lon,B.lat,B.lon,W.slope,W.mode,W.pace,W.rover,window.CTX20&&CTX20.D?1:0,exag].concat(eco?[W.body,W.load,W.suitW,W.suit,W.rovKWh]:[]).join(",");if(pathCache.has(key))return pathCache.get(key);
  const lat0=(A.lat+B.lat)/2,cs=Math.cos(lat0*D2R),lon0=A.lon+wrapLon(B.lon-A.lon)/2;
  const toXY=p=>[wrapLon(p.lon-lon0)*cs*KMD,(p.lat-lat0)*KMD],toLL=(x,y)=>({lat:lat0+y/KMD,lon:wrapLon(lon0+x/(cs*KMD))});
  const[ax,ay]=toXY(A),[bx,by]=toXY(B),L=Math.hypot(bx-ax,by-ay),mg=Math.max(.6,L*.35);
  const x0=Math.min(ax,bx)-mg,y0=Math.min(ay,by)-mg,x1=Math.max(ax,bx)+mg,y1=Math.max(ay,by)+mg;
  const minCell=inCtx(A)&&inCtx(B)?.04:(hotAt(A.lat,A.lon)&&hotAt(B.lat,B.lon))?.12:.6;
  const cell=Math.max(minCell,Math.max(x1-x0,y1-y0)/170),nx=Math.ceil((x1-x0)/cell)+1,ny=Math.ceil((y1-y0)/cell)+1,N=nx*ny;
- const Z=new Float32Array(N);for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const ll=toLL(x0+i*cell,y0+j*cell);Z[j*nx+i]=elev(ll.lat,ll.lon)}
+ const Z=new Float32Array(N),T=eco?new Float32Array(N):null;for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const ll=toLL(x0+i*cell,y0+j*cell);Z[j*nx+i]=elev(ll.lat,ll.lon);if(eco){const t=gridAt(TI,ll.lat,ll.lon);T[j*nx+i]=t==null?-1:t}}
  const id=(x,y)=>Math.min(ny-1,Math.max(0,Math.round((y-y0)/cell)))*nx+Math.min(nx-1,Math.max(0,Math.round((x-x0)/cell)));
  const si=id(ax,ay),gi=id(bx,by),g=new Float64Array(N).fill(Infinity),came=new Int32Array(N).fill(-1),done=new Uint8Array(N);
  const vmax=Math.max(W.mode==="rover"?W.rover:0,6*W.pace),tanL=Math.tan(W.slope*D2R),gx=gi%nx,gy=(gi/nx)|0;
- const H=k=>Math.hypot(k%nx-gx,((k/nx)|0)-gy)*cell/vmax;
+ // resource-saving mode: edge cost = share of suit O2 + suit battery (+ rover battery) used, so it is unit-free
+ const C=eco?caps():null,frac=r=>r.o2/C.o2+r.bat/C.bat+(W.mode==="rover"?r.rov/C.rov:0),penK=eco?2/W.suit:1;
+ const hK=eco?(o2g(1.5*W.body,1)/C.o2+W.suitW/C.bat):1;   // lower bound per hour (resting astronaut + suit electronics) keeps A* exact
+ const H=k=>Math.hypot(k%nx-gx,((k/nx)|0)-gy)*cell/vmax*hK;
  // binary heap on f-scores
  const hp=[],hf=[];const push=(k,f)=>{hp.push(k);hf.push(f);let i=hp.length-1;while(i>0){const p=(i-1)>>1;if(hf[p]<=hf[i])break;[hp[p],hp[i]]=[hp[i],hp[p]];[hf[p],hf[i]]=[hf[i],hf[p]];i=p}};
  const pop=()=>{const k=hp[0],lk=hp.pop(),lf=hf.pop();if(hp.length){hp[0]=lk;hf[0]=lf;let i=0;for(;;){const l=2*i+1,r=l+1;let m=i;if(l<hp.length&&hf[l]<hf[m])m=l;if(r<hp.length&&hf[r]<hf[m])m=r;if(m===i)break;[hp[m],hp[i]]=[hp[i],hp[m]];[hf[m],hf[i]]=[hf[i],hf[m]];i=m}}return k};
@@ -1037,13 +1042,14 @@ function safePath(A,B){const key=[A.lat,A.lon,B.lat,B.lon,W.slope,W.mode,W.pace,
  g[si]=0;push(si,H(si));let it=0;
  while(hp.length&&it++<N*3){const k=pop();if(done[k])continue;done[k]=1;if(k===gi)break;const kx=k%nx,ky=(k/nx)|0;
   for(const[dx,dy]of D8){const x=kx+dx,y=ky+dy;if(x<0||y<0||x>=nx||y>=ny)continue;const q=y*nx+x;if(done[q])continue;
-   const dk=Math.hypot(dx,dy)*cell,s=(Z[q]-Z[k])/(dk*1000);let c=dk/speedOf(s,W.mode);if(Math.abs(s)>tanL)c+=dk*4*(1+(Math.abs(s)-tanL)*10);
+   const dk=Math.hypot(dx,dy)*cell,s=(Z[q]-Z[k])/(dk*1000),dt=dk/speedOf(s,W.mode);let c=eco?frac(stepRes(dk,dt,s,T[q]<0?null:T[q],isRiding(s))):dt;if(rm!=="fast"&&Math.abs(s)>tanL)c+=penK*dk*4*(1+(Math.abs(s)-tanL)*10);
    if(g[k]+c<g[q]){g[q]=g[k]+c;came[q]=k;push(q,g[q]+H(q))}}}
  if(came[gi]<0&&gi!==si){const r=[A,B];pathCache.set(key,r);return r}
  const nodes=[];for(let k=gi;k>=0;k=came[k]){nodes.push(k);if(k===si)break}nodes.reverse();
  // string-pull: keep a straight line while it stays under the slope limit
  const xy=k=>[x0+(k%nx)*cell,y0+((k/nx)|0)*cell];
- const okLine=(a,b)=>{const[xa,ya]=xy(a),[xb,yb]=xy(b),n=Math.max(1,Math.ceil(Math.hypot(xb-xa,yb-ya)/cell));let pz=Z[a];for(let i=1;i<=n;i++){const q=id(xa+(xb-xa)*i/n,ya+(yb-ya)*i/n),dz=Z[q]-pz;if(Math.abs(dz)/(Math.hypot(xb-xa,yb-ya)/n*1000)>tanL*.92)return false;pz=Z[q]}return true};
+ const okLine=(a,b)=>{if(rm==="fast")return okFast(a,b);const[xa,ya]=xy(a),[xb,yb]=xy(b),n=Math.max(1,Math.ceil(Math.hypot(xb-xa,yb-ya)/cell));let pz=Z[a];for(let i=1;i<=n;i++){const q=id(xa+(xb-xa)*i/n,ya+(yb-ya)*i/n),dz=Z[q]-pz;if(Math.abs(dz)/(Math.hypot(xb-xa,yb-ya)/n*1000)>tanL*.92)return false;pz=Z[q]}return true};
+ function okFast(a,b){const[xa,ya]=xy(a),[xb,yb]=xy(b),d=Math.hypot(xb-xa,yb-ya),n=Math.max(1,Math.ceil(d/cell));let tl=0,pz=Z[a],pk=a;for(let i=1;i<=n;i++){const q=id(xa+(xb-xa)*i/n,ya+(yb-ya)*i/n);tl+=(d/n)/speedOf((Z[q]-pz)/(d/n*1000),W.mode);pz=Z[q]}let tg=0;for(let i=nodes.indexOf(a)+1,p=a;i<nodes.length;i++){const q=nodes[i],[x1,y1]=xy(p),[x2,y2]=xy(q),dd=Math.hypot(x2-x1,y2-y1);tg+=dd/speedOf((Z[q]-Z[p])/(dd*1000),W.mode);p=q;if(q===b)break}return tl<=tg*1.02}
  const keep=[nodes[0]];let i=0;while(i<nodes.length-1){let j=Math.min(nodes.length-1,i+60);while(j>i+1&&!okLine(nodes[i],nodes[j]))j--;keep.push(nodes[j]);i=j}
  const out=[A,...keep.slice(1,-1).map(k=>{const[x,y]=xy(k);return toLL(x,y)}),B];pathCache.set(key,out);return out}
 function densify(poly){const o=[poly[0]];for(let i=1;i<poly.length;i++){const a=poly[i-1],b=poly[i],d=dist(a.lat,a.lon,b.lat,b.lon),n=Math.max(1,Math.ceil(d/.08));for(let k=1;k<=n;k++)o.push(slerpLL(a,b,k/n))}return o}
@@ -1064,13 +1070,13 @@ function stepRes(dkKm,dtH,s,ti,riding){if(riding){const v=dkKm*1000/(dtH*3600),P
   return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:P*dtH,M}}
  const v=dkKm*1000/(dtH*3600),M=metW(v,s,ti);return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:0,M}}
 const isRiding=s=>W.mode==="rover"&&Math.atan(Math.abs(s))/D2R<=W.slope;
-function analyze(safe){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.length<2)return null;
+function analyze(safe,rm){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.length<2)return null;
  const legs=[];for(let i=1;i<P.length;i++)legs.push([i-1,i]);if(W.ret&&P.length>1)legs.push([P.length-1,0]);
  const S=[];let km=0,t=0;const U={o2:0,h2o:0,bat:0,rov:0};const addR=r=>{U.o2+=r.o2;U.h2o+=r.h2o;U.bat+=r.bat;U.rov+=r.rov},snap=o=>{o.o2=U.o2;o.h2o=U.h2o;o.bat=U.bat;o.rov=U.rov};const mt=marsTime(planMs()),startH=W.start;
  legs.forEach(([a,b],li)=>{const A=P[a],B=P[b];if(li===0)S.push({km:0,t:0,lat:A.lat,lon:A.lon,m:elev(A.lat,A.lon),slope:0,leg:0,wp:a,ret:false,o2:0,h2o:0,bat:0,rov:0});
   // dwell at the waypoint we are leaving
   if(A.stop){t+=A.dwell/60;S[S.length-1].dwell=A.dwell/60;S[S.length-1].t=t;addR({o2:o2g(RES.stopW,A.dwell/60),h2o:h2og(RES.stopW,A.dwell/60),bat:W.suitW*A.dwell/60,rov:W.mode==="rover"?RES.roverAuxW*A.dwell/60:0});snap(S[S.length-1])}
-  const dens=densify(safe?safePath(A,B):[A,B]);
+  const dens=densify(safe?safePath(A,B,rm):[A,B]);
   for(let k=1;k<dens.length;k++){const ll=dens[k],p=S[S.length-1],dk=Math.max(1e-6,dist(p.lat,p.lon,ll.lat,ll.lon)),m=elev(ll.lat,ll.lon),s=(m-p.m)/(dk*1000),dt=dk/speedOf(s,W.mode);km+=dk;t+=dt;addR(stepRes(dk,dt,s,gridAt(TI,ll.lat,ll.lon),isRiding(s)));
    const smp={km,t,lat:ll.lat,lon:ll.lon,m,slope:Math.atan(Math.abs(s))/D2R,leg:li,wp:k===dens.length-1?b:null,ret:W.ret&&li===legs.length-1};snap(smp);S.push(smp)}});
  if(!W.ret){const L=P[P.length-1];if(L.stop){t+=L.dwell/60;S[S.length-1].dwell=L.dwell/60;S[S.length-1].t=t;addR({o2:o2g(RES.stopW,L.dwell/60),h2o:h2og(RES.stopW,L.dwell/60),bat:W.suitW*L.dwell/60,rov:0});snap(S[S.length-1])}}
@@ -1134,6 +1140,16 @@ window._renderWalk=()=>renderWalk();
 const fmtG=g=>g>=1000?(g/1000).toFixed(g<1e4?2:1)+" kg":n0(g)+" g",fmtWh=w=>w>=1000?(w/1000).toFixed(2)+" kWh":n0(w)+" Wh";
 function resRows(){const u=R.used,c=R.caps,rf=W.res/W.suit,rows=[["Oxygen",u.o2,c.o2,fmtG],["Cooling water",u.h2o,c.h2o,fmtG],["Suit battery",u.bat,c.bat,fmtWh]];if(W.mode==="rover")rows.push(["Rover battery",u.rov,c.rov,fmtWh]);
  return rows.map(([n,a,b,f])=>({n,a,b,f,frac:a/b,over:a>b*(1-rf)}))}
+const RNAME={safe:"Safest terrain",fast:"Fastest",eco:"Resource-saving",straight:"Straight line"};let cmpT=0;
+function schedCmp(){clearTimeout(cmpT);cmpT=setTimeout(renderCmp,250)}
+function renderCmp(){const el=$("w-cmp");if(!R||W.pts.length<2){el.hidden=true;return}
+ const rows=["safe","fast","eco","straight"].map(k=>{const a=k==="straight"?analyze(false):analyze(true,k);return a&&{k,a,o2:a.used.o2/a.caps.o2}}).filter(Boolean);
+ const cur=W.safe?W.rmode:"straight",min=f=>Math.min(...rows.map(f)),bt=min(r=>r.a.need),bo=min(r=>r.o2),bs=min(r=>r.a.steepKm);
+ const td=(v,b,t)=>`<td class="${Math.abs(v-b)<1e-9?"cbest":""}">${t}</td>`;
+ el.hidden=false;el.innerHTML=`<h3>Compare path choices</h3><table class="cmpt"><tr><th>Path</th><th>Distance</th><th>Suit time</th><th>Too steep</th><th>Oxygen*</th></tr>`+
+  rows.map(r=>`<tr data-r="${r.k}" class="${r.k===cur?"on":""}"><td>${RNAME[r.k]}</td><td>${fmtKm(r.a.km)}</td>${td(r.a.need,bt,fmtH(r.a.need))}${td(r.a.steepKm,bs,r.a.steepKm<.005?"none":fmtKm(r.a.steepKm))}${td(r.o2,bo,Math.round(r.o2*100)+"%")}</tr>`).join("")+
+  `</table><p class="note">Tap a row to use that path. Green marks the best in each column. "Too steep" is distance on slopes over your ${W.slope}° limit (Fastest ignores the limit). *Oxygen is the share of suit oxygen used, a simulated educational estimate. Differences of a few percent are within the precision of this model.</p>`;
+ el.querySelectorAll("tr[data-r]").forEach(tr=>tr.onclick=()=>{const v=tr.dataset.r;W.safe=v!=="straight";if(W.safe)W.rmode=v;$("w-route").value=v;renderWalk()})}
 function renderRes(){const el=$("w-res"),rf=W.res/W.suit;el.hidden=false;
  el.innerHTML=`<h3>Resources (estimate)</h3><span class="simtag">Simulated educational estimate — not real suit data</span>`+resRows().map(r=>`<div class="resrow"><span>${r.n}</span><div class="suitbar"><i class="${r.over?"over":""}" style="width:${Math.min(100,r.frac*100).toFixed(1)}%"></i><em style="left:${((1-rf)*100).toFixed(1)}%" title="Reserve starts here"></em></div><b>${r.f(r.a)} / ${r.f(r.b)}</b></div>`).join("")+`<p class="note">Bars show use against capacity; the yellow line is where your reserve starts. Average effort on this route: ${n0(R.used.o2/Math.max(1e-6,R.need)/1.429*20100/3600)} W. See Planning assumptions for how these are worked out.</p>`}
 function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
@@ -1147,13 +1163,13 @@ function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(fal
  $("w-list").querySelectorAll("[data-dw]").forEach(s=>s.onchange=()=>{P[+s.dataset.dw].dwell=+s.value;renderWalk()});
  $("w-list").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);W.preset=null;markPreset();renderWalk()});
  $("w-list").querySelectorAll("strong[data-k]").forEach(s=>s.onclick=()=>focusWp(+s.dataset.k));
- if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-res").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
+ if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-res").hidden=true;$("w-cmp").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
  const over=R.need>R.lim,pct=Math.min(100,R.need/W.suit*100);
  $("w-sum").innerHTML=`<div><b>${fmtKm(R.km)}</b><span>${W.ret?"Round trip":"One way"}</span></div><div><b>${fmtH(R.need)}</b><span>Suit time used</span></div><div><b>${n0(R.climb)} m</b><span>Total climb</span></div>
  <div class="suit"><div class="suitbar"><i class="${over?"over":""}" style="width:${pct}%"></i><em style="left:${(R.lim/W.suit*100).toFixed(1)}%" title="Reserve starts here"></em></div><div class="suitlab"><span>0 h</span><span>Reserve after ${fmtH(R.lim)}</span><span>${W.suit} h suit</span></div></div>`;
- renderRes();
+ renderRes();schedCmp();
  const pk=R.pnr!=null?R.S[R.pnr]:null;
- const cmpTxt=D0?(D0.steepKm>.05||D0.maxSl>R.maxSl+1?`<br><span style="color:var(--dust)">Safer path vs a straight line: steepest ${R.maxSl.toFixed(0)}° instead of ${D0.maxSl.toFixed(0)}°, ${R.km>D0.km?"+"+fmtKm(R.km-D0.km)+" walking":"same distance"}, ${fmtH(Math.abs(R.need-D0.need))} ${R.need>D0.need?"longer":"shorter"}.</span>`:`<br><span style="color:var(--dust)">The straight line is already the safest way here.</span>`):"";
+ const cmpTxt=D0?(D0.steepKm>.05||D0.maxSl>R.maxSl+1?`<br><span style="color:var(--dust)">${RNAME[W.rmode]} path vs a straight line: steepest ${R.maxSl.toFixed(0)}° instead of ${D0.maxSl.toFixed(0)}°, ${R.km>D0.km?"+"+fmtKm(R.km-D0.km)+" walking":"same distance"}, ${fmtH(Math.abs(R.need-D0.need))} ${R.need>D0.need?"longer":"shorter"}.</span>`:`<br><span style="color:var(--dust)">The straight line is already the safest way here.</span>`):"";
  $("w-verdict").innerHTML=(over?`<p class="verdict bad"><b>Too long for one EVA.</b> You'd need ${fmtH(R.need)}, but the suit allows ${fmtH(R.lim)} before the reserve. ${pk?`Turn back by <b>${fmtKm(pk.km)}</b> (about ${hm(R.sunH(pk.t))} Mars time), marked ↩ on the globe.`:""} ${W.mode==="foot"?"Try a rover, a closer stop, or a shorter route.":"Try a closer stop, or split it into two EVAs."}</p>`
   :`<p class="verdict"><b>Doable in one EVA.</b> Back by ${hm(R.endH)} Mars time with ${fmtH(R.lim-R.need)} spare before the ${fmtH(W.res)} reserve.</p>`).replace(/<\/p>$/,cmpTxt+"</p>");
  // hazard flags
@@ -1199,7 +1215,7 @@ function loadPreset(id,fly){const P=PRESETS[id];W.preset=id;W.mode=P.mode;W.ret=
 function setWalk(on){window.walkOn=on;atlasEl.classList.toggle("walking",on);if(on){if(measuring)setMeasure(false);$("info").hidden=true;ring.visible=false;picked=null;drawIce();renderWalk()}else{probe.visible=false}}
 document.querySelectorAll("[data-preset]").forEach(b=>b.onclick=()=>loadPreset(b.dataset.preset));
 document.querySelectorAll("#w-mode button").forEach(b=>b.onclick=()=>{W.mode=b.dataset.mode;markMode();renderWalk()});
-$("w-ret").onchange=e=>{W.ret=e.target.checked;renderWalk()};$("w-safe").onchange=e=>{W.safe=e.target.checked;renderWalk()};
+$("w-ret").onchange=e=>{W.ret=e.target.checked;renderWalk()};$("w-route").onchange=e=>{const v=e.target.value;W.safe=v!=="straight";if(W.safe)W.rmode=v;renderWalk()};
 $("w-arm").onclick=()=>{W.arm=!W.arm;$("w-arm").setAttribute("aria-pressed",W.arm)};
 $("w-undo").onclick=()=>{W.pts.pop();W.preset=null;markPreset();renderWalk()};
 $("w-clear").onclick=()=>{W.pts=[];W.preset=null;markPreset();renderWalk()};
@@ -1216,6 +1232,7 @@ const ll4=p=>`${p.lat.toFixed(4)}°, ${p.lon.toFixed(4)}°E`;
 function briefingText(){const P=W.pts,mt=R.mt,pk=R.pnr!=null?R.S[R.pnr]:null,L=[];
  L.push("MARSWALK PLAN (Mars Atlas concept planner)");
  L.push(`Route: ${P.map((p,k)=>wpName(p,k)).join(" > ")}${W.ret?" > back to start":""}`);
+ L.push(`Path choice: ${W.safe?RNAME[W.rmode]:"Straight line"}`);
  L.push(`Mode: ${W.mode==="foot"?"on foot":"with a rover"} | ${fmtKm(R.km)} ${W.ret?"round trip":"one way"} | climb ${n0(R.climb)} m | steepest ${R.maxSl.toFixed(0)} deg`);
  L.push(`Season: Mars Year ${mt.my}, Ls ${mt.Ls.toFixed(0)} deg | sunrise ${hm(R.sunrise)}, sunset ${hm(R.sunset)} local solar time`);
  L.push(`Timing: leave ${hm(W.start)}, back by ${hm(R.endH)} | suit time ${fmtH(R.need)} of ${W.suit} h (reserve ${fmtH(W.res)})`);
