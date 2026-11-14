@@ -1383,6 +1383,11 @@ const prevShowInfo=showInfo;showInfo=function(lat,lon,ft,site){prevShowInfo(lat,
 PRESETS.gale.pts[1].note+=` NASA has published Curiosity's <a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">proposed path up Mount Sharp</a>: compare it with this plan.`;
 document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a href="https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars" target="_blank" rel="noopener">USGS–NASA Planetary Geologic Mapping Program</a>: global geologic map of Mars (Tanaka et al. 2014, SIM 3292, via NASA Mars Trek)</li><li><a href="https://mars.nasa.gov/mars2020/multimedia/raw-images/" target="_blank" rel="noopener">Mars Perseverance raw images gallery</a>: linked from science stops along Perseverance's path</li><li><a href="https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/" target="_blank" rel="noopener">Curiosity's proposed path up Mount Sharp</a>: NASA route map, compared with the Gale crater plan</li><li><a href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener">NASA Worldview</a>: Earth imagery explorer that inspired the layer-switching design (no Worldview data is used, since it covers Earth)</li>`);
 
+
+// read-only hooks for the Mission Assistant (it only reads these; nothing here changes the app)
+window._atlasAPI={ti:(la,lo)=>gridAt(TI,la,lo),dci:(la,lo)=>gridAt(DCI,la,lo),gridsReady:()=>gridsReady,marsTime,ltst,sunElev,dayLen,rems:()=>REMS,era:d=>ERA(d),
+ nearMinerals:(la,lo,km)=>MIN.length?nearMinerals(la,lo,km):null,minName:k=>MINNAME[k]||k,ovInfo:o=>OVINFO[o]||null,panels:PANELS,
+ analyze:(safe,rm)=>analyze(safe,rm),routeName:k=>RNAME[k],W,geo:c=>{if(!GEO)return null;const j=GEO.codes.indexOf(c);return j<0?null:{interp:GEO.interp?GEO.interp[j]:null,group:GEO.group?GEO.group[j]:null}},wpName:(p,k)=>wpName(p,k),openWalk:()=>{if($("walk").hidden)$("btn-walk").click()}};
 })();
 </script>
 <script>// ===== Live NASA Mars Trek layers: tiles streamed on demand and draped over the 3D terrain =====
@@ -1629,6 +1634,7 @@ const MODEL=[
  ["Mars clock","Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
  ["Suit time and turn-back point","Walking speed (Tobler's hiking function × a cautious suit pace), rover speed, suit time and reserve are planning guesses you can change."],
  ["Path choices","A* route searches over the terrain grid: Safest terrain (quickest under your slope limit), Fastest (ignores the limit) and Resource-saving (least estimated oxygen and battery). Slopes are only as fine as the terrain (20 m at Jezero, 200 m in other close-ups, about 7 km elsewhere)."],
+ ["Mission Assistant","A rule-based helper (no AI service). It matches keywords in your question and answers only from the data and calculations listed on this page, naming the source each time. When the app has no data, it says so."],
  ["Oxygen, water and energy","Simulated educational estimates, not real suit or rover data. Effort comes from the Pandolf load-carrying equation (1977) scaled to Mars gravity; oxygen from 20.1 kJ per litre of O₂; cooling water from sublimation (2.83 MJ/kg). Suit capacities are sized from your suit-time setting. Rover battery default (8.7 kWh) matches the Apollo Lunar Roving Vehicle; rover mass, efficiency and electronics load are guesses. The turn-back point uses whichever runs out first: suit time or a supply."],
  ["Radiation per walk","Curiosity's measured daily rate multiplied by the walk's length. No suit shielding or solar storms."],
  ["Air pressure","Estimated from the NASA fact-sheet pressure and scale height, scaled by elevation."],
@@ -1659,6 +1665,179 @@ document.querySelectorAll("#about-src .src li").forEach(li=>{if(/worldview/i.tes
 })();
 </script>
 
+<script>
+// ===== Mission Assistant: rule-based. It only reads Mars Atlas data and functions; it never makes up measurements. =====
+(function(){
+const A=window._atlasAPI;if(!A)return;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fH=h=>{const H=Math.floor(h+1e-9),m=Math.round((h-H)*60);return m===60?`${H+1} h`:H?`${H} h ${String(m).padStart(2,"0")}`:`${m} min`};
+const hhmm=h=>{h=((h%24)+24)%24;let H=Math.floor(h),m=Math.round((h-H)*60);if(m===60){H=(H+1)%24;m=0}return String(H).padStart(2,"0")+":"+String(m).padStart(2,"0")};
+const pct=v=>Math.round(v*100)+"%";
+
+// ---------- UI
+const tools=document.querySelector(".tools");
+$("btn-cond").insertAdjacentHTML("afterend",`<button id="btn-ask" aria-expanded="false" aria-controls="ask">Ask</button>`);
+$("tour").insertAdjacentHTML("beforebegin",`<aside id="ask" class="panel right wide" hidden aria-label="Mission Assistant">
+  <div class="phead"><div><h2>Mission Assistant</h2><p class="sub" id="a-ctx"></p></div><button class="x" id="a-close" aria-label="Close assistant">×</button></div>
+  <div id="a-log" class="alog" aria-live="polite"></div>
+  <div id="a-chips" class="achips"></div>
+  <form id="a-form" class="aform" autocomplete="off"><input id="a-in" type="text" aria-label="Ask the Mission Assistant" placeholder="Ask about geology, ice, radiation, terrain or your route"><button class="btn-primary" type="submit">Ask</button></form>
+  <p class="note">Rule-based assistant. It answers only from Mars Atlas data and says so when that data doesn't exist. Resource figures are simulated educational estimates.</p>
+</aside>`);
+A.panels.push("ask");
+$("btn-ask").onclick=()=>{const on=$("ask").hidden;openPanel("ask",on);if(on){renderCtx();renderChips();if(!$("a-log").children.length)greet();setTimeout(()=>$("a-in").focus(),50)}};
+$("a-close").onclick=()=>openPanel("ask",false);
+
+// ---------- what the assistant is looking at
+function namedPlace(q){const s=" "+q.toLowerCase()+" ";let best=null;const take=(n,lat,lon,name)=>{if(!best||n.length>best.n.length)best={n,lat,lon,name,src:"named in your question"}};
+ for(const x of SITES){const n=x[0].toLowerCase();if(s.includes(n))take(n,x[1],x[2],x[0]+" landing site")}
+ for(const h of HOT){const n=h.name.toLowerCase(),n2=n.replace(/ crater$/,"");if(s.includes(n)||new RegExp("\\b"+n2+"\\b").test(s))take(n2,h.view[0],h.view[1],h.name)}
+ for(const ft of FEAT){const n=ft.name.toLowerCase();if(n.length<4||!s.includes(n))continue;if(new RegExp("[^a-z]"+n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z]").test(s))take(n,ft.lat,ft.lon,ft.type==="Crater"?ft.name+" crater":ft.name)}
+ return best}
+function place(q){const np=q&&namedPlace(q);if(np)return np;
+ if(picked&&!$("info").hidden)return{lat:picked.lat,lon:picked.lon,name:$("i-title").textContent,src:"the place you clicked"};
+ const W=A.W;if(W.pts.length)return{lat:W.pts[0].lat,lon:W.pts[0].lon,name:A.wpName(W.pts[0],0),src:"your route's start point"};
+ return{lat:CAM.lat,lon:CAM.lon,name:placeName(CAM.lat,CAM.lon),src:"the centre of your view (click Mars to pick a place)"}}
+const route=()=>window._walkR||null;
+function layerText(){const st=$("st-src").textContent.replace(/^(Imagery|Map):\s*/,"");const I=overlay!=="none"?A.ovInfo(overlay):null;return{base:st,ov:I}}
+function renderCtx(){const P=place(""),R=route(),L=layerText();
+ $("a-ctx").textContent=`Looking at ${P.name} · ${R?`Route ${fmtKm(R.km)}`:"No route yet"} · ${L.ov?L.ov.lab+" overlay":"No overlay"}`}
+
+// ---------- answers (every number comes from the app's own data)
+function ansPlace(P){const i=cellOf(P.lat,P.lon),h=hotAt(P.lat,P.lon);
+ return{t:`<b>${esc(P.name)}</b> (${esc(P.src)}) is at ${fmtPt(P.lat,P.lon)}, elevation ${fmtElev(elev(P.lat,P.lon))} relative to Mars' average surface level.${h?` It's inside the <b>${esc(h.name)}</b> close-up, with imagery about ${h.mpp} m per pixel.`:""}`,src:["Elevation: MGS MOLA / HRSC terrain"]}}
+function ansGeology(P){const g=window.geoAt&&geoAt(P.lat,P.lon);
+ if(!g)return{t:"The geology map hasn't finished loading, or there's no mapped unit at this spot. Try again in a moment.",src:[]};
+ const I=A.geo(g.code),nm=A.nearMinerals(P.lat,P.lon,50);
+ let t=`<b>${esc(P.name)}</b> sits on the <b>${esc(g.desc)}</b> (unit ${esc(g.code)}). ${esc(A.era(g.desc))}.`;
+ if(I&&I.interp)t+=`<br>USGS interpretation: “${esc(I.interp)}”`;
+ t+=g.exact?`<br>This unit was confirmed with the USGS map service for this exact point.`:`<br>Read from the USGS map image (about 7 km per pixel), so near unit edges it can be off. Click the spot on the globe to confirm it with the USGS service.`;
+ if(nm==null)t+=`<br>The water-formed mineral map is still loading.`;
+ else if(nm.length)t+=`<br>Water-formed minerals detected from orbit within 50 km: ${nm.slice(0,4).map(([k,d])=>`${esc(A.minName(k))} (${d<1?"right here":fmtKm(d)})`).join(", ")}. These form with liquid water, so they are evidence of past water.`;
+ else t+=`<br>No water-formed mineral detections within 50 km in the orbital mineral map.`;
+ return{t,src:["Geology: USGS SIM 3292 (Tanaka et al. 2014)","Minerals: Ehlmann & Edwards 2014 (CRISM, OMEGA, THEMIS) via NASA Mars Trek"],acts:[go(P)]}}
+function ansIce(P){const i=cellOf(P.lat,P.lon),w=f.water[i];
+ if(w<0)return{t:`There's no ice data for <b>${esc(P.name)}</b>: the SWIM ice survey only covers 60°N to 60°S. Mars Atlas won't guess beyond that.`,src:["SWIM project"]};
+ const lvl=w>=.6?"a strong buried-ice signal":w>=.3?"a moderate ice signal":"a weak or no ice signal";
+ const ne=nearestIce(P.lat,P.lon);
+ let t=`<b>${esc(P.name)}</b> has ${lvl}: the water-ice factor is <b>${Math.round(w*100)} out of 100</b>. It measures how consistently radar, neutron, thermal and imaging data point to ice buried in the ground, not liquid water.`;
+ if(ne)t+=ne.km>20?` The nearest strong ice signal is about <b>${n0(ne.km)} km</b> away (${fmtPt(ne.lat,ne.lon)}).`:` Strong ice signal is within reach here.`;
+ const nm=A.nearMinerals(P.lat,P.lon,50);if(nm&&nm.length)t+=` Water-formed minerals within 50 km (${nm.slice(0,3).map(x=>esc(A.minName(x[0]))).join(", ")}) show there was liquid water here in the past.`;
+ const acts=[{l:"Show ice overlay",f:()=>setOverlay("water")}];if(ne&&ne.km>20)acts.push({l:"Fly to nearest ice",f:()=>flyTo(ne.lat,ne.lon,.12,45,0)});
+ return{t,src:["Ice: SWIM project (MRO SHARAD, Mars Odyssey and others)"],acts}}
+function ansRadiation(P){const R=route();
+ let t=`Mars Atlas has one radiation measurement: Curiosity's RAD instrument measured about <b>0.67 mSv per day</b> from cosmic rays on the surface at Gale crater.`;
+ if(R)t+=` At that rate your planned EVA (${fH(R.need)} of suit time) would mean about <b>${(R.need*.67/24).toFixed(2)} mSv</b>.`;else t+=` Plan a Marswalk and I can work out the dose for your EVA at that rate.`;
+ t+=`<br>The app has no radiation map, so it can't say whether ${esc(P.name)} gets more or less than Gale. It also doesn't model suit shielding or solar storms, which could change the dose a lot.`;
+ return{t,src:["Hassler et al. 2014, Science (Curiosity RAD)"]}}
+function firmWord(ti){return ti==null?null:ti<.22?"very soft (likely loose dust or fine sand)":ti<.4?"soft":ti<.55?"mixed":"firm (rock, crust or cemented ground)"}
+function ansTerrain(P,q){const i=cellOf(P.lat,P.lon),ti=A.ti(P.lat,P.lon),dc=A.dci(P.lat,P.lon),R=route(),h=hotAt(P.lat,P.lon);
+ let t=`At <b>${esc(P.name)}</b>: elevation ${fmtElev(elev(P.lat,P.lon))}. The flat-ground factor is <b>${Math.round(f.flat[i]*100)} out of 100</b> (from laser altimetry at about 7 km scale).`;
+ const fw=firmWord(ti);t+=fw?` Ground looks <b>${fw}</b> in the thermal-inertia map.`:A.gridsReady()?" No thermal-inertia data here.":" The ground-firmness map is still loading.";
+ if(dc!=null)t+=dc>.6?" It's heavily dust-covered.":dc>.35?" It has some dust cover.":" It's fairly dust-free.";
+ t+=` Firmness and dust are read from coloured maps, so they're relative, not exact values.`;
+ if(R)t+=`<br>On your route: steepest section about ${R.maxSl.toFixed(0)}°, ${R.steepKm>.05?`${fmtKm(R.steepKm)} steeper than your ${A.W.slope}° limit`:`nothing steeper than your ${A.W.slope}° limit`}, ${R.softKm>.05?`${fmtKm(R.softKm)} over very soft ground`:"no very soft ground"}, total climb ${n0(R.climb)} m.`;
+ if(!h)t+=`<br>This isn't a close-up area, so boulders, small cliffs and ripples don't show at this resolution.`;
+ return{t,src:["Elevation and slope: MGS MOLA / HRSC","Firmness: MGS TES thermal inertia (Putzig et al. 2005)","Dust: TES dust cover index (Ruff & Christensen 2002)"],acts:[{l:"Show steepness overlay",f:()=>setOverlay("slope")},{l:"Show firmness overlay",f:()=>setOverlay("ti")}]}}
+function ansConditions(P){const mt=A.marsTime(Date.now()),lt=A.ltst(mt,P.lon),el=A.sunElev(P.lat,mt.dec,lt),dl=A.dayLen(P.lat,mt.dec),z=elev(P.lat,P.lon),r=A.rems()[0];
+ let t=`At <b>${esc(P.name)}</b> it's <b>${hhmm(lt)}</b> local solar time right now, with the sun ${el>0?`${el.toFixed(0)}° above`:`${(-el).toFixed(0)}° below`} the horizon. Daylight lasts about ${dl.toFixed(1)} h today${dl>0&&dl<24?` (sunrise about ${hhmm(12-dl/2)}, sunset about ${hhmm(12+dl/2)})`:""}. It's Mars Year ${mt.my}, solar longitude ${mt.Ls.toFixed(0)}°.`;
+ t+=mt.Ls>=180?" This is dust storm season (Ls 180°–360°).":" This is outside the main dust storm season.";
+ t+=` Estimated air pressure from elevation: about ${n0(636*Math.exp(-z/11000))} Pa (an estimate, not a measurement).`;
+ if(r)t+=`<br>Latest weather in the app is from Curiosity's REMS station at Gale crater, not this spot: sol ${esc(r.sol)} (${esc(r.terrestrial_date)}), ${esc(r.min_temp)}°C to ${esc(r.max_temp)}°C, ${esc(r.pressure)} Pa.`;
+ return{t,src:["Mars clock: Allison & McEwen (2000), the Mars24 method","Weather: NASA/CAB Curiosity REMS"],acts:[{l:"Open Conditions",f:()=>{if($("cond").hidden)$("btn-cond").click()}}]}}
+function ansSurvival(P){const i=cellOf(P.lat,P.lon),s=score[i],mb=document.querySelector(".mission button[aria-pressed=true]"),mn=mb?mb.textContent:"custom weights";
+ if(s<0)return{t:`${esc(P.name)} has no survival score: the ice survey it relies on only covers 60°N to 60°S.`,src:["Survival model: MOLA + SWIM + sunlight"]};
+ const lim=limiting(i);
+ return{t:`<b>${esc(P.name)}</b> scores <b>${Math.round(s)} out of 100</b> for a ${esc(mn.toLowerCase())} mission. Factors: ${KEYS.map(k=>`${NAMES[k].toLowerCase()} ${Math.round(f[k][i]*100)}`).join(", ")}. The factor holding it back most is <b>${NAMES[lim].toLowerCase()}</b>.<br>This is a concept model to show where to look closer, not a NASA recommendation.`,
+  src:["Survival model: MOLA + SWIM + sunlight (Mars Atlas)"],acts:[{l:"Open survival analysis",f:()=>{openPanel("surv",true);if(overlay==="none")setOverlay("score")}}]}}
+function ansLayer(){const L=layerText();let t=`The base map is: <b>${esc(L.base)}</b>.`;
+ t+=L.ov?` The <b>${esc(L.ov.lab)}</b> overlay is on: ${esc(L.ov.note)} (Data: ${esc(L.ov.src)}.)`:" No data overlay is switched on. Open Layers to add one, like ice, firmness, dust, steepness or geology.";
+ return{t,src:[],acts:[{l:"Open Layers",f:()=>{if($("layers").hidden)$("btn-layers").click()}}]}}
+// route planning: re-runs the app's own planner for "what if" answers
+function withW(ch,fn){const W=A.W,old={};for(const k in ch){old[k]=W[k];W[k]=ch[k]}try{return fn()}finally{Object.assign(W,old)}}
+const RN={o2:"oxygen",h2o:"cooling water",bat:"suit battery",rov:"rover battery",time:"suit time"};
+function verdict(R){return R.need<=R.lim&&!R.short.length}
+function ansRoute(q){const R=route(),W=A.W;
+ if(!R)return{t:"You don't have a route yet. Open Marswalk, then click Mars to drop a start point and at least one more point (or pick the Jezero or Gale example). Then ask me again.",src:[],acts:[{l:"Open Marswalk",f:A.openWalk}]};
+ const s=q.toLowerCase(),cur=W.safe?W.rmode:"straight",acts=[];let t="";
+ if(/rover|drive|car/.test(s)&&!/battery/.test(s)){
+  if(W.mode==="rover")t+=`You're already planning with a rover. `;
+  else{const Rr=withW({mode:"rover"},()=>A.analyze());t+=`I re-ran the planner with a rover: <b>${fH(Rr.need)}</b> of suit time instead of ${fH(R.need)} on foot, and it ${verdict(Rr)?"<b>fits in one EVA</b>":"<b>still doesn't fit</b> in one EVA"}. Simulated rover battery use: ${pct(Rr.used.rov/Rr.caps.rov)} of ${W.rovKWh} kWh.`;acts.push({l:"Switch to rover",f:()=>{const b=document.querySelector('[data-mode="rover"]');if(b)b.click()}});
+   return{t,src:["Mars Atlas route planner (speeds and rover figures are planning guesses)"],acts}}}
+ if(/fast|quick|safe|safest|path|least|efficient|saving|which way|best way|compare/.test(s)){
+  const rows=["safe","fast","eco","straight"].map(k=>{const a=k==="straight"?A.analyze(false):A.analyze(true,k);return{k,a,o2:a.used.o2/a.caps.o2}});
+  const by=(fn)=>rows.reduce((a,b)=>fn(b)<fn(a)?b:a);
+  const want=/oxygen|resource|efficient|saving|least|energy|battery/.test(s)?by(r=>r.o2):/fast|quick/.test(s)?by(r=>r.a.need):by(r=>r.a.steepKm*100+r.a.need);
+  t+=`I compared the four path choices for your route:<table class="cmpt"><tr><th>Path</th><th>Time</th><th>Too steep</th><th>Oxygen*</th></tr>${rows.map(r=>`<tr class="${r.k===want.k?"on":""}"><td>${A.routeName(r.k)}</td><td>${fH(r.a.need)}</td><td>${r.a.steepKm<.005?"none":fmtKm(r.a.steepKm)}</td><td>${pct(r.o2)}</td></tr>`).join("")}</table>For your question, <b>${A.routeName(want.k)}</b> comes out best.${(()=>{const m=Math.min(...rows.map(r=>r.a.steepKm));return want.a.steepKm>m+.05?` Note: it crosses ${fmtKm(want.a.steepKm)} steeper than your ${W.slope}° limit, more than the safest option.`:""})()} Differences of a few percent are within the model's precision. *Oxygen is a simulated estimate.`;
+  if(want.k!==cur)acts.push({l:`Use ${A.routeName(want.k)}`,f:()=>{const sel=$("w-route");sel.value=want.k;sel.dispatchEvent(new Event("change"))}});
+  return{t,src:["Mars Atlas A* route planner over MOLA/HRSC/CTX terrain"],acts}}
+ if(/oxygen|\bo2\b|water|battery|batteries|supplies|supply|resources?|energy|use\b/.test(s)){
+  const U=R.used,C=R.caps,g=x=>x>=1000?(x/1000).toFixed(2)+" kg":Math.round(x)+" g",wh=x=>x>=1000?(x/1000).toFixed(2)+" kWh":Math.round(x)+" Wh";
+  const rows=[["Oxygen",g(U.o2),g(C.o2),U.o2/C.o2],["Cooling water",g(U.h2o),g(C.h2o),U.h2o/C.h2o],["Suit battery",wh(U.bat),wh(C.bat),U.bat/C.bat]];if(W.mode==="rover")rows.push(["Rover battery",wh(U.rov),wh(C.rov),U.rov/C.rov]);
+  t+=`Simulated estimate for your ${fmtKm(R.km)} route (not real suit data):<table class="cmpt"><tr><th>Supply</th><th>Used</th><th>Suit holds</th><th></th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${pct(r[3])}</td></tr>`).join("")}</table>Average effort is about ${Math.round(U.o2/R.need/1.429*20100/3600)} W. ${R.short.length?`Running into your reserve: <b>${R.short.map(k=>RN[k]).join(", ")}</b>.`:"Everything stays above your reserve."}`;
+  acts.push({l:"Open Marswalk",f:A.openWalk});
+  return{t,src:["Pandolf et al. 1977 effort equation scaled to Mars gravity; 20.1 kJ per litre of O₂; Mars Atlas planner"],acts}}
+ const pk=R.pnr!=null?R.S[R.pnr]:null;
+ t+=`Your route: <b>${fmtKm(R.km)}</b> ${W.ret?"round trip":"one way"}, ${W.mode==="foot"?"on foot":"with a rover"}, ${A.routeName(cur)} path. It needs <b>${fH(R.need)}</b> of suit time; the suit allows ${fH(R.lim)} before your ${fH(W.res)} reserve.`;
+ t+=verdict(R)?` <b>Return to base looks feasible.</b>`:` <b>Not feasible in one EVA as planned.</b>`;
+ if(pk)t+=` Turn back by <b>${fmtKm(pk.km)}</b>, limited by ${RN[R.pnrBy]}.`;
+ t+=`<br>Estimated supplies left at the end (simulated): ${Object.entries(R.left).map(([k,v])=>v>=0?`${RN[k]} ${pct(v)}`:`${RN[k]} runs out (needs ${pct(-v)} more than the suit holds)`).join(", ")}.`;
+ if(R.short.length)t+=` Running into the reserve: ${R.short.map(k=>RN[k]).join(", ")}.`;
+ const iss=[];if(R.steepKm>.05)iss.push(`${fmtKm(R.steepKm)} steeper than ${W.slope}°`);if(R.darkKm>.05)iss.push(`${fmtKm(R.darkKm)} after sunset`);if(R.softKm>.2)iss.push(`${fmtKm(R.softKm)} over very soft ground`);
+ t+=iss.length?`<br>Watch out for: ${iss.join(", ")}.`:`<br>No steep, dark or very soft sections at this map's resolution.`;
+ if(!verdict(R)&&W.mode==="foot"){const Rr=withW({mode:"rover"},()=>A.analyze());t+=`<br>What if: with a rover it would need ${fH(Rr.need)} and ${verdict(Rr)?"would fit":"still wouldn't fit"}.`}
+ acts.push({l:"Open Marswalk",f:A.openWalk});
+ return{t,src:["Mars Atlas route planner (Tobler walking model, Pandolf effort model; resource figures are simulated)"],acts}}
+function ansOverview(P){const a=ansPlace(P),g=window.geoAt&&geoAt(P.lat,P.lon),i=cellOf(P.lat,P.lon),w=f.water[i],fw=firmWord(A.ti(P.lat,P.lon));
+ let t=a.t;if(g)t+=`<br>Geology: ${esc(g.desc)} (${esc(g.code)}).`;
+ t+=w<0?" No ice data (outside 60°N–60°S).":` Water-ice factor ${Math.round(w*100)}/100.`;
+ if(fw)t+=` Ground: ${fw}.`;if(score[i]>=0)t+=` Survival score ${Math.round(score[i])}/100 (concept model).`;
+ t+=`<br>Ask me about any of these for more detail.`;
+ return{t,src:["MOLA, USGS SIM 3292, SWIM, TES"],acts:[go(P)]}}
+function go(P){return{l:"Show on globe",f:()=>showAndFly(P)}}
+function showAndFly(P){flyTo(P.lat,P.lon,Math.min(CAM.range,.3),35,0);showInfo(P.lat,P.lon)}
+const HELP=`I answer from Mars Atlas data only. Try asking about:<br>• <b>geology</b> ("what rock is this?")<br>• <b>water ice</b> ("is there ice here?")<br>• <b>radiation</b> ("how much radiation on my walk?")<br>• <b>terrain</b> ("is the ground steep or soft?")<br>• <b>time and sunlight</b> ("when is sunset here?")<br>• <b>survival score</b> ("could a base go here?")<br>• <b>your route</b> ("can I get back to base?", "would a rover help?", "which path uses least oxygen?")<br>• <b>the map</b> ("what layer am I looking at?")<br>You can name a place, like "Gale crater" or "Olympus Mons". Otherwise I use the place you clicked.`;
+
+// ---------- intent matching (keyword rules)
+const RULES=[
+ ["route",/\b(route|walk|eva|turn ?back|get back|return|home|base camp|reserve|oxygen|o2|suit|battery|batteries|supplies|supply|resources?|rover|drive|path|fastest|quickest|safest|doable|feasible|trip|plan(ning)?|cooling water)\b/],
+ ["radiation",/\b(radiation|dose|cosmic|sievert|msv|rad)\b/],
+ ["ice",/\b(ice|icy|water|frozen|h2o)\b/],
+ ["geology",/\b(geolog\w*|rock|rocks|unit|formed|formation|age|old|noachian|hesperian|amazonian|mineral\w*|clay|clays|sulfate\w*|volcan\w*)\b/],
+ ["terrain",/\b(terrain|slope|steep|elevation|height|altitude|ground|sand|soft|firm|dust|dusty|rough|flat|boulder\w*)\b/],
+ ["conditions",/\b(time|sun|sunset|sunrise|daylight|day|night|season|weather|temperature|cold|pressure|storm|storms|dust storm)\b/],
+ ["survival",/\b(survive|survival|score|live|land|landing|settle\w*|habitat|base|base site|build)\b/],
+ ["layer",/\b(layer|layers|overlay|map|colou?rs?|looking at|legend)\b/],
+ ["place",/\b(where|location|coordinates?|what is (this|here)|what's here)\b/],
+ ["overview",/\b(tell me about|about this|overview|summary|summar\w+|describe)\b/],
+ ["help",/\b(help|what can you|how do i|hello|hi)\b/]];
+function answer(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).map(r=>r[0]),P=place(q);
+ // "cooling water"/"water supply" is about the suit, not ice
+ let k=hits[0]||null;if(k==="route"&&hits.includes("radiation"))k="radiation";
+ if(k==="route"&&/\b(ice)\b/.test(s)&&!/oxygen|suit|battery|rover|turn|return|route|walk/.test(s))k="ice";
+ if(!k&&namedPlace(q))k="overview";
+ switch(k){case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
+  case"conditions":return ansConditions(P);case"survival":return ansSurvival(P);case"layer":return ansLayer();case"place":return ansPlace(P);case"overview":return ansOverview(P);case"help":return{t:HELP,src:[]}}
+ return{t:`I couldn't match that to a topic I have data for, and I won't guess. ${HELP}`,src:[]}}
+
+// ---------- chat log
+let actSeq=0;const ACTS={};
+function add(who,html,src,acts){const d=document.createElement("div");d.className="amsg "+who;
+ const ab=(acts||[]).map(a=>{const id="aa"+(++actSeq);ACTS[id]=a.f;return`<button type="button" data-act="${id}">${esc(a.l)}</button>`}).join("");
+ d.innerHTML=`<div class="abody">${html}</div>${src&&src.length?`<div class="asrc">Source: ${src.map(esc).join(" · ")}</div>`:""}${ab?`<div class="aacts">${ab}</div>`:""}`;
+ $("a-log").appendChild(d);d.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{const f=ACTS[b.dataset.act];if(f)f();setTimeout(renderCtx,400)});$("a-log").scrollTop=$("a-log").scrollHeight}
+function ask(q){q=q.trim();if(!q)return;add("me",esc(q));let r;try{r=answer(q)}catch(e){r={t:"Something went wrong reading the data for that question, so I won't answer it rather than guess. Try again after the map finishes loading.",src:[]};console.error(e)}
+ add("bot",r.t,r.src,r.acts);renderCtx();renderChips()}
+function greet(){const P=place("");add("bot",`Hi. I'm a rule-based assistant: I read Mars Atlas data and never make up measurements. I'm looking at <b>${esc(P.name)}</b> (${esc(P.src)}). Ask me anything below, or tap a suggestion.`,[])}
+function renderChips(){const R=route(),c=R?["Can I get back to base?","Would a rover help?","Which path uses least oxygen?","Radiation on my walk?","Is the ground steep or soft?"]:["What rock is this?","Is there water ice here?","Is the ground steep or soft?","When is sunset here?","Could a base go here?","What layer am I looking at?"];
+ $("a-chips").innerHTML=c.map(x=>`<button type="button">${x}</button>`).join("");$("a-chips").querySelectorAll("button").forEach(b=>b.onclick=()=>ask(b.textContent))}
+$("a-form").onsubmit=e=>{e.preventDefault();const v=$("a-in").value;$("a-in").value="";ask(v)};
+// keep the context line fresh when the user clicks Mars or edits a route
+const baseShowInfo2=showInfo;showInfo=function(){baseShowInfo2.apply(this,arguments);if(!$("ask").hidden)renderCtx()};
+window._ask=ask;
+})();
+</script>
 <style id="theme-ops">/* ===== theme layer (overrides; all features untouched) ===== */
 :root{--sand:var(--ink);--dust:var(--ink2);--accent:var(--acc);--line:var(--rule);--edge:var(--rule);--edge2:var(--rule2);--glass:var(--panel);--glass2:var(--panel);--glow:none;--display:var(--fd);--body:var(--fb);--data:var(--fm)}
 body{background:var(--bg);font-family:var(--fb)}
@@ -1698,5 +1877,23 @@ input[type=range]{accent-color:var(--acc)}
 /* accent colour is kept for actions and warnings; normal readings are neutral */
 .suitbar i,.bar b,.fitrow b,.fitrow.best b{background:#cfd2d6!important}
 .suitbar i.over,.bar.low b{background:var(--bad)!important}
-.verdict:not(.bad){border-left-color:#cfd2d6!important}</style>
+.verdict:not(.bad){border-left-color:#cfd2d6!important}
+/* Mission Assistant */
+#ask{display:flex;flex-direction:column}
+#ask:not([hidden]){display:flex}
+.alog{display:flex;flex-direction:column;gap:10px;max-height:min(46vh,460px);overflow:auto;margin:10px 0 8px;padding-right:4px}
+.amsg{font-size:13px;line-height:1.5;color:var(--ink)}
+.amsg.me{align-self:flex-end;max-width:85%;background:#1f2226;border:1px solid var(--rule);padding:6px 10px;border-radius:2px}
+.amsg.bot{border-left:2px solid #cfd2d6;padding:2px 0 2px 10px}
+.amsg .asrc{margin-top:5px;font:10.5px/1.4 var(--fm);color:var(--ink2);letter-spacing:.02em}
+.amsg .aacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.amsg .aacts button,.achips button{min-height:30px;padding:4px 9px;font-size:12px}
+.amsg .cmpt{margin:6px 0}
+.achips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;flex:none}#ask .phead,#ask .aform{flex:none}
+.aform{display:flex;gap:6px}
+.aform input{flex:1;min-width:0;font:14px var(--fb);color:var(--ink);background:#15171a;border:1px solid var(--rule);border-radius:2px;padding:8px 10px}
+.aform input:focus{outline:1px solid var(--acc);outline-offset:0}
+#ask{background:#0e0f11!important}
+@media(max-width:760px){#ask.panel{max-height:72%;overflow:hidden}#ask .alog{max-height:none;flex:1 1 auto;min-height:80px}#ask>.note{display:none}.achips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.achips button{flex:none}}
+</style>
 </body></html>
