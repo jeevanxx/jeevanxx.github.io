@@ -1717,7 +1717,7 @@ $("tour").insertAdjacentHTML("beforebegin",`<aside id="ask" class="panel right w
   <p class="note">Rule-based assistant. It answers only from Mars Atlas data and says so when that data doesn't exist. Resource figures are simulated educational estimates.</p>
 </aside>`);
 A.panels.push("ask");
-$("btn-ask").onclick=()=>{const on=$("ask").hidden;openPanel("ask",on);if(on){renderCtx();renderChips();if(!$("a-log").children.length)greet();setTimeout(()=>$("a-in").focus(),50)}};
+$("btn-ask").onclick=()=>{const on=$("ask").hidden;openPanel("ask",on);if(on){if(typeof stopAuto==="function")stopAuto();renderCtx();renderChips();if(!$("a-log").children.length)greet();setTimeout(()=>$("a-in").focus(),50)}};
 $("a-close").onclick=()=>openPanel("ask",false);
 
 // ---------- what the assistant is looking at
@@ -1846,8 +1846,31 @@ function go(P){return{l:"Show on globe",f:()=>showAndFly(P)}}
 function showAndFly(P){flyTo(P.lat,P.lon,Math.min(CAM.range,.3),35,0);showInfo(P.lat,P.lon)}
 const HELP=`I answer from Mars Atlas data only. Try asking about:<br>• <b>geology</b> ("what rock is this?")<br>• <b>water ice</b> ("is there ice here?")<br>• <b>radiation</b> ("how much radiation on my walk?")<br>• <b>terrain</b> ("is the ground steep or soft?")<br>• <b>time and sunlight</b> ("when is sunset here?")<br>• <b>survival score</b> ("could a base go here?")<br>• <b>your route</b> ("can I get back to base?", "would a rover help?", "which path uses least oxygen?")<br>• <b>the map</b> ("what layer am I looking at?")<br>You can name a place, like "Gale crater" or "Olympus Mons". Otherwise I use the place you clicked.`;
 
+
+// ---------- question types added after testing
+function notMars(q){if(/\b(earth|terrestrial)\b/i.test(q))return"Earth";const m=q.match(/\b(?:in|at|near|for)\s+((?:new |los |san |las )?[A-Za-z][\w'-]+)/i);if(!m)return null;const x=m[1].toLowerCase();
+ if(/^(here|this|that|my|our|the|a|an|mars|martian|summer|winter|spring|autumn|fall|general|total|daytime|night|morning|evening|celsius|fahrenheit|degrees|average|future|space|orbit)$/.test(x))return null;
+ return namedPlace(q)?null:m[1]}
+function ansWeather(P){const r=A.rems()[0];
+ let t=`Mars Atlas has measured temperatures from only one place: Curiosity's REMS weather station at <b>Gale crater</b>.`;
+ if(r)t+=` Its latest report in the app is sol ${esc(r.sol)} (${esc(r.terrestrial_date)}): <b>${esc(r.min_temp)}°C to ${esc(r.max_temp)}°C</b>, air pressure ${esc(r.pressure)} Pa.`;
+ t+=/gale|curiosity|bradbury/i.test(P.name)?" That's at or near the place you're looking at.":` That is <b>not</b> ${esc(P.name)}: temperatures elsewhere differ with latitude, season, time of day and elevation, and the app doesn't model them, so I won't guess.`;
+ return{t,src:["NASA/CAB Curiosity REMS"],acts:[{l:"Open Conditions",f:()=>{if($("cond").hidden)$("btn-cond").click()}}]}}
+function ansBest(){const mb=document.querySelector(".mission button[aria-pressed=true]"),mn=mb?mb.textContent:"current";
+ const seen=new Set(),rows=[];for(const s of topSites(12)){const nm=placeName(s.lat,s.lon);if(seen.has(nm))continue;seen.add(nm);rows.push({nm,s});if(rows.length===5)break}
+ if(!rows.length)return{t:"The survival ranking has no places yet. Open the survival analysis to set up a mission.",src:[]};
+ const t=`From Mars Atlas's own survival ranking for a <b>${esc(mn.toLowerCase())}</b> mission:<br>${rows.map((r,k)=>`${k+1}. <b>${esc(r.nm)}</b>, ${Math.round(score[r.s.i])}/100 (${fmtPt(r.s.lat,r.s.lon)})`).join("<br>")}<br>This is a concept model to show where to look closer, not a NASA recommendation or a safe landing site.`;
+ const top=rows[0].s;return{t,src:["Survival model: MOLA + SWIM + Mars Odyssey neutrons + sunlight (Mars Atlas)"],acts:[{l:`Fly to ${rows[0].nm}`,f:()=>showAndFly({lat:top.lat,lon:top.lon})},{l:"Open survival analysis",f:()=>{if($("surv").hidden)$("btn-surv").click()}}]}}
+function ansHeight(P,q){const z=elev(P.lat,P.lon);
+ let t=`The app's elevation at <b>${esc(P.name)}</b> (${fmtPt(P.lat,P.lon)}) is <b>${fmtElev(z)}</b> relative to Mars' reference level. That's an average over a grid cell of about 7 km, so peaks read lower and pits read shallower than they really are.`;
+ const src=["Elevation: MGS MOLA (Mars Atlas grid)"];
+ if(/olympus/i.test(P.name)||/olympus/i.test(q)){t+=`<br>For the true summit: the highest cell in NASA's full-resolution MOLA map (128 pixels per degree, about 460 m) is <b>about 21,250 m</b> above the reference level, at 17.3°N, 133.4°W on the rim of Pangboche crater near the top of the volcano. Height above the surrounding plains is a different measure, and published figures for that vary.`;src.push("MOLA MEGDR 128 pixels/degree, tile megt44n180hb (NASA PDS)")}
+ return{t,src,acts:[go(P)]}}
 // ---------- intent matching (keyword rules)
 const RULES=[
+ ["best",/\b(best|ideal|top|safest|good|great|where should|where could|where can|where would)\b.*\b(place|places|spot|site|sites|location|base|land|landing|live|build|settle\w*|colony)\b/],
+ ["height",/\bhow (tall|high|deep|big)\b|\b(summit|peak|highest|tallest)\b/],
+ ["weather",/\b(cold|hot|warm|temperatures?|weather|freez\w*|celsius|fahrenheit|climate|windy|wind)\b/],
  ["route",/\b(route|walk|eva|turn ?back|get back|return|home|base camp|reserve|oxygen|o2|suit|battery|batteries|supplies|supply|resources?|rover|drive|path|fastest|quickest|safest|doable|feasible|trip|plan(ning)?|cooling water)\b/],
  ["radiation",/\b(radiation|dose|cosmic|sievert|msv|rad)\b/],
  ["ice",/\b(ice|icy|water|frozen|h2o)\b/],
@@ -1862,10 +1885,11 @@ const RULES=[
 function answer(q){const r=answer0(q),NP=forcedPlace?null:namedPlace(q);if(r&&NP&&!NP.sure){r.acts=(r.acts||[]).concat([{l:`Did you mean ${NP.name}?`,f:()=>{forcedPlace=NP;try{ask(q)}finally{forcedPlace=null}}}])}return r}
 function answer0(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).map(r=>r[0]),P=place(q);
  // "cooling water"/"water supply" is about the suit, not ice
- let k=hits[0]||null;if(k==="route"&&hits.includes("radiation"))k="radiation";
+ let k=hits[0]||null;if(k==="best"&&/\b(here|this|my|current)\b/.test(s))k="survival";if(k==="route"&&hits.includes("radiation"))k="radiation";
  if(k==="route"&&/\b(ice)\b/.test(s)&&!/oxygen|suit|battery|rover|turn|return|route|walk/.test(s))k="ice";
  const NP=namedPlace(q);if(!k&&NP&&NP.sure)k="overview";
- switch(k){case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
+ if((k==="weather"||k==="conditions")&&notMars(q))return{t:`Mars Atlas only covers Mars, so I can't answer about ${esc(notMars(q))}. Ask me about a place on Mars instead.`,src:[]};
+ switch(k){case"best":return ansBest();case"height":return ansHeight(P,q);case"weather":return ansWeather(P);case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
   case"conditions":return ansConditions(P);case"survival":return ansSurvival(P);case"layer":return ansLayer();case"place":return ansPlace(P);case"overview":return ansOverview(P);case"help":return{t:HELP,src:[]}}
  return{t:`I couldn't match that to a topic I have data for, and I won't guess. ${HELP}`,src:[]}}
 
