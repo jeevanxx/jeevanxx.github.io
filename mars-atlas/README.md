@@ -50,10 +50,11 @@ This is a concept prototype, not a mission tool. Terrain is 20 m at Jezero, 200 
 In line with the Space Apps rule to state where and how AI tools were used:
 - **My part:** I chose the challenge, decided what the app should do (Marswalk planner, turn-back point, science stops, layers, demo), reviewed every version and directed the changes.
 - **AI assistance:** I used **Claude (Anthropic)** as a coding assistant to write most of the JavaScript, process the NASA datasets into map tiles, and check facts against sources.
+- **Interface design:** the visual style (colours, fonts, panel layout, operations sidebar) was adapted from a design generated with **Google Stitch** (AI design tool), then applied to the app by hand with Claude's help. Sensor cards show only real data, not Stitch's placeholder numbers.
 - No AI-generated images are used. All imagery and data come from the NASA, USGS and IAU sources above.
 
 ## Tech
-Plain HTML, CSS and JavaScript with [three.js](https://threejs.org) r128. No build step. Hosted on GitHub Pages.
+Plain HTML, CSS and JavaScript with [three.js](https://threejs.org) r128 (self-hosted in `vendor/`). Client-side app, no server: NASA/USGS/ESA data are pre-processed into `tiles/` and `data/`; live data comes from NASA Mars Trek, the USGS geologic map service and NASA's raw-image feed. Hosted on GitHub Pages.
 
 ---
 Made by [Jeevan J Shine](https://jeevanxx.github.io).

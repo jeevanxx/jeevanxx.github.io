@@ -10,7 +10,8 @@
 <meta name="twitter:image" content="https://jeevanxx.github.io/mars-atlas/og.jpg">
 
 <meta name="description" content="Mars Atlas: plan a Marswalk on a 3D Mars built from NASA mission data. NASA Space Apps 2026, Martian Map challenge.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&icon_names=compare_arrows,compress,device_thermostat,explore,forum,health_and_safety,hiking,info,layers,photo_library,radiology,route,schedule,straighten,warning,zoom_in_map&display=block">
 <style>/* Layout: full-bleed planet with floating glass controls, like a desktop globe viewer; panels become bottom sheets on phones. */
 :root{--space:#07050a;--glass:rgba(26,16,19,.88);--glass2:rgba(26,16,19,.7);--line:#4d3631;--sand:#f3e0c8;--dust:#bfa48f;--accent:#56e0cf;--amber:#ffc078;--warn:#ff9466;
 --display:"Saira Condensed","Arial Narrow",sans-serif;--body:"Hanken Grotesk",system-ui,sans-serif;--data:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
@@ -1724,7 +1725,7 @@ document.querySelector(".atlas").insertAdjacentHTML("beforeend",`<div id="about"
  <h2>About the data</h2><div class="seg two ab-tabs"><button data-tab="real" aria-pressed="true">What's real here</button><button data-tab="earth" aria-pressed="false">Earth: NASA Worldview</button></div>
  <div id="ab-real"><h3>Real data, shown as published</h3><table class="abt">${REAL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}<small>${r[2]}</small></td></tr>`).join("")}</table>
  <h3>Calculated or modelled (estimates)</h3><table class="abt">${MODEL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join("")}</table>
- <p class="note">Mars Atlas is a concept prototype by Jeevan J Shine for NASA Space Apps 2026, built with AI assistance (Claude). Full source list: Layers → About this map and sources.</p></div>
+ <p class="note">Mars Atlas is a concept prototype by Jeevan J Shine for NASA Space Apps 2026, built with AI assistance (Claude for code; Google Stitch for the interface design). Full source list: Layers → About this map and sources.</p></div>
  <div id="ab-earth" hidden><div class="histbadge prop">Earth only · not used on the Mars globe</div>
  <p>NASA Worldview shows near-real-time satellite imagery of <b>Earth</b> from NASA's Earth-observing missions. It is one of the resources listed for this challenge, but it has no Mars data, so Mars Atlas doesn't mix any of it into the Mars map.</p>
  <p>What it offers this project is the idea behind the Layers panel: switch between data layers from different missions over the same place, and see where each one comes from.</p>
@@ -2006,6 +2007,7 @@ $("a-form").onsubmit=e=>{e.preventDefault();const v=$("a-in").value;$("a-in").va
 // keep the context line fresh when the user clicks Mars or edits a route
 const baseShowInfo2=showInfo;showInfo=function(){baseShowInfo2.apply(this,arguments);if(!$("ask").hidden)renderCtx()};
 window._ask=ask;
+window._sosMenu=()=>{if($("ask").hidden)$("btn-ask").click();add("bot","<b>Simulate an emergency.</b> Pick a situation. I'll answer from your Marswalk plan and the map data. Click Mars first to set where the astronaut is.",[],["My suit is leaking","I'm lost","Dust storm coming","Rover broke down","It's getting dark","Solar flare warning","My crewmate is hurt"].map(x=>({l:x,f:()=>ask(x)})))};
 })();
 </script>
 <script>
@@ -2037,6 +2039,33 @@ window._ask=ask;
  const intro=$("intro");if(!intro)return;
  const sync=()=>{const on=!intro.classList.contains("out")&&!intro.hidden;for(const el of intro.parentNode.children){if(el===intro)continue;if(on)el.setAttribute("inert","");else el.removeAttribute("inert")}};
  new MutationObserver(sync).observe(intro,{attributes:true,attributeFilter:["class","hidden"]});sync();
+})();
+</script>
+<script>
+// ===== Operations rail (desktop): navigation + sensor cards filled only with real data =====
+(function(){const $=id=>document.getElementById(id),A=window._atlasAPI;if(!A)return;
+ const tools=document.querySelector(".tools");tools.insertAdjacentHTML("beforeend",`<button id="btn-sos" class="sosbtn" type="button"><span class="ms" aria-hidden="true">warning</span>Simulate emergency</button>`);
+ $("btn-sos").onclick=()=>window._sosMenu&&window._sosMenu();
+ const NAV=[["explore","Atlas",null],["hiking","Marswalk","btn-walk"],["device_thermostat","Conditions","btn-cond"],["health_and_safety","Survival","btn-surv"],["layers","Layers","btn-layers"],["forum","Mission assistant","btn-ask"],["zoom_in_map","Close-ups","btn-places"],["compare_arrows","Compare","btn-cmp"],["straighten","Measure","btn-measure"],["route","Rover routes","btn-routes"],["photo_library","Rover images","btn-gallery"],["info","About the data","btn-about"]];
+ const rail=document.createElement("nav");rail.className="rail chrome";rail.setAttribute("aria-label","Operations");
+ rail.innerHTML=`<div class="rh">Operations grid</div>`+NAV.map(([ic,l,b],k)=>`<button class="ri" type="button" data-k="${k}"><span class="ms" aria-hidden="true">${ic}</span>${l}</button>`).join("")+
+  `<div class="rh" style="margin-top:12px">Sensors (real data)</div><div id="rail-sens"></div>`;
+ document.querySelector(".atlas").appendChild(rail);
+ rail.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{const it=NAV[+b.dataset.k];
+  if(!it[2]){[...document.querySelectorAll(".panel:not([hidden])")].forEach(p=>{const x=p.querySelector("button.x,button[id$='-close']");if(x)x.click()});return}
+  const t=$(it[2]);if(t)t.click()});
+ function sync(){NAV.forEach(([,,b],k)=>{const el=rail.querySelector(`[data-k="${k}"]`);const t=b&&$(b);el.classList.toggle("on",b?!!(t&&t.getAttribute("aria-expanded")==="true"):!document.querySelector(".panel:not([hidden])"))})}
+ new MutationObserver(sync).observe(document.querySelector(".atlas"),{subtree:true,attributes:true,attributeFilter:["aria-expanded","hidden"]});sync();
+ function sens(){const r=A.rems()&&A.rems()[0];const box=$("rail-sens");if(!box)return;
+  const card=(k,tag,v,u,s,bar)=>`<div class="sens"><div class="k">${k}<b>${tag}</b></div><div class="v">${v}<small>${u}</small></div>${bar!=null?`<div class="bar"><i style="width:${bar}%"></i></div>`:""}<div class="s">${s}</div></div>`;
+  let o="";
+  if(r){o+=card("Air temp","Gale",`${r.min_temp}° / ${r.max_temp}°`,"C",`Curiosity REMS · sol ${r.sol} · ${r.terrestrial_date}. Measured at Gale crater only.`);
+   o+=card("Pressure","Gale",r.pressure,"Pa",`Curiosity REMS · same report`,Math.min(100,r.pressure/1000*100))}
+  else o+=card("Weather","Gale","—","","Curiosity REMS report loading…");
+  o+=card("Radiation","Gale","0.67","mSv/day","Curiosity RAD surface average (Hassler et al. 2014)");
+  const mt=A.marsTime(Date.now());o+=card("Season","Mars",`Ls ${mt.Ls.toFixed(0)}°`,`MY ${mt.my}`,mt.Ls>=180?"Dust storm season (Ls 180°–360°)":"Outside the main dust storm season",mt.Ls/3.6);
+  box.innerHTML=o}
+ sens();setInterval(sens,30000);setTimeout(sens,4000);
 })();
 </script>
 <style id="theme-ops">/* ===== theme layer (overrides; all features untouched) ===== */
@@ -2129,6 +2158,42 @@ button:active{transform:scale(.97)}
  .sitebar button,.achips button,.amsg .aacts button{min-height:40px}
 }
 @media(max-width:400px){.tools{gap:3px!important}.tools button{padding:6px 7px!important;font-size:12px!important}#btn-tour span{display:none}}
+
+/* ===== Stitch "Tactical Mars OS" look (design from Google Stitch, applied to the existing app) ===== */
+:root{--bg:#0b0e14;--panel:rgba(18,24,36,.82);--ink:#e1e2eb;--ink2:#bac9cc;--rule:rgba(0,229,255,.15);--rule2:rgba(0,229,255,.3);--acc:#ff5722;--cy:#00e5ff;--gold:#ffb300;--on:#00e5ff;--onink:#0b0e14;
+ --fd:"Space Grotesk",sans-serif;--fb:"Inter",sans-serif;--fm:"JetBrains Mono",monospace;--r:4px;--rb:4px;--rs:3px;--blur:blur(12px);--shadow:0 12px 40px rgba(0,0,0,.5);--warnc:#ffb300;--amber:#ffb300;--coral:#ff5722;--bad:#ff5722;--track:rgba(255,255,255,.07)}
+body{background:#0b0e14 radial-gradient(rgba(0,229,255,.05) 1px,transparent 1px) 0 0/16px 16px}
+.ms{font-family:"Material Symbols Outlined";font-weight:400;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;-webkit-font-feature-settings:"liga";font-feature-settings:"liga";-webkit-font-smoothing:antialiased;vertical-align:middle}
+.panel h2{font:600 15px var(--fm)!important;letter-spacing:.12em!important;text-transform:uppercase}
+.panel h3{font:600 11px var(--fm)!important;letter-spacing:.14em!important;text-transform:uppercase;color:var(--cy)!important}
+.panel,.brand,.tourcard{border-color:rgba(0,229,255,.18)!important}
+.btn-primary{background:#ff5722!important;color:#0b0e14!important;font:600 12px var(--fm)!important;letter-spacing:.08em;text-transform:uppercase}
+button[aria-pressed=true],button[aria-expanded=true]{background:rgba(0,229,255,.12)!important;color:#00e5ff!important;border-color:rgba(0,229,255,.55)!important;box-shadow:0 0 16px rgba(0,229,255,.2)!important}
+.tools button{font:500 12px var(--fm)!important;letter-spacing:.08em;text-transform:uppercase}
+.brand strong{font:700 20px var(--fd)!important;letter-spacing:.06em!important}
+.sosbtn{display:inline-flex;align-items:center;gap:6px;background:repeating-linear-gradient(135deg,#ff5722 0 10px,#e64a19 10px 20px)!important;color:#0b0e14!important;border:0!important;font:700 12px var(--fm)!important;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 20px rgba(255,87,34,.45)!important}
+.sosbtn .ms{font-size:18px}
+/* operations rail (desktop) */
+.rail{display:none}
+@media(min-width:1280px){
+ .rail{display:flex;flex-direction:column;position:absolute;left:0;top:78px;bottom:33px;width:224px;z-index:3;background:rgba(11,14,20,.88);border-right:1px solid rgba(0,229,255,.15);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);padding:14px 12px;gap:4px;overflow-y:auto;scrollbar-width:none}
+ .rail::-webkit-scrollbar{display:none}
+ .rail .rh{font:500 10px var(--fm);letter-spacing:.16em;color:#849396;text-transform:uppercase;margin:6px 6px 4px}
+ .rail button.ri{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent!important;border:1px solid transparent!important;color:#bac9cc!important;font:500 12.5px var(--fm)!important;letter-spacing:.08em;text-transform:uppercase;padding:9px 10px;border-radius:4px!important;box-shadow:none!important}
+ .rail button.ri:hover{color:#e1e2eb!important;background:rgba(0,229,255,.06)!important}
+ .rail button.ri.on{color:#00e5ff!important;background:rgba(0,229,255,.1)!important;border-color:rgba(0,229,255,.35)!important;box-shadow:0 0 16px rgba(0,229,255,.15)!important}
+ .rail .sens{border:1px solid rgba(0,229,255,.15);border-radius:4px;background:rgba(18,24,36,.7);padding:9px 10px;margin:3px 0}
+ .rail .sens .k{display:flex;justify-content:space-between;align-items:center;font:500 10px var(--fm);letter-spacing:.12em;color:#849396;text-transform:uppercase}
+ .rail .sens .k b{font:600 9.5px var(--fm);letter-spacing:.08em;color:#00e5ff;border:1px solid rgba(0,229,255,.4);padding:1px 5px;border-radius:2px}
+ .rail .sens .v{font:600 20px var(--fd);color:#fff;margin-top:4px;font-variant-numeric:tabular-nums}
+ .rail .sens .v small{font:500 11px var(--fm);color:#bac9cc;margin-left:4px}
+ .rail .sens .s{font:400 10.5px/1.35 var(--fm);color:#849396;margin-top:3px}
+ .rail .sens .bar{height:3px;background:rgba(255,255,255,.07);margin-top:7px;border-radius:2px}.rail .sens .bar i{display:block;height:100%;background:#00e5ff;border-radius:2px}
+ .panel.left{left:236px!important}
+ #btn-walk,#btn-cond,#btn-ask,#btn-layers,#btn-more{display:none!important}
+ .tourcard{margin-left:236px!important}
+ .atlas:has(#intro:not(.out)) .rail{display:none}
+}
 /* keep zoom buttons clear of an open right-hand panel */
 @media(min-width:761px){.nav{transition:right .35s var(--spring)}
 .atlas:has(.panel.right:not([hidden])) .nav{right:330px}
