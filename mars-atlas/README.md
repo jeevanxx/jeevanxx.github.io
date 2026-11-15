@@ -1,4 +1,4 @@
-# Mars Atlas
+# Martian Guide
 
 **Live:** https://jeevanxx.github.io/mars-atlas/
 
@@ -62,7 +62,7 @@ Open **About the data → Scientific validation** in the app for every formula a
 - Routes use A* search on a terrain grid; the cost function differs per path mode.
 - Checked with automated browser tests (resources only increase along a route, return trip ≈ 2× one-way, heavier load → more oxygen, short suit time → turn-back warning). **Not** checked against real spacesuit data or with users.
 
-> Mars Atlas is an educational research prototype, not an operational astronaut safety system.
+> Martian Guide is an educational research prototype, not an operational astronaut safety system.
 
 ## Use of AI
 In line with the Space Apps rule to state where and how AI tools were used:
