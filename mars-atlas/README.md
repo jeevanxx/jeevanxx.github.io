@@ -21,7 +21,7 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 ## Real data vs models
 | Real data, shown as published | Calculated or modelled |
 |---|---|
-| Mars Trek imagery (Viking, CTX, HiRISE, THEMIS, MOLA/HRSC), MOLA/HRSC/CTX terrain, USGS geology and interpretations, CRISM/OMEGA/THEMIS minerals, TES thermal inertia and dust, SWIM ice, Perseverance and Curiosity paths, Perseverance raw images, Curiosity REMS weather and RAD dose rate, IAU names | Mars clock (Mars24 method), walking/rover speed, suit time and turn-back point, path choices (safest terrain, fastest, resource-saving), rule-based Mission Assistant answers (built only from the data and calculations listed here), simulated oxygen/water/energy use and return-to-base check (Pandolf 1977 effort model; not real suit data), radiation per walk, air pressure, survival score, science-stop suggestions. Thermal inertia and dust values are read from coloured maps, so they're relative. |
+| Mars Trek imagery (Viking, CTX, HiRISE, THEMIS, MOLA/HRSC), MOLA/HRSC/CTX terrain, USGS geology and interpretations, CRISM/OMEGA/THEMIS minerals, TES thermal inertia and dust, SWIM ice (60°N–60°S), Mars Odyssey neutron hydrogen beyond 60°, Perseverance and Curiosity paths, Perseverance raw images, Curiosity REMS weather and RAD dose rate, IAU names | Mars clock (Mars24 method), walking/rover speed, suit time and turn-back point, path choices (safest terrain, fastest, resource-saving), rule-based Mission Assistant answers (built only from the data and calculations listed here), simulated oxygen/water/energy use and return-to-base check (Pandolf 1977 effort model; not real suit data), radiation per walk, air pressure, survival score, science-stop suggestions. Thermal inertia and dust values are read from coloured maps, so they're relative. |
 
 ## Data sources
 - NASA Mars Trek live map tiles (WMTS), plus the Esri OnMars CTX service it lists (credit: NASA/JPL/MSSS/Caltech Murray Lab/Esri)
@@ -33,7 +33,8 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 - Curiosity's proposed path up Mount Sharp (NASA), compared with the Gale plan: https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/
 - NASA Worldview: Earth imagery, kept separate from the Mars map (explained in the app's About the data panel): https://worldview.earthdata.nasa.gov/
 - IAU/USGS Gazetteer of Planetary Nomenclature
-- SWIM project: subsurface ice consistency maps
+- SWIM project: subsurface ice consistency maps (60°N to 60°S)
+- Mars Odyssey Neutron Spectrometer, Averaged Neutron Data v2 (NASA PDS Geosciences Node, ODY-M-GRS-5-AND): epithermal neutron counts averaged over local-summer seasons of Mars Years 26–33, used for ice beyond 60°. Fewer epithermal neutrons mean more hydrogen; the app turns this into a relative index and scales it to SWIM where the two overlap (correlation r = 0.78). Coarse: 5° grid, about 300 km.
 - NASA Mars Trek: Curiosity traverse path and waypoint descriptions
 - NASA raw-image feed for Perseverance (images credited per image, JPL image use policy)
 - USGS SIM 3292 Description of Map Units: unit interpretations
