@@ -1,6 +1,6 @@
 # Martian Guide
 
-**Live:** https://jeevanxx.github.io/mars-atlas/
+**Live:** https://jeevanxx.github.io/martian-guide/
 
 A 3D map of Mars for planning a **Marswalk**, built for the NASA Space Apps Challenge 2026 (*Interplanetary Survival Guide: Martian Map*).
 It layers data from six NASA missions (Viking, Mars Global Surveyor, Mars Odyssey, Mars Reconnaissance Orbiter, Curiosity and Perseverance) and ESA's Mars Express (HRSC terrain blend, OMEGA minerals) so an astronaut can plan a route, its science stops and its safety margins.
