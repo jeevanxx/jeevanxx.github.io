@@ -10,8 +10,8 @@
 <meta name="twitter:image" content="https://jeevanxx.github.io/mars-atlas/og.jpg">
 
 <meta name="description" content="Mars Atlas: plan a Marswalk on a 3D Mars built from NASA mission data. NASA Space Apps 2026, Martian Map challenge.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&icon_names=compare_arrows,compress,device_thermostat,explore,forum,health_and_safety,hiking,info,layers,photo_library,radiology,route,schedule,straighten,warning,zoom_in_map&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&icon_names=compare_arrows,compress,device_thermostat,explore,forum,health_and_safety,hiking,home,info,layers,more_horiz,photo_library,radiology,route,schedule,straighten,warning,zoom_in_map&display=block">
 <style>/* Layout: full-bleed planet with floating glass controls, like a desktop globe viewer; panels become bottom sheets on phones. */
 :root{--space:#07050a;--glass:rgba(26,16,19,.88);--glass2:rgba(26,16,19,.7);--line:#4d3631;--sand:#f3e0c8;--dust:#bfa48f;--accent:#56e0cf;--amber:#ffc078;--warn:#ff9466;
 --display:"Saira Condensed","Arial Narrow",sans-serif;--body:"Hanken Grotesk",system-ui,sans-serif;--data:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
@@ -1024,6 +1024,11 @@ function leaveIntro(fly){const intro=$("intro");if(intro.classList.contains("out
 $("go-tour").onclick=()=>{leaveIntro(false);startTour()};$("go-explore").onclick=()=>{leaveIntro(true);spinning=!reduceMotion;$("spin").setAttribute("aria-pressed",spinning)};
 atlasEl.classList.add("pre");CAM.range=wide()?2.6:3.4;CAM.lat=18;if(wide()){shift=.2;applyShift()}
 $("go-tour").focus();
+window.goHome=function(){try{endTour()}catch(e){}
+ document.querySelectorAll(".panel:not([hidden]) .x").forEach(b=>{try{b.click()}catch(e){}});
+ const m=$("more-menu");if(m)m.hidden=true;
+ const intro=$("intro");intro.hidden=false;void intro.offsetWidth;intro.classList.remove("out");atlasEl.classList.add("pre");
+ flyTo(18,CAM.lon,wide()?2.6:3.4,0,0);animShift(wide()?.2:0);setTimeout(()=>{try{$("go-tour").focus()}catch(e){}},120)};
 </script>
 <script>
 // ===== Marswalk layer: route planner, science stops, mission data layers, conditions =====
@@ -2275,6 +2280,40 @@ select:focus{border-color:#388bfd!important;outline:none}
  .rail .sfoot{font:400 9.5px/1.35 var(--fm);color:#8b949e;padding:2px 12px 10px}
 }
 @media(max-width:1279px){.rail .sfoot{display:none}}
+
+/* ===== fonts: Space Grotesk headings, Inter text & buttons, JetBrains Mono only for numbers/labels ===== */
+:root{--fd:"Space Grotesk",sans-serif;--fb:"Inter",sans-serif}
+body,.panel p,.panel li,.note,.amsg{font-family:"Inter",sans-serif!important}
+button,.btnlink{font-family:"Inter",sans-serif!important;font-weight:500!important;letter-spacing:0!important}
+.panel h2,.tourcard h2,.brand strong,.intro h1{font-family:"Space Grotesk",sans-serif!important;letter-spacing:.01em!important}
+.rail button.ri{font-family:"Inter",sans-serif!important;font-size:13px!important}
+.rail button.ri span{font-variant-numeric:tabular-nums}
+.simseg button{font-family:"JetBrains Mono",monospace!important;font-weight:600!important}
+.brand{cursor:pointer}.brand:hover strong{color:#e05a2b}
+/* ===== phone: bottom tab bar instead of the cut-off top button row ===== */
+.tabbar,.phsos{display:none}
+@media(max-width:760px){
+ .tools{visibility:hidden!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important}
+ .tools>*{pointer-events:none}
+ .tools .more,.tools .more .menu{visibility:visible;pointer-events:auto}
+ .tools #btn-more{visibility:hidden}
+ .tools .more .menu{position:fixed!important;left:8px!important;right:8px!important;top:auto!important;bottom:calc(66px + env(safe-area-inset-bottom,0px))!important;width:auto!important;z-index:30;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px!important}
+ .tools .more .menu[hidden]{display:none!important}
+ .tabbar{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:#0b0f14;border-top:1px solid #242830;padding:4px 2px calc(4px + env(safe-area-inset-bottom,0px))}
+ .tabbar button{display:flex!important;flex-direction:column;align-items:center;gap:2px;border:0!important;background:none!important;padding:5px 0!important;min-height:50px;font-size:10.5px!important;color:#8b949e!important;border-radius:6px!important}
+ .tabbar button .ms{font-size:22px}
+ .tabbar button.on{color:#e05a2b!important;background:#1f232b!important}
+ .phsos{display:inline-flex;align-items:center;gap:6px;position:absolute;left:16px;top:122px;z-index:4;background:#f85149!important;border:1px solid #242830!important;color:#fff!important;font-size:12px!important;font-weight:600!important;padding:7px 12px!important;border-radius:4px!important}
+ .phsos .ms{font-size:16px}
+ .phsos:hover,.phsos:active,.phsos:focus{background:#f85149!important;color:#fff!important;border-color:#242830!important}
+ .tools .more .menu button{font-family:"Inter",sans-serif!important;text-transform:none!important;letter-spacing:0!important}
+ .status{bottom:calc(62px + env(safe-area-inset-bottom,0px))!important}
+ .panel{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;max-height:calc(100% - 290px)!important}
+ #ask.panel{max-height:calc(100% - 250px)!important}
+ .nav{top:122px!important}
+ .sitebar{display:none!important}
+ .atlas:has(#intro:not(.out)) .tabbar,.atlas:has(#intro:not(.out)) .phsos{display:none}
+}
 /* keep zoom buttons clear of an open right-hand panel */
 @media(min-width:761px){.nav{transition:right .35s var(--spring)}
 .atlas:has(.panel.right:not([hidden])) .nav{right:330px}
@@ -2318,5 +2357,21 @@ new MutationObserver(fit).observe(document.body,{subtree:true,attributes:true,at
 function up(){const s=[...g.querySelectorAll(".sens .s")].map(e=>e.textContent.trim());if(!s.length)return;
  f.textContent="Gale = measured by Curiosity at Gale crater only. "+[s[0].replace(/\s*Measured at Gale crater only\.?/,""),s[2]].map(x=>x.replace(/\.$/,"")).filter(Boolean).join(" · ")+(s[3]?" · Season: "+s[3]+".":"")}
 new MutationObserver(up).observe(g,{childList:true,subtree:true,characterData:true});up()})();
+</script>
+<script>
+/* Home: brand logo, rail item and phone tab all return to the welcome screen */
+(function(){const $=id=>document.getElementById(id);const atlas=document.querySelector(".atlas")||document.body;
+const brand=document.querySelector(".brand");if(brand){brand.setAttribute("role","button");brand.tabIndex=0;brand.title="Back to the home page";brand.setAttribute("aria-label","Mars Atlas - back to the home page");
+ brand.onclick=()=>window.goHome&&window.goHome();brand.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();window.goHome()}}}
+const r1=document.querySelector(".rail .ri");if(r1){const hb=document.createElement("button");hb.className="ri";hb.type="button";hb.innerHTML="<span>00. Home page</span><small>HOME</small>";hb.onclick=()=>window.goHome();r1.before(hb)}
+const T=[["home","Home",null],["hiking","Walk","btn-walk"],["device_thermostat","Weather","btn-cond"],["forum","Assistant","btn-ask"],["layers","Layers","btn-layers"],["more_horiz","More","btn-more"]];
+const bar=document.createElement("nav");bar.className="tabbar";bar.setAttribute("aria-label","Main sections");
+bar.innerHTML=T.map(([i,l,b])=>`<button type="button" data-b="${b||""}"><span class="ms" aria-hidden="true">${i}</span>${l}</button>`).join("");
+atlas.appendChild(bar);
+bar.querySelectorAll("button").forEach(x=>x.onclick=e=>{e.stopPropagation();const b=x.dataset.b;if(!b){window.goHome();return}const t=$(b);if(t)t.click()});
+const sos=document.createElement("button");sos.type="button";sos.className="phsos";sos.innerHTML='<span class="ms" aria-hidden="true">warning</span>Emergency';
+sos.onclick=()=>window._sosMenu&&window._sosMenu();atlas.appendChild(sos);
+const sync=()=>bar.querySelectorAll("button").forEach(x=>{const t=x.dataset.b&&$(x.dataset.b);x.classList.toggle("on",!!t&&t.getAttribute("aria-expanded")==="true")});
+new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:["aria-expanded"]});sync()})();
 </script>
 </body></html>
