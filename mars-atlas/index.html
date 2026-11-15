@@ -1949,6 +1949,13 @@ button:active{transform:scale(.97)}
 .sitebar{transition:opacity .3s}
 @media(max-width:1100px){.sitebar{display:none}}
 @media(max-width:760px){.mclk{display:none}}
+/* keep zoom buttons clear of an open right-hand panel */
+@media(min-width:761px){.nav{transition:right .35s var(--spring)}
+.atlas:has(.panel.right:not([hidden])) .nav{right:330px}
+.atlas:has(.panel.right.wide:not([hidden])) .nav{right:380px}
+.atlas:has(.panel.right.cmpw:not([hidden])) .nav{right:470px}
+.atlas:has(.panel.right.galw:not([hidden])) .nav{right:490px}
+.atlas:has(.panel.right:not([hidden])) .sitebar{opacity:0;pointer-events:none}}
 /* faint scanlines over the whole screen */
 .atlas::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px);animation:scan 9s linear infinite}
 @keyframes scan{to{background-position:0 90px}}
