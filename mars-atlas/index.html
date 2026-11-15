@@ -391,7 +391,8 @@ h2{font-size:23px}
   <div class="ovgrid"><button data-ov="none" aria-pressed="true">None</button><button data-ov="score" aria-pressed="false">Survival<small>model</small></button><button data-ov="water" aria-pressed="false">Ice<small>SWIM + Odyssey</small></button><button data-ov="sun" aria-pressed="false">Sun<small>model</small></button><button data-ov="ti" aria-pressed="false">Firmness<small>MGS TES</small></button><button data-ov="dust" aria-pressed="false">Dust<small>MGS TES</small></button><button data-ov="slope" aria-pressed="false">Steepness<small>MGS MOLA</small></button></div>
   <div id="legend" hidden><div class="heat"></div><div class="scale-w"><span id="leg-lo">Low</span><span id="leg-lab"></span><span id="leg-hi">High</span></div><p class="note" id="leg-note"></p><p class="srcmini" id="leg-src"></p></div>
   <h3>Show</h3>
-  <label class="check" for="t-names"><input id="t-names" type="checkbox" checked> Place names (IAU)</label>
+  <label class="check" for="t-auto"><input id="t-auto" type="checkbox" checked> Sharper colour imagery when zoomed (live from Mars Trek)</label>
+<label class="check" for="t-names"><input id="t-names" type="checkbox" checked> Place names (IAU)</label>
   <label class="check" for="t-sites"><input id="t-sites" type="checkbox" checked> Landing sites</label>
   <h3>Terrain height</h3>
   <label class="sl" for="relief"><span>Exaggerate</span><input id="relief" type="range" min="1" max="10" step="1" value="2"><output id="relief-o">×2</output></label>
@@ -1484,14 +1485,14 @@ function wantPatch(){if(!T)return null;const altKm=altCam()*RM;if(altKm>1400)ret
  const cc=Math.floor((wrapLon(CAM.lon)+180)/d),rc=Math.floor((90-CAM.lat)/d);let c0=cc-Math.floor((k-1)/2),c1=c0+k-1,r0=Math.max(0,rc-Math.floor((k-1)/2)),r1=Math.min(2**z-1,r0+k-1);
  if(T.bbox){c0=Math.max(c0,Math.floor((T.bbox[0]+180)/d));c1=Math.min(c1,Math.floor((T.bbox[2]+180-1e-9)/d));r0=Math.max(r0,Math.floor((90-T.bbox[3])/d));r1=Math.min(r1,Math.floor((90-T.bbox[1]-1e-9)/d));if(c0>c1||r0>r1)return null}
  c0=Math.max(0,c0);c1=Math.min(2**(z+1)-1,c1);
- return{z,c0,c1,r0,r1,ts,box:[-180+c0*d,90-(r1+1)*d,-180+(c1+1)*d,90-r0*d],key:[T.id,z,c0,c1,r0,r1].join(",")}}
+ return{t:T,z,c0,c1,r0,r1,ts,box:[-180+c0*d,90-(r1+1)*d,-180+(c1+1)*d,90-r0*d],key:[T.id,z,c0,c1,r0,r1].join(",")}}
 let pendingKey="",timer=0;
 function updatePatch(){const P=wantPatch();if(!P){patch.mesh.visible=false;patch.key="";stat();return}if(P.key===patch.key||P.key===pendingKey)return;pendingKey=P.key;clearTimeout(timer);timer=setTimeout(()=>loadPatch(P),250)}
 function loadPatch(P){const gen=++patch.gen,cols=P.c1-P.c0+1,rows=P.r1-P.r0+1,cv=document.createElement("canvas"),ts=P.ts;cv.width=cols*ts;cv.height=rows*ts;const x=cv.getContext("2d"),tex=new THREE.CanvasTexture(cv);tex.anisotropy=renderer.capabilities.getMaxAnisotropy();tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;
  let left=cols*rows,got=0;const done=()=>{if(--left>0||gen!==patch.gen)return;pendingKey="";if(!got){stat();return}const[w,s,e,n]=P.box,segs=Math.min(140,Math.max(40,Math.round(64*Math.max(cols,rows)/4)));
   if(patch.mesh.geometry)patch.mesh.geometry.dispose();patch.mesh.geometry=buildGeo(w,e,s,n,segs,segs,Math.max(.0005,(e-w)/segs/2),false);
   if(pMat.uniforms.map.value!==blank&&pMat.uniforms.map.value!==tex)pMat.uniforms.map.value.dispose();pMat.uniforms.map.value=tex;pMat.uniforms.rect.value.set((w+180)/360,(s+90)/180,(e-w)/360,(n-s)/180);patch.mesh.visible=true;patch.key=P.key;patch.z=P.z;patch.n=got;patch.box=P.box;stat()};
- for(let r=P.r0;r<=P.r1;r++)for(let c=P.c0;c<=P.c1;c++){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{if(gen!==patch.gen)return;x.drawImage(im,(c-P.c0)*ts,(r-P.r0)*ts);tex.needsUpdate=true;got++;okTiles++;done()};im.onerror=()=>{errs++;done()};im.src=url(T,P.z,r,c)}
+ for(let r=P.r0;r<=P.r1;r++)for(let c=P.c0;c<=P.c1;c++){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{if(gen!==patch.gen)return;x.drawImage(im,(c-P.c0)*ts,(r-P.r0)*ts);tex.needsUpdate=true;got++;okTiles++;done()};im.onerror=()=>{errs++;done()};im.src=url(P.t||T,P.z,r,c)}
  stat("Loading "+cols*rows+" tiles from Mars Trek…")}
 function rebuildPatch(){if(patch.box&&patch.mesh.visible){const[w,s,e,n]=patch.box;const segs=patch.mesh.geometry.parameters?100:Math.round(Math.sqrt(patch.mesh.geometry.attributes.position.count))-1;patch.mesh.geometry.dispose();patch.mesh.geometry=buildGeo(w,e,s,n,segs,segs,Math.max(.0005,(e-w)/segs/2),false)}}
 let failMsg="";function stat(msg){const el=$("tk-stat");if(!el)return;if(!T){el.innerHTML=failMsg;return}
@@ -1499,13 +1500,24 @@ let failMsg="";function stat(msg){const el=$("tk-stat");if(!el)return;if(!T){el.
  if(errs>=3&&okTiles===0){const name=T.name;failMsg=`<span style="color:var(--warn)">Couldn't reach Mars Trek for “${name}”, so the built-in map is back on. Check your connection and try again.</span>`;selectTrek(null);return}
  const mpp=patch.mesh.visible?Math.round(180/2**patch.z/TS(T)*RM*D2R*1000):null;
  el.textContent=patch.mesh.visible?`Streaming ${patch.n} tiles at zoom ${patch.z} (about ${mpp<1000?mpp+" m":(mpp/1000).toFixed(1)+" km"} per pixel)`:T.local?"Fly to the area to stream this layer (it only covers a close-up).":"Zoom in to stream sharper tiles."}
-function selectTrek(id){if(id)failMsg="";T=TREK.find(t=>t.id===id)||null;errs=0;okTiles=0;patch.key="";pendingKey="";patch.mesh.visible=false;
+function selectTrek(id){patch.mesh.scale.setScalar(1);if(id)failMsg="";T=TREK.find(t=>t.id===id)||null;errs=0;okTiles=0;patch.key="";pendingKey="";patch.mesh.visible=false;
  document.querySelectorAll("[data-trek]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.trek===id));
  if(!T){if(layer==="trek")setLayer("viking");return}
  BASE.trek=T.local?BASE.viking:globalTex(T);setLayer("trek");needLOD=true;stat();if(T.local&&T.go){flyTo(...T.go)}}
 window.selectTrek=selectTrek;
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="t-auto"){autoDetail=e.target.checked;needLOD=true}});
+// Sharper imagery when zoomed: with the built-in photo map on, stream NASA Mars Trek tiles around the view automatically
+// (Viking colour mosaic, 232 m, from about 1,400 km up). For even sharper black-and-white CTX (5 m), pick it in Layers. Close-up areas keep their own imagery.
+let AUTO=null,autoDetail=true;
+function autoText(){return AUTO?`Imagery: NASA Viking colour mosaic + live ${AUTO.id==="ctx"?"MRO CTX 5 m (NASA/JPL/MSSS/Caltech Murray Lab/Esri)":"Viking MDIM 2.1 detail (NASA/USGS)"} via NASA Mars Trek`:"Imagery: NASA Viking colour mosaic, MRO CTX close-ups, MRO HiRISE at Jezero"}
+function autoPatch(){if(layer!=="viking"||T){AUTO=null;return}
+ const altKm=altCam()*RM,inHot=hotAt(CAM.lat,CAM.lon),want=autoDetail&&altKm<1400&&!inHot?"vik":null;
+ if(!want){if(AUTO){AUTO=null;patch.mesh.visible=false;patch.key="";pendingKey="";$("st-src").textContent=autoText()}return}
+ if(!AUTO||AUTO.id!==want){AUTO=TREK.find(t=>t.id===want);patch.key="";pendingKey="";errs=0;okTiles=0;$("st-src").textContent=autoText()}
+ T=AUTO;patch.mesh.scale.setScalar(1.0005);try{updatePatch()}finally{T=null} // lifted ~1.7 km so the coarser globe surface never pokes through
+ if(patch.key&&patch.key.startsWith(AUTO.id+","))patch.mesh.visible=true}
 // hooks: LOD, terrain rebuild, base-layer switch
-const baseLOD2=updateLOD;updateLOD=function(){baseLOD2();if(layer==="trek")updatePatch();else patch.mesh.visible=false};
+const baseLOD2=updateLOD;updateLOD=function(){baseLOD2();if(layer==="trek")updatePatch();else{patch.mesh.visible=false;autoPatch()}};
 const baseRT2=rebuildTerrain;rebuildTerrain=function(){baseRT2();rebuildPatch()};
 const baseSL=setLayer;setLayer=function(l){baseSL(l);if(l!=="trek"){T=null;patch.mesh.visible=false;document.querySelectorAll("[data-trek]").forEach(b=>b.setAttribute("aria-pressed","false"));stat()}
  else if(T)$("st-src").textContent=`Imagery: ${T.name} · ${T.credit} · via NASA Mars Trek`};
