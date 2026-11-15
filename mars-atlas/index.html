@@ -1901,8 +1901,27 @@ function ansHeight(P,q){const z=elev(P.lat,P.lon);
  const src=["Elevation: MGS MOLA (Mars Atlas grid)"];
  if(/olympus/i.test(P.name)||/olympus/i.test(q)){t+=`<br>For the true summit: the highest cell in NASA's full-resolution MOLA map (128 pixels per degree, about 460 m) is <b>about 21,250 m</b> above the reference level, at 17.3°N, 133.4°W on the rim of Pangboche crater near the top of the volcano. Height above the surrounding plains is a different measure, and published figures for that vary.`;src.push("MOLA MEGDR 128 pixels/degree, tile megt44n180hb (NASA PDS)")}
  return{t,src,acts:[go(P)]}}
+
+// biggest / tallest / deepest / longest: answered only from MOLA and the IAU gazetteer sizes, and the globe flies there
+function featByName(n){return FEAT.find(f=>f.name===n)}
+function flyToPlace(p){if(!p)return;setTimeout(()=>{const f=featByName(p.fname||"");if(f)goFeature(f);else showAndFly(p)},50)}
+function ansSuperl(q){const s=q.toLowerCase();let t,src,go=null;
+ if(/\b(deep|deepest|low|lowest)\b/.test(s)){go={fname:"Badwater",lat:-32.91,lon:62.2,name:"Badwater crater"};
+  t=`The <b>lowest point on Mars</b> is in <b>Badwater crater</b>, on the floor of the Hellas basin: about <b>−8,208 m</b> below the reference level, at 32.9°S, 62.2°E. That's the deepest cell in NASA's full-resolution MOLA map (about 460 m cells). It's roughly 29 km below the top of Olympus Mons.`;src=["MOLA MEGDR 128 pixels/degree, tile megt00n000hb (NASA PDS)","IAU/USGS Gazetteer"]}
+ else if(/\b(canyon|valley|vallis|valles|chasma|gorge|trench)\b/.test(s)){go={fname:"Valles Marineris"};
+  t=`The <b>longest canyon system</b> is <b>Valles Marineris</b>: the IAU gazetteer lists it as <b>about 3,761 km</b> long. The globe is flying there now.`;src=["IAU/USGS Gazetteer"]}
+ else if(/\b(crater|basin|impact)\b/.test(s)){go={fname:"Hellas Planitia"};
+  t=`The biggest feature officially named a <b>crater</b> is <b>Huygens</b>, about <b>467 km</b> across. Bigger impact basins are named as plains: <b>Hellas Planitia</b> is about <b>2,299 km</b> across in the IAU gazetteer, and its floor holds the lowest point on Mars. The globe is flying to Hellas.`;src=["IAU/USGS Gazetteer"]}
+ else if(/\b(plain|plains|planitia|flat)\b/.test(s)){go={fname:"Utopia Planitia"};
+  t=`The biggest named plain is <b>Utopia Planitia</b>, about <b>3,560 km</b> across in the IAU gazetteer.`;src=["IAU/USGS Gazetteer"]}
+ else if(/\b(mountain|mountains|volcano|volcanoes|peak|mons|montes|point|place|feature|hill|high|tall|tallest|highest)\b/.test(s)||/\b(biggest|largest|tallest|highest)\b/.test(s)){go={fname:"Olympus Mons"};
+  t=`The <b>tallest mountain on Mars</b> is <b>Olympus Mons</b>, a shield volcano about <b>610 km</b> across (IAU gazetteer). Its highest point in NASA's full-resolution MOLA map is <b>about 21,250 m</b> above the reference level, at 17.3°N, 133.4°W on the rim of Pangboche crater. Height above the surrounding plains is a different measure, and published figures for that vary. The globe is flying there now.`;src=["MOLA MEGDR 128 pixels/degree, tile megt44n180hb (NASA PDS)","IAU/USGS Gazetteer"]}
+ else return{t:`I can answer "biggest" questions about mountains, the lowest point, canyons, craters and plains, using NASA's MOLA map and the IAU gazetteer. Try "What is the tallest mountain?" or "Where is the deepest point?".`,src:[]};
+ flyToPlace(go);return{t,src,acts:[{l:"Fly there again",f:()=>flyToPlace(go)}]}}
 // ---------- intent matching (keyword rules)
 const RULES=[
+ ["superl",/\b(biggest|largest|tallest|highest|deepest|lowest|longest|widest|greatest|giant|huge)\b/],
+ ["show",/\b(show( me)?|take me|fly( me)? to|go to|zoom (in )?to|where is|where's|find)\b/],
  ["best",/\b(best|ideal|top|safest|good|great|where should|where could|where can|where would)\b.*\b(place|places|spot|site|sites|location|base|land|landing|live|build|settle\w*|colony)\b/],
  ["height",/\bhow (tall|high|deep|big)\b|\b(summit|peak|highest|tallest)\b/],
  ["weather",/\b(cold|hot|warm|temperatures?|weather|freez\w*|celsius|fahrenheit|climate|windy|wind)\b/],
@@ -1920,11 +1939,12 @@ const RULES=[
 function answer(q){const r=answer0(q),NP=forcedPlace?null:namedPlace(q);if(r&&NP&&!NP.sure){r.acts=(r.acts||[]).concat([{l:`Did you mean ${NP.name}?`,f:()=>{forcedPlace=NP;try{ask(q)}finally{forcedPlace=null}}}])}return r}
 function answer0(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).map(r=>r[0]),P=place(q);
  // "cooling water"/"water supply" is about the suit, not ice
- let k=hits[0]||null;if(k==="best"&&/\b(here|this|my|current)\b/.test(s))k="survival";if(k==="route"&&hits.includes("radiation"))k="radiation";
+ let k=hits[0]||null;if(k==="best"&&/\b(here|this|my|current)\b/.test(s))k="survival";if(k==="superl"&&/\b(here|this|my|current)\b/.test(s))k="height";if(k==="route"&&hits.includes("radiation"))k="radiation";
  if(k==="route"&&/\b(ice)\b/.test(s)&&!/oxygen|suit|battery|rover|turn|return|route|walk/.test(s))k="ice";
  const NP=namedPlace(q);if(!k&&NP&&NP.sure)k="overview";
  if((k==="weather"||k==="conditions")&&notMars(q))return{t:`Mars Atlas only covers Mars, so I can't answer about ${esc(notMars(q))}. Ask me about a place on Mars instead.`,src:[]};
- switch(k){case"best":return ansBest();case"height":return ansHeight(P,q);case"weather":return ansWeather(P);case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
+ if(k==="show"){const np=namedPlace(q);if(np&&np.sure){const r=ansOverview(np);flyToPlace(np);return r}k=hits.find(h=>h!=="show")||null;if(k==="superl")return ansSuperl(q)}
+ switch(k){case"superl":return ansSuperl(q);case"best":return ansBest();case"height":return ansHeight(P,q);case"weather":return ansWeather(P);case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
   case"conditions":return ansConditions(P);case"survival":return ansSurvival(P);case"layer":return ansLayer();case"place":return ansPlace(P);case"overview":return ansOverview(P);case"help":return{t:HELP,src:[]}}
  return{t:`I couldn't match that to a topic I have data for, and I won't guess. ${HELP}`,src:[]}}
 
