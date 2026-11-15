@@ -744,7 +744,7 @@ if(down&&!down.multi&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6&&e.button!
 cv.addEventListener("pointerup",endPtr);cv.addEventListener("pointercancel",endPtr);
 cv.addEventListener("dblclick",e=>{const ll=pickAt(e.clientX,e.clientY);if(ll)flyTo(ll.lat,ll.lon,CAM.range*.35,CAM.tilt/D2R,CAM.heading/D2R)});
 cv.addEventListener("wheel",e=>{e.preventDefault();zoomBy(Math.exp(e.deltaY*(e.deltaMode?.05:.0013)))},{passive:false});
-addEventListener("keydown",e=>{if(e.target.closest&&e.target.closest("input,textarea,select"))return;const k=e.key,st=40;
+addEventListener("keydown",e=>{if(e.target.closest&&e.target.closest("input,textarea,select,.panel,.tourcard,.lightbox,.menu,#sugg,.sitebar,.warnlist"))return;const k=e.key,st=40;
 if(k==="ArrowLeft"||k==="ArrowRight"||k==="ArrowUp"||k==="ArrowDown"){stopAuto();flight=null;const dx=k==="ArrowLeft"?st:k==="ArrowRight"?-st:0,dy=k==="ArrowUp"?st:k==="ArrowDown"?-st:0;if(e.shiftKey)turnBy(-dx,dy);else panBy(dx,dy);e.preventDefault()}
 else if(k==="+"||k==="=")zoomBy(.6);else if(k==="-"||k==="_")zoomBy(1/.6);else if(k==="Escape"&&measuring)setMeasure(false)});
 function stepCamera(now,dt){if(spinning)CAM.lon=wrapLon(CAM.lon+dt*.0012);
@@ -1942,6 +1942,22 @@ window._ask=ask;
  if(!matchMedia("(pointer: fine)").matches)return;
  let last=null;document.addEventListener("pointermove",e=>{const p=e.target.closest&&e.target.closest(".panel,.brand,.tourcard,.menu,.lb-in");
   if(last&&last!==p){last.style.removeProperty("--mx");last.style.removeProperty("--my")}last=p;if(!p)return;const r=p.getBoundingClientRect();p.style.setProperty("--mx",(e.clientX-r.left)+"px");p.style.setProperty("--my",(e.clientY-r.top)+"px")},{passive:true});
+})();
+</script>
+<script>
+// ===== keyboard: Esc closes the top open panel; the page behind the intro can't be reached with Tab =====
+(function(){const $=id=>document.getElementById(id);
+ addEventListener("keydown",e=>{if(e.key!=="Escape")return;
+  // these already have their own Esc handling
+  if((typeof tourI!=="undefined"&&tourI>=0)||($("lightbox")&&!$("lightbox").hidden)||($("about")&&!$("about").hidden)||(typeof measuring!=="undefined"&&measuring))return;
+  if(e.target.closest&&e.target.closest(".search"))return;
+  const wl=$("warn-list");if(wl&&!wl.hidden){wl.hidden=true;return}
+  const open=[...document.querySelectorAll(".panel:not([hidden])")].filter(p=>p.offsetParent!==null);if(!open.length)return;
+  const p=open.find(x=>x.classList.contains("right"))||open[open.length-1];
+  const x=p.querySelector("button.x,button[id$='-close'],button[aria-label^='Close']");if(x){x.click();e.preventDefault();const b=document.querySelector(`[aria-controls="${p.id}"]`)||$("btn-"+p.id);if(b&&b.focus)b.focus()}},true);
+ const intro=$("intro");if(!intro)return;
+ const sync=()=>{const on=!intro.classList.contains("out")&&!intro.hidden;for(const el of intro.parentNode.children){if(el===intro)continue;if(on)el.setAttribute("inert","");else el.removeAttribute("inert")}};
+ new MutationObserver(sync).observe(intro,{attributes:true,attributeFilter:["class","hidden"]});sync();
 })();
 </script>
 <style id="theme-ops">/* ===== theme layer (overrides; all features untouched) ===== */
