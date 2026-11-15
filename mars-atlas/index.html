@@ -485,6 +485,7 @@ h2{font-size:23px}
   <div class="row" style="align-items:center;gap:14px"><label class="check" for="w-ret"><input id="w-ret" type="checkbox" checked> Return to start</label><label class="check" for="w-route" title="How the planner picks the path between your points">Path <select id="w-route"><option value="safe" selected>Safest terrain</option><option value="fast">Fastest</option><option value="eco">Resource-saving</option><option value="straight">Straight line</option></select></label><button id="w-arm" aria-pressed="false" style="flex:none;margin-left:auto">★ Next click is a stop</button></div>
   <div id="w-sum" class="wsum"></div>
   <div id="w-verdict"></div>
+  <button id="w-debrief" class="btn-primary" type="button" style="width:100%;margin:8px 0 4px" hidden>Generate mission debrief</button>
   <div id="w-res" class="sec" hidden></div>
   <div id="w-cmp" class="sec" hidden></div>
   <div id="w-flags" class="sec" hidden></div>
@@ -1107,7 +1108,7 @@ function safePath(A,B,rm){rm=rm||W.rmode||"safe";const eco=rm==="eco",key=[rm,A.
  g[si]=0;push(si,H(si));let it=0;
  while(hp.length&&it++<N*3){const k=pop();if(done[k])continue;done[k]=1;if(k===gi)break;const kx=k%nx,ky=(k/nx)|0;
   for(const[dx,dy]of D8){const x=kx+dx,y=ky+dy;if(x<0||y<0||x>=nx||y>=ny)continue;const q=y*nx+x;if(done[q])continue;
-   const dk=Math.hypot(dx,dy)*cell,s=(Z[q]-Z[k])/(dk*1000),dt=dk/speedOf(s,W.mode);let c=eco?frac(stepRes(dk,dt,s,T[q]<0?null:T[q],isRiding(s))):dt;if(rm!=="fast"&&Math.abs(s)>tanL)c+=penK*dk*4*(1+(Math.abs(s)-tanL)*10);
+   const dk=Math.hypot(dx,dy)*cell,s=(Z[q]-Z[k])/(dk*1000),dt=dk/speedOf(s,W.mode);let c=eco?frac(stepRes(dk,dt,s,T[q]<0?null:T[q],isRiding(s))):dt;if(rm!=="fast"&&Math.abs(s)>tanL)c+=penK*dk*4*(1+(Math.abs(s)-tanL)*10);if(rm==="safe"){const r=Math.abs(s)/tanL;c+=dt*1.5*r*r}  /* safest: steeper ground costs more even below the limit */
    if(g[k]+c<g[q]){g[q]=g[k]+c;came[q]=k;push(q,g[q]+H(q))}}}
  if(came[gi]<0&&gi!==si){const r=[A,B];pathCache.set(key,r);return r}
  const nodes=[];for(let k=gi;k>=0;k=came[k]){nodes.push(k);if(k===si)break}nodes.reverse();
@@ -2317,6 +2318,23 @@ button,.btnlink{font-family:"Inter",sans-serif!important;font-weight:500!importa
  .atlas:has(.panel:not([hidden])) .nav{display:none!important}
  .atlas:has(#intro:not(.out)) .tabbar,.atlas:has(#intro:not(.out)) .phsos{display:none}
 }
+
+/* ===== mission debrief + scientific validation ===== */
+.lbl{display:inline-block;font:600 9.5px "JetBrains Mono",monospace;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;vertical-align:1px;margin-right:4px}
+.lbl.m{color:#2ea043;border-color:rgba(46,160,67,.5)}.lbl.d{color:#388bfd;border-color:rgba(56,139,253,.5)}.lbl.s{color:#d29922;border-color:rgba(210,153,34,.6)}
+#debrief .lb-in{max-width:760px;width:calc(100% - 24px);max-height:calc(100% - 40px);overflow:auto;padding:22px 24px}
+#debrief h2{font:600 20px "Space Grotesk",sans-serif;text-transform:uppercase;letter-spacing:.03em;margin:0 0 2px}
+#debrief h3{font:600 10.5px "JetBrains Mono",monospace;letter-spacing:.08em;color:#8b949e;text-transform:uppercase;border-bottom:1px solid #242830;padding-bottom:4px;margin:16px 0 8px}
+#debrief table{width:100%;border-collapse:collapse;font:12.5px "Inter",sans-serif}
+#debrief td,#debrief th{padding:5px 6px;border-bottom:1px solid #242830;text-align:left}
+#debrief td.n{text-align:right;font-family:"JetBrains Mono",monospace;white-space:nowrap}
+#debrief .go{font:600 15px "Space Grotesk",sans-serif;padding:10px 12px;border-left:3px solid #2ea043;background:#1f232b;margin:10px 0}
+#debrief .go.no{border-left-color:#f85149}
+#debrief .disc{font-size:11.5px;color:#8b949e;border:1px solid #d29922;padding:8px 10px;margin-top:14px}
+#debrief .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+#ab-sci p,#ab-sci li{font-size:12.5px;line-height:1.5}#ab-sci code{font:11.5px "JetBrains Mono",monospace;background:#0e1013;border:1px solid #242830;padding:1px 4px;border-radius:2px;color:#e2e8f0}
+#ab-sci .warnbox{border:1px solid #d29922;padding:8px 10px;color:#e2e8f0;margin:8px 0}
+@media print{body>*:not(#debrief){display:none!important}#debrief{position:static!important;background:#fff!important}#debrief .lb-in{max-height:none;overflow:visible;background:#fff!important;color:#000!important;border:0!important}#debrief *{color:#000!important}#debrief .acts{display:none}}
 /* keep zoom buttons clear of an open right-hand panel */
 @media(min-width:761px){.nav{transition:right .35s var(--spring)}
 .atlas:has(.panel.right:not([hidden])) .nav{right:330px}
@@ -2376,5 +2394,76 @@ const sos=document.createElement("button");sos.type="button";sos.className="phso
 sos.onclick=()=>window._sosMenu&&window._sosMenu();atlas.appendChild(sos);
 const sync=()=>bar.querySelectorAll("button").forEach(x=>{const t=x.dataset.b&&$(x.dataset.b);x.classList.toggle("on",!!t&&t.getAttribute("aria-expanded")==="true")});
 new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:["aria-expanded"]});sync()})();
+</script>
+<script>
+/* ===== Mission debrief (from the planner's own numbers) + Scientific validation section ===== */
+(function(){const $=id=>document.getElementById(id),A=()=>window._atlasAPI;if(!A())return;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hm=h=>{const m=Math.round(h*60);return Math.floor(m/60)+" h "+String(m%60).padStart(2,"0")};
+const pct=x=>Math.round(x*100)+"%";
+const btn=$("w-debrief");
+setInterval(()=>{const W=A().W;btn.hidden=!(W&&W.pts&&W.pts.length>=2)},800);
+const box=document.createElement("div");box.id="debrief";box.className="lightbox";box.hidden=true;box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Mission debrief");
+document.body.appendChild(box);
+function close(){box.hidden=true;btn.focus()}
+box.addEventListener("click",e=>{if(e.target===box)close()});addEventListener("keydown",e=>{if(e.key==="Escape"&&!box.hidden){e.stopPropagation();close()}},true);
+function build(){const api=A(),W=api.W,r=api.analyze();if(!r)return null;
+ const rm=W.rmode||"safe",name=k=>{try{return api.wpName(W.pts[k],k)}catch(e){return "Point "+(k+1)}};
+ const modes=[["safe",true],["fast",true],["eco",true],["straight",false]].map(([k,s])=>{const x=api.analyze(s,k);return{k,x}});
+ const RK=W.mode==="rover"?["o2","h2o","bat","rov"]:["o2","h2o","bat"],LAB={o2:"Suit oxygen",h2o:"Cooling water",bat:"Suit battery",rov:"Rover battery"},
+  U={o2:v=>Math.round(v)+" g",h2o:v=>(v/1000).toFixed(2)+" kg",bat:v=>Math.round(v)+" Wh",rov:v=>(v/1000).toFixed(1)+" kWh"};
+ const ok=!r.short.length&&r.pnr==null&&r.need<=r.lim;
+ const why=ok?`GO (simulated): the plan fits in the suit time with ${hm(r.lim-r.need)} spare before the ${hm(W.res)} reserve.`:
+   `NO-GO (simulated): ${r.pnr!=null?`turn back at ${r.S[r.pnr].km.toFixed(1)} km (limited by ${r.pnrBy==="time"?"suit time":LAB[r.pnrBy]||r.pnrBy})`:"resources run into the reserve"}${r.short.length?"; short on "+r.short.map(q=>LAB[q]).join(", "):""}.`;
+ const hz=[];if(r.steepKm>0)hz.push(`${r.steepKm.toFixed(1)} km steeper than your ${W.slope}° limit`);if(r.softKm>0)hz.push(`${r.softKm.toFixed(1)} km of soft, dusty ground (MGS TES)`);
+ if(r.dustKm>0)hz.push(`${r.dustKm.toFixed(1)} km on high-dust surface (TES dust cover index)`);if(r.darkKm>0)hz.push(`${r.darkKm.toFixed(1)} km walked after sunset`);if(r.polar)hz.push("Route reaches beyond 88° latitude, where the terrain grid is coarse");
+ const tr=Object.keys(r.terr).map(Number).sort((a,b)=>a-b).map(k=>k<1000?k+" m grid":(k/1000).toFixed(1)+" km grid").join(", ");
+ return `<div class="lb-in"><button class="x" id="db-close" aria-label="Close debrief">×</button>
+ <h2>Mission debrief</h2><p class="note" style="margin:0">${esc(name(0))} → ${esc(name(W.pts.length-1))}${W.ret?" and back":""} · ${W.mode==="rover"?"with a rover":"on foot"} · path: ${esc(api.routeName(rm)||rm)} · Mars Year ${r.mt.my}, Ls ${r.mt.Ls.toFixed(0)}° · start ${String(Math.floor(W.start)).padStart(2,"0")}:${String(Math.round((W.start%1)*60)).padStart(2,"0")} local solar time</p>
+ <div class="go ${ok?"":"no"}">${esc(why)}</div>
+ <h3>Route <span class="lbl d">DERIVED</span></h3><table>
+ <tr><td>Distance</td><td class="n">${r.km.toFixed(1)} km</td><td>Total climb / descent</td><td class="n">${Math.round(r.climb)} m / ${Math.round(r.desc)} m</td></tr>
+ <tr><td>Time needed</td><td class="n">${hm(r.need)}</td><td>Steepest slope</td><td class="n">${r.maxSl.toFixed(0)}°</td></tr>
+ <tr><td>Suit time minus reserve</td><td class="n">${hm(r.lim)}</td><td>Daylight here</td><td class="n">${hm(r.dl)}</td></tr>
+ <tr><td colspan="4" style="color:#8b949e;font-size:11.5px">Terrain read from: ${esc(tr)}. Elevation is measured (MOLA / CTX / HRSC); slope, distance and time are derived from it.</td></tr></table>
+ <h3>Resources <span class="lbl s">SIMULATED ESTIMATE</span></h3><table><tr><th>Supply</th><th>Used</th><th>Capacity</th><th>Left</th></tr>
+ ${RK.map(q=>`<tr><td>${LAB[q]}</td><td class="n">${U[q](r.used[q])}</td><td class="n">${U[q](r.caps[q])}</td><td class="n" style="color:${r.short.includes(q)?"#f85149":"inherit"}">${pct(Math.max(0,r.left[q]))}</td></tr>`).join("")}</table>
+ <h3>Compare paths <span class="lbl d">DERIVED</span> <span class="lbl s">SIMULATED</span></h3><table><tr><th>Path</th><th>Distance</th><th>Time</th><th>Steepest</th><th>Oxygen</th></tr>
+ ${modes.map(({k,x})=>x?`<tr${k===rm?' style="color:#e05a2b"':""}><td>${esc(api.routeName(k)||k)}</td><td class="n">${x.km.toFixed(1)} km</td><td class="n">${hm(x.need)}</td><td class="n">${x.maxSl.toFixed(0)}°</td><td class="n">${Math.round(x.used.o2)} g</td></tr>`:"").join("")}</table>
+ <p class="note">On gentle ground the paths can differ by only a few percent; that is a real result of the terrain, not an error.</p>
+ <h3>Hazards along the route <span class="lbl m">MEASURED</span> data, <span class="lbl d">DERIVED</span> totals</h3>
+ ${hz.length?"<ul>"+hz.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>":'<p class="note">No flagged hazards from the map layers on this route.</p>'}
+ <h3>If something goes wrong</h3><p class="note">Use “Simulate emergency” (SIM switch / Emergency button) for step-by-step guidance on a suit leak, dust storm, solar flare, rover failure, darkness, injury or getting lost.</p>
+ <div class="disc"><b>Educational research prototype.</b> Mars Atlas is not an operational astronaut safety system. Resource figures come from a simple published walking-energy model (Pandolf) scaled to Mars gravity, with assumed suit capacities; they have not been validated against real suits or tested with users. See About the data → Scientific validation.</div>
+ <div class="acts"><button class="btn-primary" id="db-print" type="button">Print / save as PDF</button><button id="db-copy" type="button">Copy as text</button><button id="db-x2" type="button">Close</button></div></div>`}
+btn.onclick=()=>{const html=build();if(!html)return;box.innerHTML=html;box.hidden=false;
+ $("db-close").onclick=close;$("db-x2").onclick=close;$("db-print").onclick=()=>print();
+ $("db-copy").onclick=async()=>{const t=box.querySelector(".lb-in").innerText.replace(/Print \/ save as PDF[\s\S]*$/,"").replace(/^×\s*/,"");try{await navigator.clipboard.writeText(t);$("db-copy").textContent="Copied"}catch(e){$("db-copy").textContent="Copy failed"}};
+ setTimeout(()=>$("db-close").focus(),30)};
+window._debrief=()=>btn.click();
+/* Scientific validation section inside About the data */
+const SCI=`<div id="ab-sci"><h3>Scientific validation: how every number is made</h3>
+<p><span class="lbl m">MEASURED</span> published spacecraft data, shown as released: MOLA elevation, CTX/HRSC terrain models, TES thermal inertia and dust cover, Odyssey neutron hydrogen, THEMIS imagery, Curiosity REMS weather and RAD radiation, USGS geology, IAU names.</p>
+<p><span class="lbl d">DERIVED</span> calculated directly from measured data with standard formulas: slope from elevation; local solar time, sunrise and season from the Mars24 method (Allison &amp; McEwen 2000); polar ice estimate (hydrogen index from Odyssey counts, calibrated to the SWIM ice map, r = 0.78); air pressure from elevation with the NASA fact-sheet scale height.</p>
+<p><span class="lbl s">SIMULATED</span> educational models with assumed inputs: walking speed, suit oxygen, cooling water and battery, rover energy, survival score.</p>
+<h3>Formulas used by the Marswalk planner</h3><ul>
+<li><b>Walking speed</b> (Tobler's hiking function): <code>v = 6 · e^(−3.5·|s + 0.05|) km/h × pace</code>, s = slope (rise/run).</li>
+<li><b>Metabolic power</b> (Pandolf et al. 1977), load terms scaled by Mars/Earth gravity 3.71/9.81: <code>M = 1.5·W + 0.378·[2(W+L)(L/W)² + η(W+L)(1.5v² + 0.35·v·G)]</code> watts; W body mass, L load (kg), v m/s, G uphill grade in %, η terrain factor 1.1–2.1 from TES firmness. Downhill is not given a discount (conservative).</li>
+<li><b>Oxygen</b>: <code>O₂ (g) = M·t / 20.1 kJ per litre O₂ × 1.429 g/L</code>.</li>
+<li><b>Cooling water</b> (sublimator): <code>H₂O (g) = 0.8·M·t / 2.83 MJ/kg</code>.</li>
+<li><b>Suit battery</b>: suit electronics power (slider) × time. <b>Rover</b>: <code>P = m·g·(Crr + sin θ)·v / 0.7 + 200 W</code>, m = 900 kg (assumed), Crr 0.06–0.18 from firmness.</li>
+<li><b>Capacities</b> (assumed): enough oxygen and water for 350 W of work over the suit time you set; science stops at 250 W.</li>
+<li><b>Point of no return</b>: the first point where time so far + the quickest way back (or any supply so far + supply needed to get back) would cut into the reserve.</li>
+<li><b>Paths</b>: A* search on a terrain grid (up to ~170 cells across, 40 m cells inside the 20 m CTX Jezero model). Cost = travel time; <i>Safest</i> adds a penalty that grows with slope² and a large penalty above your slope limit; <i>Fastest</i> uses time only; <i>Resource-saving</i> minimises the share of suit O₂ + battery (+ rover battery) used. The path is then smoothed while staying under the slope limit.</li></ul>
+<h3>What has been checked</h3><ul>
+<li>Automated browser tests by the developer: cumulative oxygen, water and battery only increase along a route; a return trip is about twice a one-way trip; a heavier load raises oxygen use; a 2-hour suit correctly triggers a turn-back and shortage warnings; a route with one point is rejected.</li>
+<li>Not done: comparison with real spacesuit data, field trials or testing with users.</li></ul>
+<h3>Limits and uncertainty</h3><ul>
+<li>Global terrain is about 7 km per cell: small cliffs and boulders are invisible outside the close-up areas. A badge in the planner shows which terrain resolution a route uses.</li>
+<li>Ice values are regional signals (tens of km), not drilling targets. Weather and radiation are from Curiosity at Gale crater only.</li>
+<li>Resource numbers could be off by tens of percent; real suits differ by design.</li></ul>
+<div class="warnbox"><b>Mars Atlas is an educational research prototype, not an operational astronaut safety system.</b></div></div>`;
+const ab=$("btn-about");if(ab)ab.addEventListener("click",()=>setTimeout(()=>{const r=$("ab-real");if(r&&!$("ab-sci"))r.insertAdjacentHTML("beforeend",SCI)},60));
+})();
 </script>
 </body></html>

@@ -46,6 +46,24 @@ It layers data from six NASA missions (Viking, Mars Global Surveyor, Mars Odysse
 ## Limits
 This is a concept prototype, not a mission tool. Terrain is 20 m at Jezero, 200 m in the other close-ups and about 7 km elsewhere, so boulders and small scarps don't show. Walking speed, rover speed and suit time are labelled planning guesses you can change in the app.
 
+## Mission workflow
+1. Pick a place on the globe (or search 1,926 IAU names).
+2. Explore layers: survival score, water ice, sunlight, steepness, ground firmness, dust, geology.
+3. Plan a Marswalk: click waypoints, add science stops, choose Safest / Fastest / Resource-saving / Straight path.
+4. Read the turn-back point and the simulated oxygen, cooling water and battery use.
+5. Simulate an emergency (SIM switch or Emergency button) and get step-by-step guidance.
+6. **Generate mission debrief**: a one-page summary (GO / NO-GO, route, resources, path comparison, hazards) that can be printed or saved as PDF.
+
+## Scientific validation
+Open **About the data → Scientific validation** in the app for every formula and assumption. In short:
+- **Measured:** MOLA, CTX/HRSC terrain, TES, Odyssey neutron hydrogen, THEMIS, Curiosity REMS and RAD, USGS geology, IAU names.
+- **Derived:** slope, local time and seasons (Mars24, Allison & McEwen 2000), polar ice estimate, air pressure from elevation.
+- **Simulated:** walking speed (Tobler), metabolic power (Pandolf et al. 1977, load terms scaled to Mars gravity), oxygen, cooling water, battery, rover energy, survival score.
+- Routes use A* search on a terrain grid; the cost function differs per path mode.
+- Checked with automated browser tests (resources only increase along a route, return trip ≈ 2× one-way, heavier load → more oxygen, short suit time → turn-back warning). **Not** checked against real spacesuit data or with users.
+
+> Mars Atlas is an educational research prototype, not an operational astronaut safety system.
+
 ## Use of AI
 In line with the Space Apps rule to state where and how AI tools were used:
 - **My part:** I chose the challenge, decided what the app should do (Marswalk planner, turn-back point, science stops, layers, demo), reviewed every version and directed the changes.
