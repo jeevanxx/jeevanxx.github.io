@@ -1,5 +1,14 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2713%27 fill=%27%23c1440e%27/%3E%3Cellipse cx=%2716%27 cy=%2716%27 rx=%2715%27 ry=%274%27 fill=%27none%27 stroke=%27%2300f0ff%27 stroke-width=%271.5%27/%3E%3C/svg%3E"></head><body>
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2713%27 fill=%27%23c1440e%27/%3E%3Cellipse cx=%2716%27 cy=%2716%27 rx=%2715%27 ry=%274%27 fill=%27none%27 stroke=%27%2300f0ff%27 stroke-width=%271.5%27/%3E%3C/svg%3E"></head><body>
 <title>Mars Atlas</title>
+<meta property="og:title" content="Mars Atlas: plan the first walk on Mars">
+<meta property="og:description" content="Interactive 3D map of Mars built on NASA and ESA data: where humans could live, buried ice, geology and a walk planner with simulated suit oxygen and safe turn-back points. NASA Space Apps 2026 concept prototype.">
+<meta property="og:image" content="https://jeevanxx.github.io/mars-atlas/og.jpg">
+<meta property="og:url" content="https://jeevanxx.github.io/mars-atlas/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mars Atlas: plan the first walk on Mars">
+<meta name="twitter:image" content="https://jeevanxx.github.io/mars-atlas/og.jpg">
+
 <meta name="description" content="Mars Atlas: plan a Marswalk on a 3D Mars built from NASA mission data. NASA Space Apps 2026, Martian Map challenge.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
 <style>/* Layout: full-bleed planet with floating glass controls, like a desktop globe viewer; panels become bottom sheets on phones. */
@@ -392,15 +401,15 @@ h2{font-size:23px}
       <li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: Viking MDIM 2.1 colour mosaic, MOLA shaded relief</li>
       <li><a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noopener">NASA PDS</a>: MGS MOLA elevation</li>
       <li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: MRO CTX mosaics of Jezero, Gale, Olympus Mons and Deuteronilus Mensae</li>
-      <li><a href="https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m" target="_blank" rel="noopener">USGS Astrogeology</a>: HRSC and MOLA blended 200 m terrain</li>
-      <li><a href="https://planetarynames.wr.usgs.gov/" target="_blank" rel="noopener">IAU/USGS Gazetteer</a>: 1,927 feature names</li>
+      <li><a href="https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m" target="_blank" rel="noopener">USGS Astrogeology</a>: HRSC and MOLA blended 200 m terrain (HRSC: ESA/DLR/FU Berlin, ESA Mars Express; MOLA: NASA/GSFC)</li>
+      <li><a href="https://planetarynames.wr.usgs.gov/" target="_blank" rel="noopener">IAU/USGS Gazetteer</a>: 1,926 feature names</li>
       <li><a href="https://swim.psi.edu/SWIM4MIMProducts.php" target="_blank" rel="noopener">SWIM project</a>: ice consistency maps (60°N to 60°S)</li>
       <li><a href="https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-and-v2/" target="_blank" rel="noopener">Mars Odyssey Neutron Spectrometer, averaged neutron data</a> (NASA PDS Geosciences Node): hydrogen beyond 60°, Mars Years 26–33</li>
       <li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: Mars Odyssey THEMIS daytime infrared mosaic (100 m)</li>
       <li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a>: MGS TES thermal inertia (Putzig et al. 2005) and dust cover index (Ruff &amp; Christensen 2002)</li>
       <li><a href="https://mars.nasa.gov/msl/mission/weather/" target="_blank" rel="noopener">NASA Curiosity REMS weather</a>: latest weather reports from Gale crater</li>
-      <li><a href="https://phys.org/news/2013-12-scientists-publish-surface-mars.amp" target="_blank" rel="noopener">Hassler et al. 2014 radiation results</a>: Curiosity RAD, 0.67 mSv per day on the surface</li>
-      <li><a href="https://phys.org/news/2023-05-perseverance-rover-captures-view-mars.amp" target="_blank" rel="noopener">Belva crater (JPL)</a>: Perseverance's 2023 view of Belva's layered walls</li>
+      <li><a href="https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars" target="_blank" rel="noopener">Hassler et al. 2014 radiation results</a>: Curiosity RAD, 0.67 mSv per day on the surface</li>
+      <li><a href="https://www.jpl.nasa.gov/news/nasas-perseverance-rover-captures-view-of-mars-belva-crater/" target="_blank" rel="noopener">Belva crater (JPL)</a>: Perseverance's 2023 view of Belva's layered walls</li>
       <li><a href="https://science.nasa.gov/?p=407443" target="_blank" rel="noopener">Gediz Vallis sulfur (NASA)</a>: Curiosity's 2024 pure sulfur discovery</li>
       <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html?embed=true" target="_blank" rel="noopener">NASA Mars fact sheet</a>: surface pressure and scale height</li>
     </ul>
@@ -450,11 +459,11 @@ h2{font-size:23px}
   <button id="zin" aria-label="Zoom in">+</button>
   <button id="zout" aria-label="Zoom out">−</button>
   <button id="home" aria-label="Reset view"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9.5L10 3l7 6.5M5.5 8v8.5h9V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
-  <button id="tilt" aria-pressed="false" aria-label="Tilt the view">3D</button>
+  <button id="tilt" aria-pressed="false" aria-label="3D tilted view">3D</button>
   <button aria-label="Point north"><svg id="compass" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l3.2 7.5H6.8z" fill="#ff9466"/><path d="M10 17.5l3.2-7.5H6.8z" fill="currentColor" opacity=".55"/></svg></button>
   <button id="spin" aria-pressed="true" aria-label="Auto spin"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10a6 6 0 1 1-2-4.5M16 3.5v3.5h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 </div>
-<div id="hint" class="hint chrome">Drag to move · Right-drag or Shift-drag to tilt and turn · Scroll to zoom · Click a place</div>
+<div id="hint" class="hint chrome" role="complementary" aria-label="How to move the globe">Drag to move · Right-drag or Shift-drag to tilt and turn · Scroll to zoom · Click a place</div>
 
 
 <aside id="cmp" class="panel right cmpw" hidden aria-label="Compare places">
@@ -521,9 +530,9 @@ h2{font-size:23px}
   <div class="intro-in">
     <div class="kick">NASA Space Apps 2026 · Martian Map challenge</div>
     <h1>Plan the first walk on Mars.</h1>
-    <p>Mars Atlas layers data from five NASA missions onto one 3D globe. Find where humans could live, then plan a Marswalk: the route, the slopes, the science stops, the suit time, the sunlight and the moment to turn back.</p>
+    <p>Mars Atlas layers data from six NASA missions and ESA's Mars Express onto one 3D globe. Find where humans could live, then plan a Marswalk: the route, the slopes, the science stops, the suit time, the sunlight and the moment to turn back.</p>
     <div class="cta"><button id="go-tour" class="btn-primary">Start the guided tour</button><button id="go-explore" class="btn-ghost">Explore the planet</button></div>
-    <div class="stats"><div><b>5</b><span>NASA missions</span></div><div><b>10</b><span>Data layers</span></div><div><b>1,927</b><span>Named places</span></div><div><b>4</b><span>3D close-ups</span></div></div>
+    <div class="stats"><div><b>6</b><span>NASA missions + ESA</span></div><div><b>10</b><span>Data layers</span></div><div><b>1,926</b><span>Named places</span></div><div><b>4</b><span>3D close-ups</span></div></div>
     <small>Concept prototype. Scores and plans show where to look closer, not where it is safe to go.</small>
   </div>
 </section>
@@ -990,6 +999,7 @@ const TOUR=[
  p(){const b=topList[0],a=this._a||b;return`Switch to a <b>solar camp</b> and the best spot moves to <b>${placeName(b.lat,b.lon)}</b> (${Math.round(score[b.i])}/100), about <b>${n0(dist(a.lat,a.lon,b.lat,b.lon))} km</b> from the first-base pick. Each mission needs its own map.`}},
 {k:"Decide",t:"Compare before you commit",run(){setMission("base");$("info").hidden=true;ring.visible=false;picked=null;drawIce();defaultCompare();openPanel("cmp",true);renderCompare();const b=cmp[0];flyTo(b.lat,b.lon,2.0,0,0)},
  p:()=>{const rows=cmp.map(c=>({c,v:scoreWith(cellOf(c.lat,c.lon),MISSIONS.base.w)})).filter(r=>r.v>=0),w=rows.reduce((a,b)=>b.v>a.v?b:a);return`Here are the top first-base pick, Jezero and Gale side by side across every mission and factor. <b>${w.c.label}</b> leads for a first base. Pin any place with <b>+ Compare</b> and explore on your own.`}}];
+window._tourRefresh=()=>{if(tourI>=0&&!$("tour").hidden&&TOUR[tourI]){const s=TOUR[tourI];try{$("t-text").innerHTML=s.p.call(s)}catch(e){}}};
 function tourShow(n){tourI=n;const s=TOUR[n];s.run();$("t-kick").textContent=`${s.k}`;$("t-step").textContent=`${n+1} / ${TOUR.length}`;$("t-title").textContent=s.t;$("t-text").innerHTML=s.p.call(s);
 $("t-prog").style.width=((n+1)/TOUR.length*100)+"%";$("t-back").disabled=n===0;$("t-next").textContent=n===TOUR.length-1?"Finish":"Next";
 $("t-dots").innerHTML=TOUR.map((_,k)=>`<i class="${k<=n?"on":""}"></i>`).join("");scheduleAuto()}
@@ -1058,7 +1068,7 @@ window.walkOn=false;
 const PRESETS={
  jezero:{mode:"foot",ret:true,start:9,pts:[
   {lat:18.4447,lon:77.4508,name:"Octavia E. Butler Landing",note:"Where Perseverance touched down on 18 February 2021. Base camp for this walk."},
-  {lat:18.4825,lon:77.3705,name:"Belva crater, western rim",stop:true,dwell:45,note:"Belva is a 0.9 km wide impact crater inside Jezero. In April 2023 Perseverance imaged its walls from this rim: they expose layered sedimentary rock, some beds dipping steeply, which may be an old river sandbar. <a href=\"https://phys.org/news/2023-05-perseverance-rover-captures-view-mars.amp\" target=\"_blank\" rel=\"noopener\">Source: JPL</a>"}]},
+  {lat:18.4825,lon:77.3705,name:"Belva crater, western rim",stop:true,dwell:45,note:"Belva is a 0.9 km wide impact crater inside Jezero. In April 2023 Perseverance imaged its walls from this rim: they expose layered sedimentary rock, some beds dipping steeply, which may be an old river sandbar. <a href=\"https://www.jpl.nasa.gov/news/nasas-perseverance-rover-captures-view-of-mars-belva-crater/\" target=\"_blank\" rel=\"noopener\">Source: JPL</a>"}]},
  gale:{mode:"rover",ret:true,start:8,pts:[
   {lat:-4.5895,lon:137.4417,name:"Bradbury Landing",note:"Where Curiosity landed in August 2012. Base camp for this traverse."},
   {lat:-4.854,lon:137.436,name:"Gediz Vallis channel",stop:true,dwell:60,note:"A channel cut into Mount Sharp by floods and debris flows. In 2024 Curiosity cracked open a rock here and found pure sulfur crystals, a first on Mars. <a href=\"https://science.nasa.gov/?p=407443\" target=\"_blank\" rel=\"noopener\">Source: NASA</a>"}]}};
@@ -1208,7 +1218,7 @@ function renderCmp(){const el=$("w-cmp");if(!R||W.pts.length<2){el.hidden=true;r
  el.querySelectorAll("tr[data-r]").forEach(tr=>tr.onclick=()=>{const v=tr.dataset.r;W.safe=v!=="straight";if(W.safe)W.rmode=v;$("w-route").value=v;renderWalk()})}
 function renderRes(){const el=$("w-res"),rf=W.res/W.suit;el.hidden=false;
  el.innerHTML=`<h3>Resources (estimate)</h3><span class="simtag">Simulated educational estimate — not real suit data</span>`+resRows().map(r=>`<div class="resrow"><span>${r.n}</span><div class="suitbar"><i class="${r.over?"over":""}" style="width:${Math.min(100,r.frac*100).toFixed(1)}%"></i><em style="left:${((1-rf)*100).toFixed(1)}%" title="Reserve starts here"></em></div><b>${r.f(r.a)} / ${r.f(r.b)}</b></div>`).join("")+`<p class="note">Bars show use against capacity; the yellow line is where your reserve starts. Average effort on this route: ${n0(R.used.o2/Math.max(1e-6,R.need)/1.429*20100/3600)} W. See Planning assumptions for how these are worked out.</p>`}
-function renderWalk(){R=analyze();let tiny=false;if(R){let oneWay=0;for(let k=1;k<W.pts.length;k++)oneWay+=dist(W.pts[k-1].lat,W.pts[k-1].lon,W.pts[k].lat,W.pts[k].lon);if(oneWay<.05){R=null;tiny=true}}window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
+function renderWalk(){setTimeout(()=>window._tourRefresh&&window._tourRefresh(),0);R=analyze();let tiny=false;if(R){let oneWay=0;for(let k=1;k<W.pts.length;k++)oneWay+=dist(W.pts[k-1].lat,W.pts[k-1].lon,W.pts[k].lat,W.pts[k].lon);if(oneWay<.05){R=null;tiny=true}}window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
  const P=W.pts;$("w-empty").textContent=P.length?"":"Click anywhere on Mars to place your start point (zoom into a close-up area for the sharpest terrain).";
  $("w-undo").disabled=!P.length;$("w-clear").disabled=!P.length;$("w-export").disabled=!R;
  $("w-list").innerHTML=P.map((p,k)=>{const s=R&&R.S.find(x=>x.wp===k&&!(k===0&&x.km>0));const eta=s?R.sunH(s.t-(s.dwell||0)):W.start;
@@ -1322,7 +1332,7 @@ function renderCond(){if($("cond").hidden)return;const now=Date.now(),mt=marsTim
  <p class="note">Why not live? Weather from Mars has to be downlinked through orbiters, processed and published, and NASA's public REMS feed is updated irregularly. This is its newest report when the page was built (checked 14 Nov 2026). A real crew would read their own weather station. Curiosity's landing site sits about ${(Math.abs(elev(-4.59,137.44))/1000).toFixed(1)} km below the datum, so Gale's air is thicker than most places.</p></div>
  <div class="sec"><h3>Radiation</h3><p class="note">Curiosity's RAD measured an average of <b style="color:var(--sand)">0.67 mSv per day</b> from cosmic rays on the surface (2012–13). An 8 hour EVA adds about ${(8*.67/24).toFixed(2)} mSv before suit shielding. Solar storms can spike this, so EVAs need a shelter plan.</p></div>
  <p class="srcmini">Mars time: Allison & McEwen (2000) algorithm used by NASA's Mars24. Pressure: 6.36 mb at mean radius and 11 km scale height, scaled by this spot's height; it varies with season.</p>
- <div class="sec"><h3>Sources</h3><ul class="src"><li><a href="https://mars.nasa.gov/msl/mission/weather/" target="_blank" rel="noopener">NASA Curiosity REMS weather</a></li><li><a href="https://phys.org/news/2013-12-scientists-publish-surface-mars.amp" target="_blank" rel="noopener">Hassler et al. 2014 radiation results</a></li><li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html?embed=true" target="_blank" rel="noopener">NASA Mars fact sheet</a></li><li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a> (THEMIS, TES and MOLA layers)</li></ul></div>`}
+ <div class="sec"><h3>Sources</h3><ul class="src"><li><a href="https://mars.nasa.gov/msl/mission/weather/" target="_blank" rel="noopener">NASA Curiosity REMS weather</a></li><li><a href="https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars" target="_blank" rel="noopener">Hassler et al. 2014 radiation results</a></li><li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html?embed=true" target="_blank" rel="noopener">NASA Mars fact sheet</a></li><li><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek</a> (THEMIS, TES and MOLA layers)</li></ul></div>`}
 function spark(){const D=[...REMS].reverse(),n=D.length,Wd=320,H=92,l=30,r=6,t=8,b=16,pw=Wd-l-r,ph=H-t-b,lo=Math.min(...D.map(x=>+x.min_temp)),hi=Math.max(...D.map(x=>+x.max_temp)),y0=Math.floor(lo/20)*20,y1=Math.ceil(hi/20)*20,xs=i=>l+i/(n-1)*pw,ys=v=>t+(y1-v)/(y1-y0)*ph;
  let o="";for(let v=y0;v<=y1;v+=20)o+=`<line class="grid" x1="${l}" x2="${Wd-r}" y1="${ys(v).toFixed(1)}" y2="${ys(v).toFixed(1)}"/><text x="${l-5}" y="${(ys(v)+3.5).toFixed(1)}" text-anchor="end">${v}°</text>`;
  const line=(k,c)=>`<polyline fill="none" stroke="${c}" stroke-width="1.8" points="${D.map((x,i)=>xs(i).toFixed(1)+","+ys(+x[k]).toFixed(1)).join(" ")}"/>`;
@@ -1393,13 +1403,13 @@ document.querySelector("#about-src .src").insertAdjacentHTML("beforeend",`<li><a
  $("btn-more").onclick=e=>{e.stopPropagation();menu.hidden=!menu.hidden;$("btn-more").setAttribute("aria-expanded",!menu.hidden)};
  addEventListener("click",e=>{if(!e.target.closest(".more")){menu.hidden=true;$("btn-more").setAttribute("aria-expanded","false")}})})();
 
-// ---------- tours: a 2-minute demo and the full story
+// ---------- tours: a 1-minute demo (5 steps, 10 s each) and the full story
 const FULL=[...TOUR];
 const QUICK=[
  {k:"Demo · 1 of 5",t:"Plan the first walk on Mars",run(){closeAll();$("info").hidden=true;ring.visible=false;picked=null;drawIce();setLayer("viking");setOverlay("water");setMission("base");flyTo(25,40,2.0,0,0)},
-  p:()=>`Mars Atlas stacks data from <b>five NASA missions</b> on one globe. This layer is buried ice: astronauts' water, oxygen and fuel. It sits far from the equator's sunlight, and that tradeoff decides where we land.`},
+  p:()=>`Mars Atlas stacks data from <b>six NASA missions and ESA's Mars Express</b> on one globe. This layer is buried ice: astronauts' water, oxygen and fuel. It sits far from the equator's sunlight, and that tradeoff decides where we land.`},
  {k:"Demo · 2 of 5",t:"Zoom to where we'd walk",run(){setOverlay("none");loadPreset("jezero",false);openPanel("walk",true);$("w-assume").open=false;flyTo(18.462,77.415,.0042,60,255)},
-  p:()=>`Jezero crater in <b>5 m HiRISE imagery</b> on <b>20 m CTX terrain</b>. The dashed line is Perseverance's real path. Our walk to Belva crater is <b>${fmtKm(R.km)}</b>, about <b>${fmtH(R.need)}</b> of suit time, on a safer route that keeps under a ${W.slope}° slope.`},
+  p:()=>`Jezero crater in <b>5 m HiRISE imagery</b> on ${window.CTX20&&CTX20.D?"<b>20 m CTX terrain</b>":"coarser terrain (the 20 m terrain is still loading, so these numbers will update)"}. The dashed line is Perseverance's real path. Our walk to Belva crater is <b>${fmtKm(R.km)}</b>, about <b>${fmtH(R.need)}</b> of suit time, on a safer route that keeps under a ${W.slope}° slope.`},
  {k:"Demo · 3 of 5",t:"Science stops pick their own goals",run(){setOverlay("ti");const s=W.pts[1];flyTo(s.lat,s.lon,.0035,62,250)},
   p:()=>{const b=brief(W.pts[1]).map(x=>x[0].toLowerCase());return`Each stop reads the data under it: here that's <b>${b.slice(0,3).join(", ")}</b>. The overlay shows ground firmness from Mars Global Surveyor, so the crew knows where footing turns soft.`}},
  {k:"Demo · 4 of 5",t:"Know when to turn back",run(){setOverlay("none");loadPreset("gale");this._r={km:R.km,need:R.need};W.mode="foot";markMode();renderWalk()},
@@ -1408,7 +1418,7 @@ const QUICK=[
   p:()=>{const mt=marsTime(Date.now());return`Live Mars clock: <b>Mars Year ${mt.my}, Ls ${mt.Ls.toFixed(0)}°</b>. Sunrise and sunset at the route, Curiosity's latest weather and the EVA radiation dose. Everything is sourced, and every guess is labelled. Try it yourself.`}}];
 function useTour(list){TOUR.splice(0,TOUR.length,...list)}
 const startQuick=()=>{useTour(QUICK);leaveIntro(false);startTour()},startFull=()=>{useTour(FULL);leaveIntro(false);startTour()};
-$("go-tour").onclick=startQuick;$("go-tour").textContent="Watch the 2-minute demo";
+$("go-tour").onclick=startQuick;$("go-tour").textContent="Watch the 1-minute demo";
 $("go-explore").insertAdjacentHTML("afterend",`<button id="go-full" class="btn-ghost">Full tour (${FULL.length} steps)</button>`);$("go-full").onclick=startFull;
 $("btn-tour").onclick=startQuick;$("btn-tour").querySelector("span").textContent="Demo";
 // demo step 3 needs the Jezero walk even if started from elsewhere
@@ -1624,7 +1634,9 @@ const FEED="https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&fee
 const CAM={MCZ_LEFT:"Mastcam-Z, left",MCZ_RIGHT:"Mastcam-Z, right",NAVCAM_LEFT:"Navcam, left",NAVCAM_RIGHT:"Navcam, right",FRONT_HAZCAM_LEFT_A:"Front Hazcam, left",FRONT_HAZCAM_RIGHT_A:"Front Hazcam, right",FRONT_HAZCAM_LEFT_B:"Front Hazcam, left",FRONT_HAZCAM_RIGHT_B:"Front Hazcam, right",REAR_HAZCAM_LEFT:"Rear Hazcam, left",REAR_HAZCAM_RIGHT:"Rear Hazcam, right",SKYCAM:"MEDA SkyCam",SUPERCAM_RMI:"SuperCam Remote Micro-Imager",SHERLOC_WATSON:"SHERLOC WATSON",SHERLOC_ACI:"SHERLOC context imager",CACHECAM:"CacheCam",PIXL_MCC:"PIXL micro-context camera",HELI_NAV:"Ingenuity navigation camera",HELI_RTE:"Ingenuity colour camera",LCAM:"Lander vision camera",EDL_RUCAM:"Rover up-look camera (landing)",EDL_RDCAM:"Rover down-look camera (landing)",EDL_DDCAM:"Descent stage down-look camera",EDL_PUCAM1:"Parachute up-look camera A",EDL_PUCAM2:"Parachute up-look camera B"};
 const camName=c=>CAM[c]||c.replace(/_/g," ").toLowerCase();
 const cache=new Map();let S={sol:770,cam:"all",page:0,imgs:[],latest:null,busy:false,err:"",small:false};const PER=24;
-function load(sol){if(cache.has(sol))return Promise.resolve(cache.get(sol));return fetch(`${FEED}&sol=${sol}`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{const a=(d.images||[]).map(i=>({id:i.imageid,sol:i.sol,cam:i.camera&&i.camera.instrument,title:i.title,utc:i.date_taken_utc,lmst:(i.date_taken_mars||"").replace(/^Sol-\d+M/,""),credit:i.credit,caption:i.caption,small:i.image_files&&i.image_files.small,large:i.image_files&&(i.image_files.large||i.image_files.medium),full:i.image_files&&i.image_files.full_res,link:i.link,thumb:i.sample_type==="Thumbnail",w:+(((i.extended&&i.extended.dimension)||"").match(/\((\d+)/)||[0,0])[1]}));cache.set(sol,a);return a})}
+function load(sol){if(cache.has(sol))return Promise.resolve(cache.get(sol));return fetch(`${FEED}&sol=${sol}`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{// every feed field is escaped (text) or checked (links) before it can reach the page, as defence in depth
+ const T=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),U=v=>/^https:\/\/[^\s"'<>]+$/.test(String(v||""))?String(v):"";
+ const a=(d.images||[]).map(i=>({id:T(i.imageid),sol:+i.sol||0,cam:T(i.camera&&i.camera.instrument),title:T(i.title),utc:T(i.date_taken_utc),lmst:T((i.date_taken_mars||"").replace(/^Sol-\d+M/,"")),credit:T(i.credit),caption:T(i.caption),small:U(i.image_files&&i.image_files.small),large:U(i.image_files&&(i.image_files.large||i.image_files.medium)),full:U(i.image_files&&i.image_files.full_res),link:U(i.link),thumb:i.sample_type==="Thumbnail",w:+(((i.extended&&i.extended.dimension)||"").match(/\((\d+)/)||[0,0])[1]}));cache.set(sol,a);return a})}
 function latest(){return fetch(`${FEED}&num=1&page=0&order=sol+desc`).then(r=>r.json()).then(d=>{const s=d.images&&d.images[0]&&d.images[0].sol;if(s!=null)S.latest=s;return s})}
 function go(sol){sol=Math.max(0,Math.round(+sol||0));S.sol=sol;S.page=0;S.busy=true;S.err="";render();load(sol).then(a=>{S.imgs=a;if(S.cam!=="all"&&!a.some(i=>i.cam===S.cam))S.cam="all"}).catch(()=>{S.imgs=[];S.err="NASA's raw-image feed didn't answer. Try again in a moment, or open the official gallery."}).finally(()=>{S.busy=false;render()})}
 window.openGallery=sol=>{openPanel("gallery",true);go(sol)};
@@ -1683,7 +1695,7 @@ const REAL=[
  ["Rover paths","Perseverance's drives (sols 14–1176); Curiosity's drives and 14 waypoint descriptions (to about sol 2004). Historical, not live","NASA Mars Trek"],
  ["Rover images","Perseverance raw images with their camera, time and credit, loaded live","NASA raw-image feed"],
  ["Weather and radiation","Curiosity's REMS reports (newest public report: 25 Aug 2026); RAD surface dose rate of 0.67 mSv per day","NASA/CAB, Hassler et al. 2014"],
- ["Names","1,927 official feature names","IAU/USGS Gazetteer"]];
+ ["Names","1,926 official feature names","IAU/USGS Gazetteer"]];
 const MODEL=[
  ["Mars clock","Mars Sol Date and Mars Coordinated Time (top left), Mars Year, season, local solar time, sunrise and sunset are calculated with the Allison & McEwen (2000) method behind NASA's Mars24. A calculation, not a measurement."],
  ["Suit time and turn-back point","Walking speed (Tobler's hiking function × a cautious suit pace), rover speed, suit time and reserve are planning guesses you can change."],

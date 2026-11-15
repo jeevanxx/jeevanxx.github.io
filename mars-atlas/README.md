@@ -3,7 +3,7 @@
 **Live:** https://jeevanxx.github.io/mars-atlas/
 
 A 3D map of Mars for planning a **Marswalk**, built for the NASA Space Apps Challenge 2026 (*Interplanetary Survival Guide: Martian Map*).
-It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyssey, Mars Reconnaissance Orbiter and Curiosity) so an astronaut can plan a route, its science stops and its safety margins.
+It layers data from six NASA missions (Viking, Mars Global Surveyor, Mars Odyssey, Mars Reconnaissance Orbiter, Curiosity and Perseverance) and ESA's Mars Express (HRSC terrain blend, OMEGA minerals) so an astronaut can plan a route, its science stops and its safety margins.
 
 ## What it does
 - **Marswalk planner:** drop waypoints and science stops. It works out distance, climb, slopes, suit time and when you're back, and marks a **turn-back point** when a walk is too long.
@@ -16,7 +16,7 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 - **Conditions:** Mars clock (Mars Year, season, local solar time, sunrise/sunset), Curiosity's latest REMS weather, radiation from Curiosity's RAD.
 - **Survival analysis:** scores the planet for a first base, a solar camp or a science mission, and compares places.
 - **About the data:** a panel listing which features show real data and which are calculations or models. NASA Worldview (Earth imagery) is kept separate from the Mars map.
-- **2-minute demo** and a full guided tour.
+- **1-minute demo** and a full guided tour.
 
 ## Real data vs models
 | Real data, shown as published | Calculated or modelled |
@@ -27,7 +27,7 @@ It layers data from five NASA missions (Viking, Mars Global Surveyor, Mars Odyss
 - NASA Mars Trek live map tiles (WMTS), plus the Esri OnMars CTX service it lists (credit: NASA/JPL/MSSS/Caltech Murray Lab/Esri)
 - NASA Mars Trek: Viking MDIM 2.1 colour mosaic, MGS MOLA shaded relief, MRO CTX mosaics, Mars Odyssey THEMIS day IR, MGS TES thermal inertia and dust cover index, Perseverance traverse, aqueous mineral distribution (Ehlmann & Edwards 2014)
 - NASA PDS: MGS MOLA MEGDR elevation
-- USGS Astrogeology: HRSC/MOLA blended 200 m terrain; Mars 2020 HiRISE mosaic and CTX 20 m terrain of Jezero
+- USGS Astrogeology: HRSC/MOLA blended 200 m terrain (HRSC: ESA/DLR/FU Berlin, ESA Mars Express; MOLA: NASA/GSFC); Mars 2020 HiRISE mosaic and CTX 20 m terrain of Jezero
 - USGS–NASA Planetary Geologic Mapping Program: global geologic map of Mars (Tanaka et al. 2014, SIM 3292), https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars
 - Mars Perseverance raw images gallery, linked from science stops: https://mars.nasa.gov/mars2020/multimedia/raw-images/
 - Curiosity's proposed path up Mount Sharp (NASA), compared with the Gale plan: https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/
