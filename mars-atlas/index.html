@@ -1930,8 +1930,39 @@ function ansSuperl(q){const s=q.toLowerCase();let t,src,go=null;
   t=`The <b>tallest mountain on Mars</b> is <b>Olympus Mons</b>, a shield volcano about <b>610 km</b> across (IAU gazetteer). Its highest point in NASA's full-resolution MOLA map is <b>about 21,250 m</b> above the reference level, at 17.3°N, 133.4°W on the rim of Pangboche crater. Height above the surrounding plains is a different measure, and published figures for that vary. The globe is flying there now.`;src=["MOLA MEGDR 128 pixels/degree, tile megt44n180hb (NASA PDS)","IAU/USGS Gazetteer"]}
  else return{t:`I can answer "biggest" questions about mountains, the lowest point, canyons, craters and plains, using NASA's MOLA map and the IAU gazetteer. Try "What is the tallest mountain?" or "Where is the deepest point?".`,src:[]};
  flyToPlace(go);return{t,src,acts:[{l:"Fly there again",f:()=>flyToPlace(go)}]}}
+
+// ---------- Situation Guide: what to do now, using the astronaut's own plan and the map data (a training aid)
+const deg=x=>x*Math.PI/180;
+function bearing(a,o,b,p){const y=Math.sin(deg(p-o))*Math.cos(deg(b)),x=Math.cos(deg(a))*Math.sin(deg(b))-Math.sin(deg(a))*Math.cos(deg(b))*Math.cos(deg(p-o));const t=(Math.atan2(y,x)*180/Math.PI+360)%360;return{t,dir:["north","north-east","east","south-east","south","south-west","west","north-west"][Math.round(t/45)%8]}}
+function backHome(P){const W=A.W;if(!W.pts.length)return null;const base=W.pts[0];if(dist(P.lat,P.lon,base.lat,base.lon)<.05)return{here:true,base};
+ const R=withW({pts:[{lat:P.lat,lon:P.lon,stop:false,dwell:0},{lat:base.lat,lon:base.lon,stop:false,dwell:0}],ret:false},()=>A.analyze());if(!R)return null;
+ return{base,km:R.km,h:R.need,o2:R.used.o2/R.caps.o2,maxSl:R.maxSl,b:bearing(P.lat,P.lon,base.lat,base.lon)}}
+function sunLeft(P){const mt=A.marsTime(Date.now()),lt=A.ltst(mt,P.lon),dl=A.dayLen(P.lat,mt.dec),set=12+dl/2;return{lt,left:dl>=24?99:dl<=0?0:Math.max(0,set-lt),set,dl,mt}}
+function ansSOS(q,P){const s=q.toLowerCase(),W=A.W,hb=backHome(P),sun=sunLeft(P),L=[];let title,steps=[];
+ const where=`You (using <b>${esc(P.name)}</b>, ${fmtPt(P.lat,P.lon)}, as your position)`;
+ const home=hb?(hb.here?`You're at your start point.`:`Your start point is <b>${fmtKm(hb.km)} ${hb.b.dir}</b> (bearing ${Math.round(hb.b.t)}°). Walking back takes about <b>${fH(hb.h)}</b> and about <b>${pct(hb.o2)}</b> of a full suit's oxygen (simulated); steepest slope on the way ${hb.maxSl.toFixed(0)}°.`):`No route is planned, so I don't know where your base is. Open Marswalk and set your start point first.`;
+ const light=sun.left>=99?"The sun doesn't set here today.":sun.left<=0?"<b>It's already dark here</b> (local time "+hhmm(sun.lt)+").":`About <b>${fH(sun.left)}</b> of daylight left (sunset about ${hhmm(sun.set)} local time).`;
+ if(/leak|puncture|oxygen|running out|suit/.test(s)){title="Suit problem or low oxygen";
+  steps=["Stop work and tell your crew and mission control at once.","Turn back now, on the shortest safe path.",home,hb&&!hb.here&&hb.h>W.res?`<b>Warning:</b> the walk back is longer than your ${fH(W.res)} reserve, so ask for a rover pickup now.`:"Your reserve should cover the walk back if you leave now.","Walk slowly and steadily: harder work burns oxygen faster (the app's effort model)."]}
+ else if(/lost|stranded|no signal|radio|comms/.test(s)){title=/radio|comms|signal/.test(s)?"Lost contact":"Lost or stranded";
+  steps=[`Your position: <b>${fmtPt(P.lat,P.lon)}</b>, elevation ${fmtElev(elev(P.lat,P.lon))}. Read this out if you can reach anyone.`,home,light,"Stay with your rover if you have one: it's easier to find and carries supplies.","If you start walking, follow your planned route back, not a shortcut."]}
+ else if(/dust|storm coming/.test(s)&&!/solar/.test(s)){const dc=A.dci(P.lat,P.lon),seasonal=sun.mt.Ls>=180;title="Dust storm";
+  steps=[seasonal?`It's dust storm season now (solar longitude ${sun.mt.Ls.toFixed(0)}°, season runs 180°–360°).`:`It's outside the main dust storm season (solar longitude ${sun.mt.Ls.toFixed(0)}°), but local storms can still happen.`,dc!=null?`Ground here is ${dc>.6?"heavily dust-covered":dc>.35?"partly dust-covered":"fairly dust-free"} (MGS TES dust map).`:"No dust map data for this spot.","Head back to shelter early: visibility and solar power can drop for days.",home,"Mars Atlas has no live weather forecast, so treat any storm warning from mission control as the real one."]}
+ else if(/rover|broke|broken|stuck/.test(s)){title="Rover breakdown";
+  steps=[home,hb&&!hb.here?(hb.h<=W.suit-W.res?`That fits inside your suit time (${fH(W.suit)} with a ${fH(W.res)} reserve), if your suit is close to full.`:`<b>That's longer than your suit time allows</b> (${fH(W.suit)} with a ${fH(W.res)} reserve). Stay with the rover and call for rescue.`):"",light,"Before walking, check your own suit oxygen and battery against the walk time above."]}
+ else if(/dark|night|sunset/.test(s)){title="Night is coming";
+  steps=[light,home,hb&&!hb.here&&sun.left<hb.h?`<b>You won't make it back before dark.</b> Leave now, use lights, and keep to your planned path; night on Mars gets very cold.`:"You can be back before dark if you leave soon."]}
+ else if(/solar|radiation|flare/.test(s)){title="Solar or radiation storm";
+  steps=["Mars Atlas has no live space-weather data, so follow mission control's warning.","Get to the best shelter you can reach fast: the habitat, or the rover if it has a shielded area.",home,"Normal surface dose measured by Curiosity is about 0.67 mSv per day. Solar storms can push it far higher."]}
+ else if(/injur|hurt/.test(s)){title="Someone is hurt";
+  steps=["Call mission control and your crew first, with your position.",`Position: <b>${fmtPt(P.lat,P.lon)}</b>.`,home,light,"Don't carry or move someone over steep ground; the route above shows the steepest slope on the way back."]}
+ else{title="Emergency";steps=["Stop, stay calm and tell your crew and mission control.",home,light]}
+ const t=`<b>${title}</b> · ${where}:<ol class="sos">${steps.filter(Boolean).map(x=>`<li>${x}</li>`).join("")}</ol><span class="simtag">Training aid: built from your plan and map data, not real NASA procedures</span>`;
+ const acts=[];if(hb&&!hb.here)acts.push({l:"Show way home",f:()=>{flyTo(hb.base.lat,hb.base.lon,.05,40,0)}});if(!W.pts.length)acts.push({l:"Open Marswalk",f:A.openWalk});
+ return{t,src:["Mars Atlas route planner (simulated oxygen)","Mars clock (Mars24 method)","MGS TES dust map","Curiosity RAD (Hassler et al. 2014)"],acts}}
 // ---------- intent matching (keyword rules)
 const RULES=[
+ ["sos",/\b(emergency|sos|mayday|help me|leak|leaking|puncture|low oxygen|oxygen (is )?(low|running)|running out|suit (problem|fail\w*|damage\w*|broken)|lost|stranded|stuck|dust storm|storm coming|injur\w*|hurt|broke down|broken down|rover (broke|broken|dead|failed|stuck)|getting dark|night (is )?coming|solar storm|solar flare|radiation storm|radio|comms|no signal)\b/],
  ["superl",/\b(biggest|largest|tallest|highest|deepest|lowest|longest|widest|greatest|giant|huge)\b/],
  ["show",/\b(show( me)?|take me|fly( me)? to|go to|zoom (in )?to|where is|where's|find)\b/],
  ["best",/\b(best|ideal|top|safest|good|great|where should|where could|where can|where would)\b.*\b(place|places|spot|site|sites|location|base|land|landing|live|build|settle\w*|colony)\b/],
@@ -1956,7 +1987,7 @@ function answer0(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).m
  const NP=namedPlace(q);if(!k&&NP&&NP.sure)k="overview";
  if((k==="weather"||k==="conditions")&&notMars(q))return{t:`Mars Atlas only covers Mars, so I can't answer about ${esc(notMars(q))}. Ask me about a place on Mars instead.`,src:[]};
  if(k==="show"){const np=namedPlace(q);if(np&&np.sure){const r=ansOverview(np);flyToPlace(np);return r}k=hits.find(h=>h!=="show")||null;if(k==="superl")return ansSuperl(q)}
- switch(k){case"superl":return ansSuperl(q);case"best":return ansBest();case"height":return ansHeight(P,q);case"weather":return ansWeather(P);case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
+ switch(k){case"sos":return ansSOS(q,picked?{lat:picked.lat,lon:picked.lon,name:$("i-title").textContent||"the place you clicked"}:{lat:CAM.lat,lon:CAM.lon,name:"the centre of your view"});case"superl":return ansSuperl(q);case"best":return ansBest();case"height":return ansHeight(P,q);case"weather":return ansWeather(P);case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
   case"conditions":return ansConditions(P);case"survival":return ansSurvival(P);case"layer":return ansLayer();case"place":return ansPlace(P);case"overview":return ansOverview(P);case"help":return{t:HELP,src:[]}}
  return{t:`I couldn't match that to a topic I have data for, and I won't guess. ${HELP}`,src:[]}}
 
@@ -1969,7 +2000,7 @@ function add(who,html,src,acts){const d=document.createElement("div");d.classNam
 function ask(q){q=q.trim();if(!q)return;add("me",esc(q));let r;try{r=answer(q)}catch(e){r={t:"Something went wrong reading the data for that question, so I won't answer it rather than guess. Try again after the map finishes loading.",src:[]};console.error(e)}
  add("bot",r.t,r.src,r.acts);renderCtx();renderChips()}
 function greet(){const P=place("");add("bot",`Hi. I'm a rule-based assistant: I read Mars Atlas data and never make up measurements. I'm looking at <b>${esc(P.name)}</b> (${esc(P.src)}). Ask me anything below, or tap a suggestion.`,[])}
-function renderChips(){const R=route(),c=R?["Can I get back to base?","Would a rover help?","Which path uses least oxygen?","Radiation on my walk?","Is the ground steep or soft?"]:["What rock is this?","Is there water ice here?","Is the ground steep or soft?","When is sunset here?","Could a base go here?","What layer am I looking at?"];
+function renderChips(){const R=route(),c=R?["Emergency: oxygen is low","Rover broke down","Can I get back to base?","Would a rover help?","Which path uses least oxygen?","Radiation on my walk?","Is the ground steep or soft?"]:["What rock is this?","Is there water ice here?","Is the ground steep or soft?","When is sunset here?","Could a base go here?","What layer am I looking at?"];
  $("a-chips").innerHTML=c.map(x=>`<button type="button">${x}</button>`).join("");$("a-chips").querySelectorAll("button").forEach(b=>b.onclick=()=>ask(b.textContent))}
 $("a-form").onsubmit=e=>{e.preventDefault();const v=$("a-in").value;$("a-in").value="";ask(v)};
 // keep the context line fresh when the user clicks Mars or edits a route
@@ -2120,6 +2151,7 @@ button:active{transform:scale(.97)}
 .amsg .aacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .amsg .aacts button,.achips button{min-height:30px;padding:4px 9px;font-size:12px}
 .amsg .cmpt{margin:6px 0}
+.amsg ol.sos{margin:6px 0 6px 18px;padding:0}.amsg ol.sos li{margin:3px 0}
 .achips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;flex:none}#ask .phead,#ask .aform{flex:none}
 .aform{display:flex;gap:6px}
 .aform input{flex:1;min-width:0;font:14px var(--fb);color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:3px;padding:8px 10px;font-family:var(--fm)}
