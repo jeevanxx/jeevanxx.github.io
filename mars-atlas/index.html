@@ -807,7 +807,7 @@ $("i-origin").hidden=!ft||!!site;$("i-origin").textContent=ft?"Name origin: "+ft
 const h=hotAt(lat,lon);$("i-hot").hidden=!h;if(h)$("i-hot").textContent=`Sharp close-up area · about ${h.mpp} m per pixel`;
 $("i-coord").textContent=fmtPt(lat,lon);$("i-elev").textContent=fmtElev(elev(lat,lon));
 const mname=document.querySelector(".mission button[aria-pressed=true]");$("i-mission").textContent=mname?mname.textContent:"Custom weights";
-if(score[i]<0){$("i-score").textContent="—";$("i-bars").innerHTML="";$("i-note").textContent="No ice data for this place, so it has no survival score."}
+if(score[i]<0){$("i-score").textContent="—";$("i-bars").innerHTML="";$("i-note").textContent=KEYS.some(k=>weights[k]>0)?"No ice data for this place, so it has no survival score.":"Every survival factor is set to zero, so there is no score. Raise at least one in the survival panel."}
 else{$("i-score").textContent=Math.round(score[i]);$("i-bars").innerHTML=KEYS.map(k=>{const v=Math.round(f[k][i]*100);return`<div class="bar ${v<30?"low":""}"><span>${NAMES[k]}</span><i><b style="width:${v}%"></b></i><span>${v}</span></div>`}).join("");
 const ne=nearestIce(lat,lon),w=KEYS.reduce((a,k)=>f[k][i]<f[a][i]?k:a,"water");if(ne&&ne.km>20){picked.ice=ne;$("i-note").textContent=`Nearest strong ice signal: ${n0(ne.km)} km (dashed line). Weakest factor: ${NAMES[w].toLowerCase()}.`}else $("i-note").textContent=`Strong ice signal right here. Weakest factor: ${NAMES[w].toLowerCase()}.`;if(f.wsrc[i])$("i-note").textContent+=" Ice beyond 60° comes from Mars Odyssey neutron data, about 300 km resolution."}
 drawIce();$("info").hidden=false}
@@ -850,7 +850,9 @@ function setMeasure(on){measuring=on;$("btn-measure").setAttribute("aria-pressed
 $("btn-measure").onclick=()=>setMeasure(!measuring);$("m-clear").onclick=()=>{measurePts=[];drawMeasure();renderMeasure()};$("m-undo").onclick=()=>{measurePts.pop();drawMeasure();renderMeasure()};$("m-done").onclick=()=>setMeasure(false);
 
 // ---------- survival analysis panel
-function updateSurvival(fly){compute();topList=topSites(5);const b=topList[0];
+function updateSurvival(fly){compute();
+ if(!KEYS.some(k=>weights[k]>0)){score.fill(-1);topList=[];$("best-score").textContent="—";$("best-name").textContent="Set at least one factor above zero";$("best-coord").textContent="With every factor at zero there is nothing to rank.";$("sites").innerHTML="";paintOverlay();if(picked&&!$("info").hidden)showInfo(picked.lat,picked.lon);return}
+ {const seen=new Set();topList=[];for(const p of topSites(15)){const nm=nearName(p.lat,p.lon)||fmtPt(p.lat,p.lon);if(seen.has(nm))continue;seen.add(nm);topList.push(p);if(topList.length===5)break}}const b=topList[0];
 $("best-score").textContent=Math.round(score[b.i]);$("best-name").textContent=nearName(b.lat,b.lon)||"Unnamed area";$("best-coord").textContent=fmtPt(b.lat,b.lon);
 $("sites").innerHTML=topList.map((p,k)=>`<li><button data-k="${k}"><span>${k+1}</span><span>${nearName(p.lat,p.lon)||fmtPt(p.lat,p.lon)}</span><span>${Math.round(score[p.i])}</span></button></li>`).join("");
 $("sites").querySelectorAll("button").forEach(x=>x.onclick=()=>{const p=topList[+x.dataset.k];flyTo(p.lat,p.lon,.35);showInfo(p.lat,p.lon)});
@@ -1815,7 +1817,7 @@ function ansConditions(P){const mt=A.marsTime(Date.now()),lt=A.ltst(mt,P.lon),el
  if(r)t+=`<br>Latest weather in the app is from Curiosity's REMS station at Gale crater, not this spot: sol ${esc(r.sol)} (${esc(r.terrestrial_date)}), ${esc(r.min_temp)}°C to ${esc(r.max_temp)}°C, ${esc(r.pressure)} Pa.`;
  return{t,src:["Mars clock: Allison & McEwen (2000), the Mars24 method","Weather: NASA/CAB Curiosity REMS"],acts:[{l:"Open Conditions",f:()=>{if($("cond").hidden)$("btn-cond").click()}}]}}
 function ansSurvival(P){const i=cellOf(P.lat,P.lon),s=score[i],mb=document.querySelector(".mission button[aria-pressed=true]"),mn=mb?mb.textContent:"custom weights";
- if(s<0)return{t:`${esc(P.name)} has no survival score because there's no ice data for it.`,src:["Survival model: MOLA + SWIM + Mars Odyssey neutrons + sunlight"]};
+ if(s<0)return{t:KEYS.some(k=>weights[k]>0)?`${esc(P.name)} has no survival score because there's no ice data for it.`:"Every survival factor is set to zero, so nothing has a score. Raise at least one factor in the survival panel.",src:["Survival model: MOLA + SWIM + Mars Odyssey neutrons + sunlight"]};
  const lim=limiting(i);
  return{t:`<b>${esc(P.name)}</b> scores <b>${Math.round(s)} out of 100</b> for a ${esc(mn.toLowerCase())} mission. Factors: ${KEYS.map(k=>`${NAMES[k].toLowerCase()} ${Math.round(f[k][i]*100)}`).join(", ")}. The factor holding it back most is <b>${NAMES[lim].toLowerCase()}</b>.<br>This is a concept model to show where to look closer, not a NASA recommendation.`,
   src:["Survival model: MOLA + SWIM + Mars Odyssey neutrons + sunlight (Mars Atlas)"],acts:[{l:"Open survival analysis",f:()=>{openPanel("surv",true);if(overlay==="none")setOverlay("score")}}]}}
