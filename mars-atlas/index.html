@@ -240,6 +240,7 @@ h2{font-size:23px}
 .suitbar i{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:linear-gradient(90deg,#2fb6a6,#56e0cf);transition:width .5s var(--ease)}
 .suitbar i.over{background:linear-gradient(90deg,#d85a3a,#ff9466)}
 .suitbar em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#ffc078}
+.tbadge{display:inline-block;margin:6px 0 0;padding:2px 8px;border:1px solid rgba(0,240,255,.4);border-radius:3px;font:500 11px var(--data);letter-spacing:.06em;color:var(--cy,#00f0ff)}.tcoarse{color:#ffd166!important}
 .resrow{display:grid;grid-template-columns:76px minmax(60px,1fr) auto;gap:7px;align-items:center;font:12px var(--data);color:var(--dust);margin:5px 0}.resrow b{color:var(--sand);font-weight:600;white-space:nowrap;font-size:11.5px}.simtag{display:inline-block;font:10.5px var(--data);letter-spacing:.04em;padding:2px 7px;border-radius:9px;border:1px solid rgba(255,192,120,.45);color:#ffc078;margin-bottom:4px}
 .cmpt{width:100%;border-collapse:collapse;font:11.5px var(--data);color:var(--dust)}.cmpt th,.cmpt td{padding:4px 3px;white-space:nowrap;text-align:right;border-bottom:1px solid rgba(255,236,214,.07)}.cmpt th:first-child,.cmpt td:first-child{text-align:left;white-space:normal}.cmpt th{font-weight:500;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}.cmpt tr[data-r]{cursor:pointer}.cmpt tr[data-r]:hover td{color:var(--sand)}.cmpt tr.on td{color:var(--sand);font-weight:600}.cmpt td.cbest{color:#56e0cf}
 .suitlab{display:flex;justify-content:space-between;font:11.5px var(--data);color:var(--dust)}
@@ -1100,6 +1101,9 @@ function stepRes(dkKm,dtH,s,ti,riding){if(riding){const v=dkKm*1000/(dtH*3600),P
   return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:P*dtH,M}}
  const v=dkKm*1000/(dtH*3600),M=metW(v,s,ti);return{o2:o2g(M,dtH),h2o:h2og(M,dtH),bat:W.suitW*dtH,rov:0,M}}
 const isRiding=s=>W.mode==="rover"&&Math.atan(Math.abs(s))/D2R<=W.slope;
+// which terrain each route point is read from: 20 m (CTX Jezero), 200 m (close-up DEMs) or the global grid (~7 km, ~30 km if it failed)
+function terrRes(lat,lon){const c=window.CTX20;if(c&&c.D&&inBox(c.dem,lat,lon))return 20;for(const h of HOT)if(h.D&&inBox(h.dem,lat,lon))return 200;return E8?7400:30000}
+const resLab=r=>r===20?"20 m":r===200?"200 m":r===7400?"~7 km":"~30 km";
 function analyze(safe,rm){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.length<2)return null;
  const legs=[];for(let i=1;i<P.length;i++)legs.push([i-1,i]);if(W.ret&&P.length>1)legs.push([P.length-1,0]);
  const S=[];let km=0,t=0;const U={o2:0,h2o:0,bat:0,rov:0};const addR=r=>{U.o2+=r.o2;U.h2o+=r.h2o;U.bat+=r.bat;U.rov+=r.rov},snap=o=>{o.o2=U.o2;o.h2o=U.h2o;o.bat=U.bat;o.rov=U.rov};const mt=marsTime(planMs()),startH=W.start;
@@ -1124,9 +1128,9 @@ function analyze(safe,rm){if(safe===undefined)safe=W.safe;const P=W.pts;if(P.len
   b.sun=sunElev(b.lat,mt.dec,sunH(b.t));if(b.sun<0)darkKm+=dk;const ti=gridAt(TI,b.lat,b.lon),dc=gridAt(DCI,b.lat,b.lon);if(ti!=null&&ti<.22)softKm+=dk;if(dc!=null&&dc>.6)dustKm+=dk}
  S[0].sun=sunElev(S[0].lat,mt.dec,startH);
  const dl=dayLen(lat0,mt.dec);
- const endR=W.ret?{o2:0,h2o:0,bat:0,rov:0}:backR[S.length-1],used={o2:U.o2+endR.o2,h2o:U.h2o+endR.h2o,bat:U.bat+endR.bat,rov:U.rov+endR.rov};
+ const terr={};let polar=false;for(const s of S){const r=terrRes(s.lat,s.lon);terr[r]=(terr[r]||0)+1;if(Math.abs(s.lat)>88)polar=true}const endR=W.ret?{o2:0,h2o:0,bat:0,rov:0}:backR[S.length-1],used={o2:U.o2+endR.o2,h2o:U.h2o+endR.h2o,bat:U.bat+endR.bat,rov:U.rov+endR.rov};
  const short=RK.filter(q=>used[q]>C[q]*(1-rf)+1e-9),left=Object.fromEntries(RK.map(q=>[q,1-used[q]/C[q]]));
- return{used,caps:C,short,left,pnrBy,backR,S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
+ return{terr,polar,used,caps:C,short,left,pnrBy,backR,S,legs,km,total,need,lim,pnr,back,climb,desc,steepKm,maxSl,softKm,dustKm,darkKm,mt,sunrise:12-dl/2,sunset:12+dl/2,dl,endH:sunH(need),sunH}}
 function planMs(){return W.date?W.date.getTime():Date.now()}
 
 // ---------- science stop briefs from the data under each point
@@ -1187,7 +1191,7 @@ function renderCmp(){const el=$("w-cmp");if(!R||W.pts.length<2){el.hidden=true;r
  el.querySelectorAll("tr[data-r]").forEach(tr=>tr.onclick=()=>{const v=tr.dataset.r;W.safe=v!=="straight";if(W.safe)W.rmode=v;$("w-route").value=v;renderWalk()})}
 function renderRes(){const el=$("w-res"),rf=W.res/W.suit;el.hidden=false;
  el.innerHTML=`<h3>Resources (estimate)</h3><span class="simtag">Simulated educational estimate — not real suit data</span>`+resRows().map(r=>`<div class="resrow"><span>${r.n}</span><div class="suitbar"><i class="${r.over?"over":""}" style="width:${Math.min(100,r.frac*100).toFixed(1)}%"></i><em style="left:${((1-rf)*100).toFixed(1)}%" title="Reserve starts here"></em></div><b>${r.f(r.a)} / ${r.f(r.b)}</b></div>`).join("")+`<p class="note">Bars show use against capacity; the yellow line is where your reserve starts. Average effort on this route: ${n0(R.used.o2/Math.max(1e-6,R.need)/1.429*20100/3600)} W. See Planning assumptions for how these are worked out.</p>`}
-function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
+function renderWalk(){R=analyze();let tiny=false;if(R){let oneWay=0;for(let k=1;k<W.pts.length;k++)oneWay+=dist(W.pts[k-1].lat,W.pts[k-1].lon,W.pts[k].lat,W.pts[k].lon);if(oneWay<.05){R=null;tiny=true}}window._walkR=R;const D0=W.safe&&R?analyze(false):null;syncPins();drawWalk();
  const P=W.pts;$("w-empty").textContent=P.length?"":"Click anywhere on Mars to place your start point (zoom into a close-up area for the sharpest terrain).";
  $("w-undo").disabled=!P.length;$("w-clear").disabled=!P.length;$("w-export").disabled=!R;
  $("w-list").innerHTML=P.map((p,k)=>{const s=R&&R.S.find(x=>x.wp===k&&!(k===0&&x.km>0));const eta=s?R.sunH(s.t-(s.dwell||0)):W.start;
@@ -1198,7 +1202,7 @@ function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(fal
  $("w-list").querySelectorAll("[data-dw]").forEach(s=>s.onchange=()=>{P[+s.dataset.dw].dwell=+s.value;renderWalk()});
  $("w-list").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);W.preset=null;markPreset();renderWalk()});
  $("w-list").querySelectorAll("strong[data-k]").forEach(s=>s.onclick=()=>focusWp(+s.dataset.k));
- if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML="";$("w-res").hidden=true;$("w-cmp").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
+ if(!R){$("w-sum").innerHTML=`<div><b>—</b><span>Distance</span></div><div><b>—</b><span>Time</span></div><div><b>—</b><span>Climb</span></div>`;$("w-verdict").innerHTML=tiny?`<p class="verdict bad"><b>Add a second point further away.</b> Your points are less than 50 m apart, so there is no walk to plan yet.</p>`:"";$("w-res").hidden=true;$("w-cmp").hidden=true;$("w-flags").hidden=true;$("w-prof").hidden=true;return}
  const over=R.need>R.lim||R.short.length>0,pct=Math.min(100,R.need/W.suit*100);
  $("w-sum").innerHTML=`<div><b>${fmtKm(R.km)}</b><span>${W.ret?"Round trip":"One way"}</span></div><div><b>${fmtH(R.need)}</b><span>Suit time used</span></div><div><b>${n0(R.climb)} m</b><span>Total climb</span></div>
  <div class="suit"><div class="suitbar"><i class="${over?"over":""}" style="width:${pct}%"></i><em style="left:${(R.lim/W.suit*100).toFixed(1)}%" title="Reserve starts here"></em></div><div class="suitlab"><span>0 h</span><span>Reserve after ${fmtH(R.lim)}</span><span>${W.suit} h suit</span></div></div>`;
@@ -1208,6 +1212,8 @@ function renderWalk(){R=analyze();window._walkR=R;const D0=W.safe&&R?analyze(fal
  const RN={o2:"oxygen",h2o:"cooling water",bat:"suit battery",rov:"rover battery",time:"suit time"},tooLong=R.need>R.lim,resTxt=R.short.length?` Estimated ${(a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0])(R.short.map(q=>RN[q]))} would dip into the reserve before you get back.`:"";
  $("w-verdict").innerHTML=(over?`<p class="verdict bad"><b>${tooLong?"Too long for one EVA.":"Not enough supplies to get back safely."}</b> ${tooLong?`You'd need ${fmtH(R.need)}, but the suit allows ${fmtH(R.lim)} before the reserve.`:""}${resTxt} ${pk?`Turn back by <b>${fmtKm(pk.km)}</b> (about ${hm(R.sunH(pk.t))} Mars time, limited by ${RN[R.pnrBy]}), marked ↩ on the globe.`:""} ${W.mode==="foot"?"Try a rover, a closer stop, or a shorter route.":"Try a closer stop, or split it into two EVAs."}</p>`
   :`<p class="verdict"><b>Doable in one EVA.</b> Back by ${hm(R.endH)} Mars time with ${fmtH(R.lim-R.need)} spare before the ${fmtH(W.res)} reserve. Return to base looks feasible: estimated ${Object.entries(R.left).map(([q,v])=>`${Math.round(v*100)}% ${RN[q]}`).join(", ")} left (simulated).</p>`).replace(/<\/p>$/,cmpTxt+"</p>");
+ {const ks=Object.keys(R.terr).map(Number).sort((a,b)=>a-b),coarse=ks.some(r=>r>=7400);
+  $("w-verdict").insertAdjacentHTML("beforeend",`<p class="tbadge" title="Which elevation data this route was planned on">Terrain: ${ks.map(resLab).join(" + ")}</p>`+(R.polar?`<p class="note tcoarse">Near the pole the map's grid cells squeeze together, which creates fake steep slopes. Slope numbers on this route are unreliable.</p>`:"")+(coarse?`<p class="note tcoarse">${ks.length>1?"Part of this route uses":"This route uses"} coarse ${resLab(ks[ks.length-1])} terrain, so small slopes, boulders and cliffs don't show. Real slopes can be much steeper.</p>`:""))}
  // hazard flags
  const fl=[],steepPct=R.steepKm/R.km*100;
  if(R.steepKm>.05)fl.push(["hi",`${fmtKm(R.steepKm)} steeper than your ${W.slope}° limit (max ${R.maxSl.toFixed(0)}°). ${W.mode==="rover"?"The rover can't drive those parts, so they're walked.":"Look for a switchback or another line."}`]);
