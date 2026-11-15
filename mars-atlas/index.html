@@ -2046,10 +2046,12 @@ window._sosMenu=()=>{if($("ask").hidden)$("btn-ask").click();add("bot","<b>Simul
 (function(){const $=id=>document.getElementById(id),A=window._atlasAPI;if(!A)return;
  const tools=document.querySelector(".tools");tools.insertAdjacentHTML("beforeend",`<button id="btn-sos" class="sosbtn" type="button"><span class="ms" aria-hidden="true">warning</span>Simulate emergency</button>`);
  $("btn-sos").onclick=()=>window._sosMenu&&window._sosMenu();
- const NAV=[["explore","Atlas",null],["hiking","Marswalk","btn-walk"],["device_thermostat","Conditions","btn-cond"],["health_and_safety","Survival","btn-surv"],["layers","Layers","btn-layers"],["forum","Mission assistant","btn-ask"],["zoom_in_map","Close-ups","btn-places"],["compare_arrows","Compare","btn-cmp"],["straighten","Measure","btn-measure"],["route","Rover routes","btn-routes"],["photo_library","Rover images","btn-gallery"],["info","About the data","btn-about"]];
+ $("btn-sos").insertAdjacentHTML("beforebegin",`<div class="simseg" role="group" aria-label="Simulate a situation"><span>SIM:</span><button type="button" class="on" data-q="">Nominal</button><button type="button" data-q="Dust storm coming">Dust storm</button><button type="button" data-q="Solar flare warning">Solar event</button><button type="button" data-q="My suit is leaking">Suit leak</button></div>`);
+ document.querySelectorAll(".simseg button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".simseg button").forEach(x=>x.classList.toggle("on",x===b));if(!b.dataset.q)return;if($("ask").hidden)$("btn-ask").click();setTimeout(()=>window._ask(b.dataset.q),60)});
+ const NAV=[["MAP","Atlas globe",null],["EVA","Marswalk planner","btn-walk"],["ENV","Conditions","btn-cond"],["SRV","Survival sites","btn-surv"],["LYR","Data layers","btn-layers"],["AST","Mission assistant","btn-ask"],["HRS","Close-ups","btn-places"],["CMP","Compare places","btn-cmp"],["MSR","Measure","btn-measure"],["RVR","Rover routes","btn-routes"],["IMG","Rover images","btn-gallery"],["DOC","About the data","btn-about"]];
  const rail=document.createElement("nav");rail.className="rail chrome";rail.setAttribute("aria-label","Operations");
- rail.innerHTML=`<div class="rh">Operations grid</div>`+NAV.map(([ic,l,b],k)=>`<button class="ri" type="button" data-k="${k}"><span class="ms" aria-hidden="true">${ic}</span>${l}</button>`).join("")+
-  `<div class="rh" style="margin-top:12px">Sensors (real data)</div><div id="rail-sens"></div>`;
+ rail.innerHTML=`<div class="rh"><span>Subsystem nodes</span><em><i></i>UP</em></div>`+NAV.map(([tag,l,b],k)=>`<button class="ri" type="button" data-k="${k}"><span>${String(k+1).padStart(2,"0")}. ${l}</span><small>${tag}</small></button>`).join("")+
+  `<div class="rh" style="margin-top:10px"><span>Sensors · real data</span></div><div id="rail-sens"></div>`;
  document.querySelector(".atlas").appendChild(rail);
  rail.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{const it=NAV[+b.dataset.k];
   if(!it[2]){[...document.querySelectorAll(".panel:not([hidden])")].forEach(p=>{const x=p.querySelector("button.x,button[id$='-close']");if(x)x.click()});return}
@@ -2193,6 +2195,58 @@ button[aria-pressed=true],button[aria-expanded=true]{background:rgba(0,229,255,.
  #btn-walk,#btn-cond,#btn-ask,#btn-layers,#btn-more{display:none!important}
  .tourcard{margin-left:236px!important}
  .atlas:has(#intro:not(.out)) .rail{display:none}
+}
+
+/* ===== Stitch "Ares Surface Operations" look: matte carbon, hairlines, colour only for state ===== */
+:root{--bg:#0e1013;--panel:#16191f;--panel2:#1f232b;--ink:#e2e8f0;--ink2:#8b949e;--rule:#242830;--rule2:#3a404b;--acc:#e05a2b;--nom:#2ea043;--blu:#388bfd;--amb:#d29922;--crit:#f85149;
+ --cy:#388bfd;--on:#e05a2b;--onink:#fff;--fd:"IBM Plex Sans",sans-serif;--fb:"IBM Plex Sans",sans-serif;--fm:"JetBrains Mono",monospace;--r:4px;--rb:4px;--rs:2px;--blur:none;--shadow:none;--warnc:#d29922;--amber:#d29922;--coral:#e05a2b;--bad:#f85149;--track:#242830}
+body{background:#0e1013!important}
+.atlas::after{display:none!important}
+.panel,.brand,.tourcard,.menu,.lb-in{background:#16191f!important;border:1px solid #242830!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:4px!important}
+.panel h2,.tourcard h2{font:600 15px var(--fb)!important;letter-spacing:.04em!important;text-transform:uppercase;color:#e2e8f0}
+.panel h3{font:600 10px var(--fm)!important;letter-spacing:.08em!important;color:#8b949e!important;text-transform:uppercase;border-bottom:1px solid #242830;padding-bottom:4px}
+.panel p,.panel li,.note{font-family:var(--fb)}
+button,.btnlink{background:transparent!important;border:1px solid #242830!important;color:#e2e8f0!important;border-radius:4px!important;box-shadow:none!important;font-family:var(--fm)!important}
+button:hover,.btnlink:hover{background:#1f232b!important;border-color:#8b949e!important}
+button[aria-pressed=true],button[aria-expanded=true],.presets button[aria-pressed=true]{background:#1f232b!important;color:#e05a2b!important;border-color:#e05a2b!important;box-shadow:none!important}
+.btn-primary,.btn-primary:hover{background:#e05a2b!important;border-color:#e05a2b!important;color:#fff!important;box-shadow:none!important;font-weight:600!important}
+.btn-primary:active{background:#c2481d!important}
+.sosbtn{background:#f85149!important;border:1px solid #242830!important;color:#fff!important;box-shadow:none!important}
+.search input{border-radius:4px!important;background:#0e1013!important;border:1px solid #242830!important;font:12.5px var(--fm)!important}
+.search input:focus{border-color:#388bfd!important;box-shadow:none!important}
+.suitbar i,.bar b,.fitrow b,.fitrow.best b,.tprog i,.rail .sens .bar i{background:#2ea043!important}
+.suitbar i.over,.bar.low b{background:#e05a2b!important}
+.verdict{background:#1f232b!important;border:1px solid #242830!important;border-left:2px solid #2ea043!important}
+.verdict.bad{border-left-color:#e05a2b!important}
+.cmpt td.cbest{color:#2ea043!important}
+.tbadge{border-color:#388bfd!important;color:#388bfd!important;border-radius:2px}
+.simtag{border-color:#d29922!important;color:#d29922!important;border-radius:2px!important}
+.amsg.bot{border-left:2px solid #388bfd!important}.amsg.me{background:#1f232b!important;border:1px solid #242830!important}
+.mclk{color:#2ea043!important}.mclk i{background:#2ea043!important;box-shadow:none!important;border-radius:0!important;animation:none!important}
+.sitebar{border-radius:4px!important;background:#16191f!important;border:1px solid #242830!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.sitebar button{border-radius:2px!important;border-color:transparent!important}.sitebar span{color:#8b949e!important}
+.status{background:#0e1013!important;border-top:1px solid #242830!important}
+.panel:not([hidden]){animation:none!important}
+input[type=checkbox]{accent-color:#e05a2b}
+/* SIM segmented control */
+.simseg{display:none;align-items:center;gap:2px;background:#141a21;border:1px solid #242830;border-radius:4px;padding:2px;font:600 10px var(--fm);letter-spacing:.08em;color:#8b949e}
+.simseg span{padding:0 6px}
+.simseg button{border:0!important;padding:5px 9px!important;min-height:0!important;font:600 10.5px var(--fm)!important;letter-spacing:.06em;text-transform:uppercase;color:#8b949e!important}
+.simseg button.on{background:#01872e!important;color:#f7fff1!important}
+@media(min-width:1280px){
+ .simseg{display:flex}
+ #btn-sos{display:none!important}
+ .rail{background:#0b0f14!important;border-right:1px solid #242830!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:0!important;gap:0!important;top:78px}
+ .rail .rh{display:flex;justify-content:space-between;align-items:center;margin:0!important;padding:10px 14px;border-bottom:1px solid #242830;font:600 10px var(--fm)!important;letter-spacing:.08em;color:#8b949e}
+ .rail .rh em{font-style:normal;color:#2ea043;display:flex;align-items:center;gap:5px}.rail .rh em i{width:6px;height:6px;background:#2ea043;display:inline-block}
+ .rail button.ri{justify-content:space-between;border:0!important;border-left:2px solid transparent!important;border-radius:0!important;padding:7px 14px!important;font:400 12.5px var(--fm)!important;letter-spacing:0!important;text-transform:none!important;color:#c9d1d9!important}
+ .rail button.ri small{font:600 10px var(--fm);letter-spacing:.08em;color:#8b949e}
+ .rail button.ri:hover{background:#182028!important}
+ .rail button.ri.on{background:#222b33!important;color:#e05a2b!important;border-left-color:#e05a2b!important;box-shadow:none!important;font-weight:500!important}
+ .rail #rail-sens{padding:6px 10px}
+ .rail .sens{background:#16191f!important;border:1px solid #242830!important;border-radius:2px!important}
+ .rail .sens .k b{color:#2ea043!important;border-color:rgba(46,160,67,.4)!important}
+ .rail .sens .v{font:500 18px var(--fm)!important;letter-spacing:-.02em}
 }
 /* keep zoom buttons clear of an open right-hand panel */
 @media(min-width:761px){.nav{transition:right .35s var(--spring)}
