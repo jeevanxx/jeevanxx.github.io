@@ -1707,12 +1707,28 @@ $("btn-ask").onclick=()=>{const on=$("ask").hidden;openPanel("ask",on);if(on){re
 $("a-close").onclick=()=>openPanel("ask",false);
 
 // ---------- what the assistant is looking at
-function namedPlace(q){const s=" "+q.toLowerCase()+" ";if(/north(ern)? pol(e|ar)/.test(s))return{n:"north pole",lat:86,lon:0,name:"North polar region",src:"named in your question"};if(/south(ern)? pol(e|ar)/.test(s))return{n:"south pole",lat:-86,lon:0,name:"South polar region",src:"named in your question"};let best=null;const take=(n,lat,lon,name)=>{if(!best||n.length>best.n.length)best={n,lat,lon,name,src:"named in your question"}};
- for(const x of SITES){const n=x[0].toLowerCase();if(s.includes(n))take(n,x[1],x[2],x[0]+" landing site")}
- for(const h of HOT){const n=h.name.toLowerCase(),n2=n.replace(/ crater$/,"");if(s.includes(n)||new RegExp("\\b"+n2+"\\b").test(s))take(n2,h.view[0],h.view[1],h.name)}
- for(const ft of FEAT){const n=ft.name.toLowerCase();if(n.length<4||!s.includes(n))continue;if(new RegExp("[^a-z]"+n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z]").test(s))take(n,ft.lat,ft.lon,ft.type==="Crater"?ft.name+" crater":ft.name)}
- return best}
-function place(q){const np=q&&namedPlace(q);if(np)return np;
+// Place names in a question. Many Mars names are ordinary English words (Land, Flat, Hope, Main, Cross...),
+// so a name only counts when the question gives a cue: a multi-word name, a feature word after it ("Gale crater"),
+// "at/in/near/about/of X", or a capital letter. Common words need a capital AND a cue. Anything weaker is only offered
+// as a "Did you mean...?" button, and the answer stays on the current place.
+const STOPW=new Set(["abu", "ada", "adams", "airy", "albany", "amsterdam", "angelica", "annapolis", "apt", "aspen", "bam", "bar", "barlow", "barnard", "basin", "beer", "bend", "bernard", "bison", "bland", "bled", "bluff", "bond", "bor", "bordeaux", "bree", "bristol", "brush", "burroughs", "burton", "butte", "byrd", "cairns", "campbell", "can", "canberra", "cave", "charleston", "chia", "circle", "clark", "cobalt", "colon", "columbus", "concord", "cost", "cray", "cross", "cruz", "cue", "curiosity", "cypress", "daly", "dana", "dank", "darwin", "davies", "dawes", "delta", "dixie", "douglass", "drake", "eagle", "eddie", "ely", "endeavour", "faith", "fancy", "flat", "flora", "freedom", "gah", "gale", "gan", "gilbert", "gill", "glide", "globe", "gold", "golden", "green", "greg", "groves", "hack", "hadley", "hale", "ham", "harris", "henry", "hit", "holden", "holmes", "honda", "hope", "horowitz", "houston", "hutton", "huxley", "ins", "insight", "isil", "jeans", "jen", "johannesburg", "jones", "kai", "kaiser", "kepler", "kin", "kinda", "kingston", "kong", "lal", "lambert", "lamont", "land", "lau", "leighton", "lexington", "lopez", "los", "lowell", "luck", "madrid", "main", "mari", "mariner", "martin", "mclaughlin", "mega", "merchant", "mila", "milford", "mohawk", "mojave", "moss", "muller", "murray", "nan", "never", "newport", "newton", "nicholson", "nitro", "opportunity", "ore", "owen", "pai", "pal", "pals", "pathfinder", "pau", "perseverance", "peta", "philadelphia", "phillips", "phoenix", "pickering", "plum", "pompeii", "porter", "portsmouth", "princeton", "proctor", "quick", "rana", "reynolds", "richardson", "roman", "ross", "ruby", "russell", "rutherford", "savannah", "say", "schmidt", "sera", "smith", "somerset", "south", "spirit", "spur", "stokes", "tak", "tame", "tara", "thom", "tile", "toro", "torso", "townsend", "trinidad", "troy", "very", "victoria", "viking", "vogel", "wallace", "wells", "williams", "wilmington", "wink", "winslow", "worcester", "wright"]);
+const CUE=/\b(at|in|near|about|of|around|to|from|on|inside|over|visit|reach)\s+(the\s+)?$/i,FWORD=/^\s+(crater|mons|montes|vallis|valles|planitia|planum|chasma|chasmata|patera|fossae|terra|colles|mensae|tholus|rupes|labyrinthus|lander|rover|landing site|site)\b/i;
+function namedPlace(q){const orig=" "+q+" ",s=orig.toLowerCase();
+ if(/north(ern)? pol(e|ar)/.test(s))return{n:"north pole",lat:86,lon:0,name:"North polar region",src:"named in your question",sure:true};
+ if(/south(ern)? pol(e|ar)/.test(s))return{n:"south pole",lat:-86,lon:0,name:"South polar region",src:"named in your question",sure:true};
+ let sure=null,maybe=null;
+ const consider=(n,lat,lon,name)=>{const esc2=n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),re=new RegExp("[^a-z0-9]"+esc2+"(?=[^a-z0-9])","g");let m;
+  while((m=re.exec(s))){const at=m.index+1,before=orig.slice(0,at),after=orig.slice(at+n.length),word=orig.slice(at,at+n.length),cap=/^[A-Z]/.test(word),start=/^\s*$|[.!?]\s*$/.test(before),cue=CUE.test(before),multi=n.includes(" ");
+   const common=STOPW.has(n);let ok=multi||FWORD.test(after);
+   if(!ok)ok=common?(cap&&cue):(cue||(cap&&!start)||(cap&&!common));
+   const c={n,lat,lon,name,src:"named in your question",sure:ok};
+   if(ok){if(!sure||n.length>sure.n.length)sure=c}else if((!common||cap)&&(!maybe||n.length>maybe.n.length))maybe=c}};
+ for(const x of SITES)consider(x[0].toLowerCase(),x[1],x[2],x[0]+" landing site");
+ for(const h of HOT){const n2=h.name.toLowerCase().replace(/ crater( and .*)?$/,"");consider(n2,h.view[0],h.view[1],h.name)}
+ for(const ft of FEAT){const n=ft.name.toLowerCase();if(n.length<4||!s.includes(n))continue;consider(n,ft.lat,ft.lon,ft.type==="Crater"?ft.name+" crater":ft.name)}
+ return sure||(maybe?Object.assign(maybe,{sure:false}):null)}
+let forcedPlace=null;
+function place(q){if(forcedPlace)return forcedPlace;const np=q&&namedPlace(q);if(np&&np.sure)return np;
  if(picked&&!$("info").hidden)return{lat:picked.lat,lon:picked.lon,name:$("i-title").textContent,src:"the place you clicked"};
  const W=A.W;if(W.pts.length)return{lat:W.pts[0].lat,lon:W.pts[0].lon,name:A.wpName(W.pts[0],0),src:"your route's start point"};
  return{lat:CAM.lat,lon:CAM.lon,name:placeName(CAM.lat,CAM.lon),src:"the centre of your view (click Mars to pick a place)"}}
@@ -1822,18 +1838,19 @@ const RULES=[
  ["radiation",/\b(radiation|dose|cosmic|sievert|msv|rad)\b/],
  ["ice",/\b(ice|icy|water|frozen|h2o)\b/],
  ["geology",/\b(geolog\w*|rock|rocks|unit|formed|formation|age|old|noachian|hesperian|amazonian|mineral\w*|clay|clays|sulfate\w*|volcan\w*)\b/],
- ["terrain",/\b(terrain|slope|steep|elevation|height|altitude|ground|sand|soft|firm|dust|dusty|rough|flat|boulder\w*)\b/],
+ ["terrain",/\b(terrain|slope|steep|elevation|height|altitude|ground|sand|soft|firm|dust|dusty|rough|flat|boulder\w*|cross|crossing|traverse|passable|area)\b/],
  ["conditions",/\b(time|sun|sunset|sunrise|daylight|day|night|season|weather|temperature|cold|pressure|storm|storms|dust storm)\b/],
  ["survival",/\b(survive|survival|score|live|land|landing|settle\w*|habitat|base|base site|build)\b/],
  ["layer",/\b(layer|layers|overlay|map|colou?rs?|looking at|legend)\b/],
  ["place",/\b(where|location|coordinates?|what is (this|here)|what's here)\b/],
  ["overview",/\b(tell me about|about this|overview|summary|summar\w+|describe)\b/],
  ["help",/\b(help|what can you|how do i|hello|hi)\b/]];
-function answer(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).map(r=>r[0]),P=place(q);
+function answer(q){const r=answer0(q),NP=forcedPlace?null:namedPlace(q);if(r&&NP&&!NP.sure){r.acts=(r.acts||[]).concat([{l:`Did you mean ${NP.name}?`,f:()=>{forcedPlace=NP;try{ask(q)}finally{forcedPlace=null}}}])}return r}
+function answer0(q){const s=q.toLowerCase(),hits=RULES.filter(r=>r[1].test(s)).map(r=>r[0]),P=place(q);
  // "cooling water"/"water supply" is about the suit, not ice
  let k=hits[0]||null;if(k==="route"&&hits.includes("radiation"))k="radiation";
  if(k==="route"&&/\b(ice)\b/.test(s)&&!/oxygen|suit|battery|rover|turn|return|route|walk/.test(s))k="ice";
- if(!k&&namedPlace(q))k="overview";
+ const NP=namedPlace(q);if(!k&&NP&&NP.sure)k="overview";
  switch(k){case"route":return ansRoute(q);case"radiation":return ansRadiation(P);case"ice":return ansIce(P);case"geology":return ansGeology(P);case"terrain":return ansTerrain(P,q);
   case"conditions":return ansConditions(P);case"survival":return ansSurvival(P);case"layer":return ansLayer();case"place":return ansPlace(P);case"overview":return ansOverview(P);case"help":return{t:HELP,src:[]}}
  return{t:`I couldn't match that to a topic I have data for, and I won't guess. ${HELP}`,src:[]}}
