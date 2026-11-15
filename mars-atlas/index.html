@@ -898,7 +898,7 @@ syncSliders();markMission("base");weights={...MISSIONS.base.w};updateSurvival(fa
 fetch("tiles/names.json").then(r=>r.json()).then(a=>{FEAT=a.map(([name,type,lat,lon,d,origin])=>({name,type,lat,lon,d,origin,area:AREA.has(type)}));updateSurvival(false)}).catch(()=>{$("st-cursor").textContent="Place names couldn't load."});
 function loadDem(url,W,H){return fetch(url).then(r=>r.blob()).then(b=>createImageBitmap(b,{colorSpaceConversion:"none",premultiplyAlpha:"none"})).then(bm=>{if(bm.width!==W||bm.height!==H)throw 0;const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(bm,0,0);const px=x.getImageData(0,0,W,H).data,d=new Int16Array(W*H);for(let i=0;i<W*H;i++){const v=(px[i*4]<<8|px[i*4+1]);d[i]=v===0?-32768:v-32768}return d})}
 loadDem("tiles/elev8.png",2880,1440).then(d=>{if(Math.abs(d[720*2880+1440]-sampleGrid(EL,720,360,2,0,0))>1500)throw 0;E8=d}).catch(()=>{dataWarn("Detailed global terrain didn't load, so slopes and heights use a coarse ~30 km grid.")})
-.then(()=>Promise.all(HOT.map(h=>loadDem(`tiles/hot/${h.id}_dem.png`,h.W,h.H).then(d=>{h.D=d}).catch(()=>{dataWarn(`${h.name}: close-up terrain didn't load, so the area uses ~7 km terrain.`)})))).then(()=>{rebuildTerrain();if(measuring)renderMeasure()});
+.then(()=>Promise.all(HOT.map(h=>loadDem(`tiles/hot/${h.id}_dem.png`,h.W,h.H).then(d=>{h.D=d}).catch(()=>{dataWarn(`${h.name}: close-up terrain didn't load, so the area uses the coarser global terrain.`)})))).then(()=>{rebuildTerrain();if(measuring)renderMeasure()});
 </script>
 <script>
 // ===== Premium layer: score gauge, mission fit, risk flags, compare, guided tour, intro =====
