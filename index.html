@@ -321,6 +321,57 @@
     @media (hover: hover) { .flip-card:hover .flip-inner { transform: rotateY(180deg); } }
     .flip-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 6px; }
     @media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
+    /* About: "Two sides of me" photo stack */
+    .photo-stack { position: relative; height: 330px; perspective: 1200px; cursor: pointer; outline: none; }
+    .photo-stack:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 4px; border-radius: 16px; }
+    .ps-card { position: absolute; top: 14px; width: 58%; aspect-ratio: 3 / 4; max-height: 300px; margin: 0; border-radius: 16px; overflow: hidden;
+      border: 2px solid rgb(var(--color-outline-variant) / .5); background: rgb(var(--color-surface-container-high)); box-shadow: 0 24px 50px -20px rgb(0 0 0 / .6);
+      transition: transform .8s cubic-bezier(.2,.8,.2,1), z-index 0s .25s, box-shadow .5s, border-color .5s, filter .6s; }
+    .ps-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ps-card figcaption { position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 6px 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 1px;
+      background: rgb(var(--color-surface-dim) / .88); backdrop-filter: blur(8px); border: 1px solid rgb(var(--color-outline-variant) / .4);
+      font-family: var(--md-sys-code-font-family); font-size: 11px; color: rgb(var(--color-on-surface)); line-height: 1.3; }
+    .ps-tag { font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+    .ps-card { left: 21%; }
+    /* front card */
+    .photo-stack[data-front="formal"] .ps-card[data-k="formal"], .photo-stack[data-front="casual"] .ps-card[data-k="casual"] {
+      z-index: 2; transform: translate3d(-26%, 0, 40px) rotateY(8deg) rotateZ(-4deg); border-color: rgb(var(--color-primary) / .55);
+      box-shadow: 0 30px 60px -18px rgb(0 0 0 / .65), 0 0 30px -6px rgb(var(--color-primary) / .35); }
+    /* back card */
+    .photo-stack[data-front="formal"] .ps-card[data-k="casual"], .photo-stack[data-front="casual"] .ps-card[data-k="formal"] {
+      z-index: 1; transform: translate3d(28%, 0, -60px) rotateY(-14deg) rotateZ(6deg) scale(.9); filter: saturate(.75) brightness(.8); }
+    @media (hover: hover) {
+      .photo-stack:hover .ps-card { filter: none; }
+      .photo-stack[data-front="formal"]:hover .ps-card[data-k="casual"], .photo-stack[data-front="casual"]:hover .ps-card[data-k="formal"] { transform: translate3d(40%, -3%, -40px) rotateY(-20deg) rotateZ(10deg) scale(.92); }
+      .photo-stack[data-front="formal"]:hover .ps-card[data-k="formal"], .photo-stack[data-front="casual"]:hover .ps-card[data-k="casual"] { transform: translate3d(-32%, -2%, 60px) rotateY(12deg) rotateZ(-7deg); }
+    }
+    .photo-stack.shuffling .ps-card { transition-duration: .9s, 0s, .5s, .5s, .6s; }
+    @media (prefers-reduced-motion: reduce) { .ps-card { transition: none; } }
+
+    /* Contact: 3D business card */
+    .biz-card { position: relative; width: min(440px, 88vw); aspect-ratio: 1.75 / 1; border-radius: 18px; cursor: pointer; outline: none; transform-style: preserve-3d; }
+    .biz-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 6px; }
+    .biz-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+    .biz-card.flipped .biz-inner { transform: rotateY(180deg); }
+    .biz-face { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; text-align: left;
+      background: radial-gradient(120% 140% at 0% 0%, rgb(var(--color-primary) / .28), transparent 55%), radial-gradient(90% 120% at 100% 100%, rgb(var(--color-secondary) / .22), transparent 60%), rgb(var(--color-surface-container-high));
+      border: 1px solid rgb(var(--color-outline-variant) / .5); box-shadow: 0 30px 70px -25px rgb(0 0 0 / .7), inset 0 1px 0 rgb(255 255 255 / .06); }
+    .biz-photo { width: 38%; flex-shrink: 0; position: relative; }
+    .biz-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+    .biz-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 60%, rgb(var(--color-surface-container-high))); }
+    .biz-info { flex: 1; padding: 18px 20px 16px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .biz-name { font-family: var(--md-sys-typescale-font-family); font-weight: 700; font-size: clamp(20px, 5vw, 26px); line-height: 1.15; color: rgb(var(--color-on-surface)); margin: 4px 0 6px; }
+    .biz-chip { position: absolute; top: 16px; right: 16px; width: 34px; height: 26px; border-radius: 6px; opacity: .85;
+      background: linear-gradient(135deg, rgb(var(--color-tertiary) / .9), rgb(var(--color-primary) / .7)); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .2); }
+    .biz-chip::before { content: ""; position: absolute; inset: 6px 8px; border: 1px solid rgb(255 255 255 / .35); border-radius: 3px; }
+    .biz-back { transform: rotateY(180deg); flex-direction: column; padding: 18px 22px; gap: 8px; }
+    .biz-links { display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; }
+    .biz-links a { display: flex !important; justify-content: flex-start !important; align-items: center !important; gap: 10px; font-family: var(--md-sys-code-font-family); font-size: 13px; color: rgb(var(--color-on-surface)); }
+    .biz-links a:hover { color: rgb(var(--color-primary)); }
+    .biz-links svg { width: 16px; height: 16px; flex-shrink: 0; color: rgb(var(--color-primary)); }
+    .biz-mono { position: absolute; right: 14px; bottom: -28px; font-family: var(--md-sys-typescale-font-family); font-weight: 800; font-size: 150px; line-height: 1; color: rgb(var(--color-primary) / .1); pointer-events: none; }
+    @media (max-width: 420px) { .biz-links a { font-size: 11.5px; } .biz-info { padding: 12px 12px 12px 8px; } }
+    @media (prefers-reduced-motion: reduce) { .biz-inner { transition: none; } }
     /* Scroll progress bar */
     #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 70; transform-origin: 0 50%; transform: scaleX(0);
       background: linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-secondary)), rgb(var(--color-tertiary))); pointer-events: none; }
@@ -592,8 +643,30 @@
               </div>
             </div>
 
+            <!-- Right column: photo stack + journey timeline -->
+            <div class="lg:col-span-5 flex flex-col gap-space-lg">
+            <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md overflow-hidden">
+              <div class="flex items-center justify-between gap-space-sm mb-space-sm">
+                <div class="flex items-center gap-space-xs">
+                  <span class="material-symbols-outlined text-tertiary text-[22px]">photo_library</span>
+                  <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Two sides of me</h3>
+                </div>
+                <span class="ps-hint font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">swap_horiz</span><span>Tap to shuffle</span></span>
+              </div>
+              <div id="photoStack" class="photo-stack" data-front="formal" role="button" tabindex="0" aria-label="Shuffle photos">
+                <figure class="ps-card" data-k="casual">
+                  <img src="profile.jpg" alt="Jeevan in a casual shirt" loading="lazy" style="object-position:50% 12%">
+                  <figcaption><span class="ps-tag text-secondary">Everyday</span><span>Building &amp; shipping</span></figcaption>
+                </figure>
+                <figure class="ps-card" data-k="formal">
+                  <img src="profile-formal.jpg" alt="Jeevan in a suit" loading="lazy" style="object-position:50% 20%">
+                  <figcaption><span class="ps-tag text-primary">Formal</span><span>Interviews &amp; presentations</span></figcaption>
+                </figure>
+              </div>
+            </div>
+
             <!-- Journey timeline -->
-            <div class="lg:col-span-5 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
+            <div class="p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
               <div class="flex items-center gap-space-xs mb-space-lg">
                 <span class="material-symbols-outlined text-secondary text-[22px]">timeline</span>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold">My journey so far</h3>
@@ -636,6 +709,7 @@
                   <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Began my B.Tech in Computer Science, after a NIAT bootcamp at AMET College, Chennai.</p>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -816,6 +890,30 @@
             <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-secondary/10 blur-3xl pointer-events-none"></div>
             <div class="relative">
+              <!-- 3D digital business card (click / tap to flip) -->
+              <div class="flex flex-col items-center mb-space-xl">
+                <div id="bizCard" data-tilt-max="10" class="tilt biz-card" role="button" tabindex="0" aria-pressed="false" aria-label="Business card, flip for contact details">
+                  <div class="biz-inner">
+                    <div class="biz-face">
+                      <div class="biz-photo"><img src="profile-formal.jpg" alt="Jeevan J Shine" loading="lazy"></div>
+                      <div class="biz-info">
+                        <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Builder • Web &amp; AI</span>
+                        <span class="biz-name">Jeevan J Shine</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">B.Tech CSE (AI) student</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">Joy University × NIAT</span>
+                        <span class="mt-auto inline-flex items-center gap-1 font-label-sm text-label-sm text-primary"><span class="material-symbols-outlined text-[14px]">language</span>jeevanxx.github.io</span>
+                      </div>
+                      <span class="biz-chip" aria-hidden="true"></span>
+                    </div>
+                    <div class="biz-face biz-back">
+                      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Reach me</span>
+                      <div class="biz-links" id="bizLinks"></div>
+                      <span class="biz-mono" aria-hidden="true">J</span>
+                    </div>
+                  </div>
+                </div>
+                <span class="biz-hint mt-space-sm font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">360</span><span>Click the card to flip it</span></span>
+              </div>
               <div class="flex items-center justify-center gap-space-xs text-secondary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
                 <span class="material-symbols-outlined text-[16px]">alternate_email</span> Get in touch
               </div>
@@ -867,7 +965,10 @@
   <footer class="w-full bg-surface-container-low/90 backdrop-blur-md border-t border-outline-variant/20">
     <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg py-space-xl grid grid-cols-1 md:grid-cols-3 gap-space-xl">
       <div>
-        <a href="#" class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Jeevan J Shine</a>
+        <a href="#" class="flex items-center gap-space-sm group">
+          <span class="relative w-11 h-11 rounded-full p-[2px] bg-gradient-to-br from-primary via-secondary to-tertiary shrink-0"><img src="profile.jpg" alt="" class="w-full h-full rounded-full object-cover object-top border-2 border-surface-container-low" loading="lazy"></span>
+          <span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight group-hover:text-secondary transition-colors">Jeevan J Shine</span>
+        </a>
         <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs max-w-xs">B.Tech CSE (AI) student at Joy University × NIAT. Building web apps and AI tools, one project at a time.</p>
         <span class="inline-flex items-center gap-space-xs mt-space-md px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-secondary">
           <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span> Open to hackathon teams &amp; collabs
@@ -1562,6 +1663,30 @@
       const toggle = () => { const on = card.classList.toggle('flipped'); card.setAttribute('aria-pressed', on); };
       card.addEventListener('click', e => { if (e.pointerType === 'mouse' && hover) return; toggle(); });
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    })();
+
+    /* About photo stack: click / tap / Enter shuffles which photo is in front */
+    (function initPhotoStack() {
+      const st = document.getElementById('photoStack'); if (!st) return;
+      const hint = st.parentElement.querySelector('.ps-hint span:last-child');
+      if (hint && matchMedia('(hover: hover)').matches) hint.textContent = 'Click to shuffle';
+      const shuffle = () => { st.classList.add('shuffling'); st.dataset.front = st.dataset.front === 'formal' ? 'casual' : 'formal'; setTimeout(() => st.classList.remove('shuffling'), 900); };
+      st.addEventListener('click', shuffle);
+      st.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); shuffle(); } });
+    })();
+
+    /* Contact business card: flips on click / tap / Enter; links on the back work normally */
+    (function initBizCard() {
+      const card = document.getElementById('bizCard'), links = document.getElementById('bizLinks'); if (!card) return;
+      if (links) {
+        const pick = ['Gmail', 'GitHub', 'LinkedIn', 'Instagram'].map(l => SITE_CONFIG.socials.find(x => x.label === l)).filter(Boolean);
+        links.innerHTML = pick.map(s => `<a href="${esc(s.url)}" ${s.url.startsWith('mailto:') ? '' : 'target="_blank" rel="noopener noreferrer"'} tabindex="-1">${svgIcon(s.icon)}<span>${esc(s.label === 'LinkedIn' ? 'LinkedIn: ' + s.handle : s.handle)}</span></a>`).join('')
+          + `<a href="Jeevan-J-Shine-Resume.pdf" target="_blank" rel="noopener noreferrer" tabindex="-1"><span class="material-symbols-outlined text-[16px] text-primary">description</span><span>Resume (PDF)</span></a>`;
+      }
+      const bh = document.querySelector('.biz-hint span:last-child'); if (bh && !matchMedia('(hover: hover)').matches) bh.textContent = 'Tap the card to flip it';
+      const set = on => { card.classList.toggle('flipped', on); card.setAttribute('aria-pressed', on); links && links.querySelectorAll('a').forEach(a => a.tabIndex = on ? 0 : -1); };
+      card.addEventListener('click', e => { if (e.target.closest('a')) return; set(!card.classList.contains('flipped')); });
+      card.addEventListener('keydown', e => { if (e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); set(!card.classList.contains('flipped')); } });
     })();
 
     /* Scroll progress bar + back-to-top button */
