@@ -248,8 +248,10 @@
     }
 
     /* Scroll reveal */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal { opacity: 0; transform: perspective(1200px) translateY(48px) rotateX(14deg) scale(.96); transform-origin: 50% 0; transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+    .reveal.flip3d { transform: perspective(1200px) translateY(70px) rotateX(18deg) rotateY(var(--ry, -12deg)) scale(.92); }
     .reveal.is-visible { opacity: 1; transform: none; }
+    .tilt.reveal:not(.is-visible) { transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .marquee-track { animation: none !important; } }
 
     /* Tech marquee */
@@ -276,6 +278,16 @@
     .tilt::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s;
       background: radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgb(255 255 255 / .14), transparent 55%); }
     .tilt.tilting::after { opacity: 1; }
+    /* 3D cards: layers inside move at different depths while the card tilts */
+    .tilt { --px: 0; --py: 0; }
+    .tilt .depth-img { transform: scale(1.02); transition: transform .5s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+    .tilt.tilting .depth-img { transform: translate3d(calc(var(--px) * -16px), calc(var(--py) * -12px), 0) scale(1.12); transition: transform .12s linear; }
+    .tilt .depth-text { transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+    .tilt.tilting .depth-text { transform: translate3d(calc(var(--px) * 7px), calc(var(--py) * 5px), 0); transition: transform .12s linear; }
+    .tilt.tilting.card3d { box-shadow: calc(var(--px) * -24px) calc(26px + var(--py) * -18px) 60px -18px rgb(0 0 0 / .6), 0 0 0 1px rgb(var(--color-primary) / .45), 0 0 40px -8px rgb(var(--color-primary) / .35); }
+    .card3d:not(.glow-border)::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .3s;
+      background: linear-gradient(calc(110deg + var(--px) * 40deg), transparent 30%, rgb(255 255 255 / .09) 48%, transparent 66%); }
+    .card3d.tilting:not(.glow-border)::before { opacity: 1; }
     .float-3d { animation: float3d 7s ease-in-out infinite; }
     @keyframes float3d { 0%,100% { transform: translateY(0) rotateX(0) rotateY(0); } 50% { transform: translateY(-12px) rotateX(3deg) rotateY(-4deg); } }
     @media (prefers-reduced-motion: reduce) { .float-3d { animation: none; } }
@@ -298,9 +310,9 @@
     /* Phones/tablets: keep the hero background calm so the text stays readable */
     @media (max-width: 1023px) {
       #neuralCanvas { opacity: .22 !important; }
-      #hero3d { opacity: .35; }
     }
 
+    #bg3d { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
     /* Scroll progress bar */
     #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 70; transform-origin: 0 50%; transform: scaleX(0);
       background: linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-secondary)), rgb(var(--color-tertiary))); pointer-events: none; }
@@ -351,6 +363,7 @@
 </head>
 <body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
   <div id="scrollProgress" aria-hidden="true"></div>
+  <canvas id="bg3d" aria-hidden="true"></canvas>
 
   <!-- ===================== HEADER ===================== -->
   <header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_1px_8px_rgba(0,0,0,0.15)]">
@@ -402,7 +415,7 @@
     </nav>
   </div>
 
-  <main class="w-full pt-20 bg-surface">
+  <main class="w-full pt-20">
     <div class="flex flex-col w-full relative overflow-x-hidden">
 
       <!-- ===================== HERO ===================== -->
@@ -412,7 +425,7 @@
         <div class="absolute -top-32 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
         <div class="absolute bottom-10 right-10 w-[30rem] h-[30rem] rounded-full bg-secondary/10 blur-[120px] pointer-events-none"></div>
 
-        <div class="relative z-10 max-w-[1200px] w-full mx-auto px-margin-sm lg:px-margin-lg">
+        <div class="relative z-10 max-w-[1200px] w-full mx-auto px-margin-sm lg:px-margin-lg" id="heroInner">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
             <!-- Portrait -->
             <div class="lg:col-span-5 flex justify-center lg:justify-end order-1">
@@ -434,9 +447,17 @@
 
             <!-- Intro -->
             <div class="lg:col-span-7 flex flex-col items-start order-2">
-              <div class="inline-flex items-center gap-space-xs px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-secondary mb-space-md">
-                <span class="material-symbols-outlined text-[16px]">school</span>
-                1st Year B.Tech CSE (AI) @ Joy University × NIAT
+              <div class="flex flex-wrap items-center gap-space-xs mb-space-md">
+                <div class="inline-flex items-center gap-space-xs px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-secondary">
+                  <span class="material-symbols-outlined text-[16px]">school</span>
+                  1st Year B.Tech CSE (AI) @ Joy University × NIAT
+                </div>
+                <div class="inline-flex flex-wrap items-center gap-x-space-sm gap-y-0.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[16px] text-primary">badge</span>
+                  <span>Class <b class="text-on-surface">403</b></span><span class="opacity-40">•</span>
+                  <span>Section <b class="text-on-surface">C</b></span><span class="opacity-40">•</span>
+                  <span>Roll no / PRN: <b class="text-on-surface font-mono">2026BTAI021</b></span>
+                </div>
               </div>
               <h1 class="font-display-lg text-display-sm sm:text-display-md lg:text-display-lg font-bold text-on-surface tracking-tight leading-none">
                 Hi, I'm <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-fixed to-secondary">Jeevan</span>.
@@ -491,12 +512,12 @@
       </section>
 
       <!-- ===================== TECH MARQUEE ===================== -->
-      <div class="w-full bg-surface-container-lowest border-y border-outline-variant/20 py-space-lg marquee-mask overflow-hidden" aria-label="Technologies I use">
+      <div class="w-full bg-surface-container-lowest/70 backdrop-blur-sm border-y border-outline-variant/20 py-space-lg marquee-mask overflow-hidden" aria-label="Technologies I use">
         <div class="marquee-track"><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">JavaScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">TypeScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Python</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">HTML &amp; CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">React</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Vite</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">FastAPI</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">YOLOv8</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">LangGraph</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Tailwind CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">PWAs</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Git &amp; GitHub</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">GitHub Pages</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Claude Code</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Google AI Studio</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Lovable</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">JavaScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">TypeScript</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Python</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">HTML &amp; CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">React</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Vite</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">FastAPI</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">YOLOv8</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">LangGraph</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Tailwind CSS</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">PWAs</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Git &amp; GitHub</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">GitHub Pages</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Claude Code</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Google AI Studio</span><span class="mx-space-sm px-space-lg py-2 rounded-full bg-surface-container border border-outline-variant/30 font-label-lg text-label-lg text-on-surface-variant whitespace-nowrap">Lovable</span></div>
       </div>
 
       <!-- ===================== ABOUT ===================== -->
-      <section class="w-full bg-surface-container-lowest py-24" id="about">
+      <section class="w-full bg-surface-container-lowest/75 py-24" id="about">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
             <span class="material-symbols-outlined text-[16px]">person</span> About me
@@ -599,7 +620,7 @@
       </section>
 
       <!-- ===================== CERTIFICATES ===================== -->
-      <section class="w-full bg-surface-container-lowest pb-24" id="certificates">
+      <section class="w-full bg-surface-container-lowest/75 pb-24" id="certificates">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex items-center gap-space-xs text-tertiary font-label-md text-label-md uppercase tracking-wider mb-space-md">
             <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Certificates <span id="certCount"></span>
@@ -628,7 +649,7 @@
       </section>
 
       <!-- ===================== PROJECTS (auto from GitHub) ===================== -->
-      <section class="w-full bg-surface py-24" id="projects">
+      <section class="w-full bg-surface/60 py-24" id="projects">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-lg gap-space-md">
             <div>
@@ -653,7 +674,7 @@
       </section>
 
       <!-- ===================== EVENTS (edit events.json) ===================== -->
-      <section class="w-full bg-surface-container-lowest py-24" id="events">
+      <section class="w-full bg-surface-container-lowest/75 py-24" id="events">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
             <div>
@@ -672,7 +693,7 @@
       </section>
 
       <!-- ===================== ACTIVITY ===================== -->
-      <section class="w-full bg-surface py-24" id="activity">
+      <section class="w-full bg-surface/60 py-24" id="activity">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
             <div>
@@ -704,7 +725,7 @@
       </section>
 
       <!-- ===================== SKILLS ===================== -->
-      <section class="w-full bg-surface-container-lowest py-24" id="skills">
+      <section class="w-full bg-surface-container-lowest/75 py-24" id="skills">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex items-center gap-space-xs text-primary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
             <span class="material-symbols-outlined text-[16px]">construction</span> Toolbox
@@ -767,7 +788,7 @@
       </section>
 
       <!-- ===================== CONTACT ===================== -->
-      <section class="w-full bg-surface py-24" id="contact">
+      <section class="w-full bg-surface/60 py-24" id="contact">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="p-space-xl lg:p-16 rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md text-center relative overflow-hidden">
             <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
@@ -821,7 +842,7 @@
     </div>
   </main>
 
-  <footer class="w-full bg-surface-container-low border-t border-outline-variant/20">
+  <footer class="w-full bg-surface-container-low/90 backdrop-blur-md border-t border-outline-variant/20">
     <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg py-space-xl grid grid-cols-1 md:grid-cols-3 gap-space-xl">
       <div>
         <a href="#" class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Jeevan J Shine</a>
@@ -903,7 +924,11 @@
         if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
       }), { threshold: 0.12 });
       window.observeReveal = els => els.forEach((el, i) => {
-        el.classList.add('reveal'); el.style.transitionDelay = `${Math.min(i % 6, 5) * 70}ms`; io.observe(el);
+        el.classList.add('reveal'); el.style.transitionDelay = `${Math.min(i % 6, 5) * 70}ms`;
+        if (el.matches('.project-card, .highlight-card, #eventList > article')) { el.classList.add('flip3d'); el.style.setProperty('--ry', `${i % 2 ? 12 : -12}deg`); }
+        io.observe(el);
+        // remove the stagger delay once shown, so hover/tilt reacts instantly
+        el.addEventListener('transitionend', () => { if (el.classList.contains('is-visible')) el.style.transitionDelay = ''; }, { once: true });
       });
       window.observeReveal(document.querySelectorAll('main section:not(:first-child) > div > *'));
     })();
@@ -1164,13 +1189,13 @@
         const topics = (r.topics || []).slice(0, 3).map(t =>
           `<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant">${esc(t)}</span>`).join('');
         return `
-          <article data-tilt-max="6" tabindex="0" role="button" aria-label="${esc(titleOf(r))}: open details" data-name="${esc(r.name)}" class="tilt project-card ${i === 0 ? 'md:col-span-2' : ''} rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md flex flex-col justify-between group hover:bg-surface-container hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden" data-category="${esc(lang)}">
+          <article data-tilt-max="10" tabindex="0" role="button" aria-label="${esc(titleOf(r))}: open details" data-name="${esc(r.name)}" class="tilt card3d project-card ${i === 0 ? 'md:col-span-2' : ''} rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md flex flex-col justify-between group hover:bg-surface-container hover:border-primary/40 overflow-hidden" data-category="${esc(lang)}">
             <div class="block relative overflow-hidden bg-surface-container-high aspect-[2/1] border-b border-outline-variant/30">
-              <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">${Thumbs.for(r.name, titleOf(r), r.language, note(r).thumbnail)}</div>
+              <div class="depth-img w-full h-full">${Thumbs.for(r.name, titleOf(r), r.language, note(r).thumbnail)}</div>
               ${i === 0 ? '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 font-label-sm text-label-sm text-secondary font-bold">★ Featured</span>' : ''}
               <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 font-label-sm text-label-sm text-on-surface flex items-center gap-1 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 transition-all"><span class="material-symbols-outlined text-[14px]">open_in_full</span> Details</span>
             </div>
-            <div class="p-space-xl pb-0 flex-1">
+            <div class="depth-text p-space-xl pb-0 flex-1">
               <div class="flex items-start justify-between gap-space-sm">
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold group-hover:text-primary transition-colors">${esc(titleOf(r))}</h3>
                 ${live ? '<span class="shrink-0 mt-1 px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Live</span>' : ''}
@@ -1246,13 +1271,13 @@
           ? `<span class="px-2.5 py-0.5 rounded-full bg-tertiary-container/70 text-on-tertiary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>${esc(h.badge || 'In progress')}</span>`
           : `<span class="px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">${esc(h.icon || 'star')}</span>${esc(h.badge || 'Live')}</span>`;
         box.innerHTML = list.map((h, i) => `
-          <article tabindex="0" role="button" aria-label="${esc(h.title)}: open details" data-i="${i}" class="highlight-card glow-border group rounded-lg bg-surface-container-low shadow-md overflow-hidden flex flex-col hover:-translate-y-1 transition-transform">
+          <article data-tilt-max="7" tabindex="0" role="button" aria-label="${esc(h.title)}: open details" data-i="${i}" class="tilt card3d highlight-card glow-border group rounded-lg bg-surface-container-low shadow-md overflow-hidden flex flex-col">
             <div class="relative aspect-[2/1] overflow-hidden bg-surface-container-high">
-              <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">${thumbOf(h)}</div>
+              <div class="depth-img w-full h-full">${thumbOf(h)}</div>
               <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent pointer-events-none"></div>
               <div class="absolute top-3 left-3">${statusPill(h)}</div>
             </div>
-            <div class="p-space-xl pt-space-md flex-1 flex flex-col">
+            <div class="depth-text p-space-xl pt-space-md flex-1 flex flex-col">
               <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">${esc(h.title)}</h3>
               ${h.event ? `<span class="font-label-sm text-label-sm text-tertiary mt-1">${esc(h.event)}</span>` : ''}
               <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed">${esc(h.description)}</p>
@@ -1511,12 +1536,19 @@
     (function initScrollUI() {
       const bar = document.getElementById('scrollProgress'), btn = document.getElementById('backToTop');
       const ring = btn && btn.querySelector('circle.ring'), C = 138.2;
+      const heroInner = document.getElementById('heroInner'), reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (heroInner) heroInner.style.transformOrigin = '50% 0';
       let ticking = false;
       const update = () => {
         const max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, scrollY / max) : 0;
         if (bar) bar.style.transform = `scaleX(${p})`;
         if (btn) btn.classList.toggle('show', scrollY > innerHeight * 0.8);
         if (ring) ring.style.strokeDashoffset = C * (1 - p);
+        if (heroInner && !reduceMotion) {           // hero content tips back into the screen as you scroll away
+          const h = Math.min(1, scrollY / Math.max(1, heroInner.parentElement.clientHeight));
+          heroInner.style.transform = h > 0 ? `perspective(1400px) translate3d(0, ${h * 60}px, ${-h * 260}px) rotateX(${h * 16}deg)` : '';
+          heroInner.style.opacity = String(1 - h * .85);
+        }
         ticking = false;
       };
       addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
@@ -1887,7 +1919,17 @@
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
       camera.position.set(0, 0, 9);
       const rgb = s => new THREE.Color(...s.split(',').map(v => +v / 255));
-      const pts = (size, opacity = 0.9) => new THREE.PointsMaterial({ size, transparent: true, opacity, depthWrite: false });
+      const glowMats = [];
+      const addGlow = m => { glowMats.push(m); return m; };   // additive in dark mode, normal in light mode
+      let _glowTex = null;
+      const glowTex = () => {
+        if (_glowTex) return _glowTex;
+        const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d');
+        const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,255,255,.55)'); gr.addColorStop(.6, 'rgba(255,255,255,.12)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        x.fillStyle = gr; x.fillRect(0, 0, 128, 128); _glowTex = new THREE.CanvasTexture(c); return _glowTex;
+      };
+      const pts = (size, opacity = 0.9) => new THREE.PointsMaterial({ size: size * 1.9, map: glowTex(), transparent: true, opacity, depthWrite: false });   // soft round dots
       const wire = (opacity = 0.4) => new THREE.MeshBasicMaterial({ wireframe: true, transparent: true, opacity });
       const mats = { p: [], s: [], t: [] };
       const reg = (m, role) => { mats[role].push(m); return m; };
@@ -1904,18 +1946,58 @@
       // ---- Scene variants ----
       const BUILDERS = {
         sphere() {
+          // Neural core: glowing heart, breathing particle sphere, a network of nodes with light pulses, orbit rings and satellites
           const g = new THREE.Group();
-          const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 1), reg(wire(.35), 'p'));
+          const glow = new THREE.Sprite(reg(addGlow(new THREE.SpriteMaterial({ map: glowTex(), transparent: true, opacity: .55, depthWrite: false })), 'p'));
+          glow.scale.set(7.5, 7.5, 1);
+          const heart = new THREE.Sprite(reg(addGlow(new THREE.SpriteMaterial({ map: glowTex(), transparent: true, opacity: .8, depthWrite: false })), 's'));
+          heart.scale.set(2.6, 2.6, 1);
+          const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 1), reg(wire(.28), 'p'));
+          const shell2 = new THREE.Mesh(new THREE.IcosahedronGeometry(1.05, 1), reg(wire(.5), 't'));
           const innerGeo = new THREE.IcosahedronGeometry(1.55, 4), base = innerGeo.attributes.position.array.slice();
-          const inner = new THREE.Points(innerGeo, reg(pts(.045), 's'));
-          const r1 = new THREE.Points(particleRing(3.3, 420), reg(pts(.04, .85), 't')); r1.rotation.set(1.2, 0, .3);
-          const r2 = new THREE.Points(particleRing(3.9, 300), reg(pts(.04, .85), 'p')); r2.rotation.set(1.9, 0, -.5);
-          g.add(shell, inner, r1, r2);
-          return { g, update(t) {
-            shell.rotation.z = t * .05; r1.rotation.y = t * .25; r2.rotation.y = -t * .18;
+          const inner = new THREE.Points(innerGeo, reg(addGlow(pts(.045)), 's'));
+          // Network nodes on a sphere + links between near neighbours
+          const N = 90, nodes = [];
+          for (let i = 0; i < N; i++) {
+            const u = Math.random() * 2 - 1, th = Math.random() * Math.PI * 2, r = 2.55 + Math.random() * .55, q = Math.sqrt(1 - u * u);
+            nodes.push(new THREE.Vector3(q * Math.cos(th) * r, u * r, q * Math.sin(th) * r));
+          }
+          const nodeGeo = new THREE.BufferGeometry().setFromPoints(nodes);
+          const nodePts = new THREE.Points(nodeGeo, reg(addGlow(pts(.11, .95)), 's'));
+          const edges = [], seg = [];
+          for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) if (nodes[i].distanceTo(nodes[j]) < 1.15) { edges.push([i, j]); seg.push(nodes[i], nodes[j]); }
+          const links = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(seg), reg(addGlow(new THREE.LineBasicMaterial({ transparent: true, opacity: .32, depthWrite: false })), 'p'));
+          // Pulses running along the links
+          const P = Math.min(60, edges.length), pulseArr = new Float32Array(P * 3), pulses = [];
+          for (let i = 0; i < P; i++) pulses.push({ e: edges[(Math.random() * edges.length) | 0], k: Math.random(), v: .4 + Math.random() * .9 });
+          const pulseGeo = new THREE.BufferGeometry(); pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulseArr, 3));
+          const pulsePts = new THREE.Points(pulseGeo, reg(addGlow(pts(.16, 1)), 't'));
+          // Orbit rings with satellites
+          const r1 = new THREE.Points(particleRing(3.45, 520), reg(addGlow(pts(.04, .85)), 't')); r1.rotation.set(1.2, 0, .3);
+          const r2 = new THREE.Points(particleRing(4.05, 380), reg(addGlow(pts(.04, .8)), 'p')); r2.rotation.set(1.9, 0, -.5);
+          const sats = [[r1, 3.45, 's', .55], [r2, 4.05, 'p', -.4], [r1, 3.45, 'p', .55, Math.PI]].map(([ring, rad, role, speed, off = 0]) => {
+            const m = new THREE.Mesh(new THREE.OctahedronGeometry(.13, 0), reg(new THREE.MeshBasicMaterial({ transparent: true, opacity: .95 }), role));
+            const halo = new THREE.Sprite(reg(addGlow(new THREE.SpriteMaterial({ map: glowTex(), transparent: true, opacity: .7, depthWrite: false })), role)); halo.scale.set(.9, .9, 1); m.add(halo);
+            ring.add(m); return { m, rad, speed, off };
+          });
+          g.add(glow, shell, shell2, inner, heart, links, nodePts, pulsePts, r1, r2);
+          return { g, update(t, kick) {
+            shell.rotation.z = t * .05; shell.rotation.y = -t * .03; shell2.rotation.x = t * .3; shell2.rotation.y = t * .22;
+            r1.rotation.y = t * .25; r2.rotation.y = -t * .18;
+            links.rotation.y = nodePts.rotation.y = pulsePts.rotation.y = t * .04;
+            sats.forEach(s => { const a = t * s.speed + s.off; s.m.position.set(Math.cos(a) * s.rad, 0, Math.sin(a) * s.rad); s.m.rotation.y = t * 2; });
+            const pul = 1 + .08 * Math.sin(t * 2.2) + kick * .6;
+            heart.scale.set(2.6 * pul, 2.6 * pul, 1); glow.material.opacity = .45 + .15 * Math.sin(t * 1.3) + kick * .3;
             const p = innerGeo.attributes.position.array;
-            for (let i = 0; i < p.length; i += 3) { const k = 1 + .06 * Math.sin(t * 1.6 + base[i] * 2.2 + base[i + 1] * 1.7); p[i] = base[i] * k; p[i + 1] = base[i + 1] * k; p[i + 2] = base[i + 2] * k; }
+            for (let i = 0; i < p.length; i += 3) { const k = 1 + .06 * Math.sin(t * 1.6 + base[i] * 2.2 + base[i + 1] * 1.7) + kick * .25; p[i] = base[i] * k; p[i + 1] = base[i + 1] * k; p[i + 2] = base[i + 2] * k; }
             innerGeo.attributes.position.needsUpdate = true;
+            for (let i = 0; i < P; i++) {
+              const q = pulses[i]; q.k += .012 * q.v * (1 + kick * 4);
+              if (q.k >= 1) { q.k = 0; q.e = edges[(Math.random() * edges.length) | 0]; }
+              const A = nodes[q.e[0]], B = nodes[q.e[1]];
+              pulseArr[i * 3] = A.x + (B.x - A.x) * q.k; pulseArr[i * 3 + 1] = A.y + (B.y - A.y) * q.k; pulseArr[i * 3 + 2] = A.z + (B.z - A.z) * q.k;
+            }
+            pulseGeo.attributes.position.needsUpdate = true;
           } };
         },
         knot() {
@@ -2006,12 +2088,12 @@
       const starGeo = new THREE.BufferGeometry(); starGeo.setAttribute('position', new THREE.BufferAttribute(starA, 3));
       const starMat = pts(.035, .6); const stars = new THREE.Points(starGeo, starMat); scene.add(stars);
 
-      let active = null, activeName = '', lastColors = '';
+      let active = null, activeName = '', lastColors = '', baseScale = 1;
       function disposeGroup(g) { g.traverse(o => { o.geometry && o.geometry.dispose(); o.material && o.material.dispose && o.material.dispose(); }); }
       function setScene(name) {
         if (name === activeName) return;
         if (active) { scene.remove(active.g); disposeGroup(active.g); }
-        mats.p = []; mats.s = []; mats.t = [];
+        mats.p = []; mats.s = []; mats.t = []; glowMats.length = 0;
         active = (BUILDERS[name] || BUILDERS.sphere)(); activeName = name; lastColors = '';
         scene.add(active.g); layout();
       }
@@ -2021,6 +2103,7 @@
         if (key === lastColors) return; lastColors = key;
         mats.p.forEach(m => m.color = rgb(c.primaryRgb)); mats.s.forEach(m => m.color = rgb(c.secondaryRgb)); mats.t.forEach(m => m.color = rgb(c.tertiaryRgb));
         starMat.color = rgb(c.mode === 'dark' ? '255,255,255' : c.primaryRgb); starMat.opacity = c.mode === 'dark' ? .6 : .3;
+        glowMats.forEach(m => { m.blending = c.mode === 'dark' ? THREE.AdditiveBlending : THREE.NormalBlending; m.needsUpdate = true; });
       }
       function layout() {
         const w = hero.clientWidth, h = hero.clientHeight;
@@ -2029,7 +2112,7 @@
         const wide = w >= 1024;
         if (active.noScale) { active.g.position.set(0, 0, 0); active.g.scale.setScalar(1); return; }
         active.g.position.set(wide ? -2.35 * (w / h) / 1.6 : 0, wide ? .3 : 1.6, 0);
-        active.g.scale.setScalar(wide ? .95 : .72);
+        baseScale = wide ? 1.08 : .72; active.g.scale.setScalar(baseScale);
       }
       window.addEventListener('resize', layout);
       window.addEventListener('designchange', e => setScene(e.detail.scene));
@@ -2040,6 +2123,8 @@
       let visible = true;
       if (typeof IntersectionObserver === 'function') new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
 
+      let scrollEase = 0, kick = 0;
+      hero.addEventListener('pointerdown', e => { if (!e.target.closest('a,button')) kick = 1; });
       const clock = new THREE.Clock();
       (function frame() {
         requestAnimationFrame(frame);
@@ -2047,10 +2132,82 @@
         colorize();
         const t = reduce ? 0 : clock.getElapsedTime();
         mouse.x += (mouse.tx - mouse.x) * .05; mouse.y += (mouse.ty - mouse.y) * .05;
-        if (active.fixedRotation) { camera.position.x = mouse.x * .6; camera.position.y = -mouse.y * .3; camera.lookAt(0, 0, 0); }
-        else { camera.position.set(0, 0, 9); camera.lookAt(0, 0, 0); active.g.rotation.y = t * .15 + mouse.x * .5; active.g.rotation.x = mouse.y * .35; }
-        active.update(t);
+        const sp = Math.min(1, Math.max(0, scrollY / Math.max(1, hero.clientHeight)));   // 0 at top, 1 when the hero has scrolled away
+        scrollEase += (sp - scrollEase) * .08; kick *= .93;
+        if (active.fixedRotation) { camera.position.x = mouse.x * .6; camera.position.y = -mouse.y * .3 + scrollEase * 1.2; camera.lookAt(0, 0, 0); }
+        else {
+          camera.position.set(mouse.x * .4, -mouse.y * .25, 9 - scrollEase * 2.5); camera.lookAt(0, 0, 0);
+          active.g.rotation.y = t * .15 + mouse.x * .5 + scrollEase * 2.2; active.g.rotation.x = mouse.y * .35 + scrollEase * .9;
+        }
+        canvas.style.opacity = String((innerWidth < 1024 ? .32 : 1) * (1 - scrollEase * .6));
+        if (!active.noScale) active.g.scale.setScalar(baseScale * (1 + kick * .06));
+        active.update(t, reduce ? 0 : kick);
         stars.rotation.y = t * .01 + mouse.x * .05;
+        renderer.render(scene, camera);
+      })();
+    })();
+
+    /* =====================================================================
+       9. 3D space behind the whole page: particles and wireframe shapes
+          you fly past as you scroll. Follows the theme colours.
+       ===================================================================== */
+    (function initBackground3D() {
+      const canvas = document.getElementById('bg3d');
+      if (!canvas || !window.THREE) { canvas && canvas.remove(); return; }
+      let renderer;
+      try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' }); }
+      catch (e) { canvas.remove(); return; }
+      const small = innerWidth < 768, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      renderer.setPixelRatio(small ? 1 : Math.min(devicePixelRatio, 1.5));
+      const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(60, 1, .1, 120);
+      const DEPTH = 110;
+      const dot = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+        g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(255,255,255,.5)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+      const layer = (count, size, opacity) => {
+        const a = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) a.set([(Math.random() - .5) * 34, (Math.random() - .5) * 22, 6 - Math.random() * DEPTH], i * 3);
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(a, 3));
+        const m = new THREE.PointsMaterial({ size: size * 2, map: dot, transparent: true, opacity, depthWrite: false, sizeAttenuation: true });
+        scene.add(new THREE.Points(g, m)); return m;
+      };
+      const dust = [layer(small ? 700 : 1600, .06, .55), layer(small ? 250 : 500, .12, .7), layer(small ? 60 : 140, .22, .8)];
+      const geos = [new THREE.IcosahedronGeometry(1.2, 0), new THREE.TorusGeometry(1, .28, 10, 40), new THREE.OctahedronGeometry(1.1, 0), new THREE.TorusKnotGeometry(.8, .22, 80, 10), new THREE.DodecahedronGeometry(1, 0), new THREE.TetrahedronGeometry(1.2, 0)];
+      const shapes = [], roles = ['p', 's', 't'];
+      for (let i = 0; i < 14; i++) {
+        const m = new THREE.Mesh(geos[i % geos.length], new THREE.MeshBasicMaterial({ wireframe: true, transparent: true, opacity: .22, depthWrite: false }));
+        const side = i % 2 ? 1 : -1;
+        m.position.set(side * (5.5 + Math.random() * 4), (Math.random() - .5) * 7, -6 - i * (DEPTH - 12) / 14);
+        m.scale.setScalar(.7 + Math.random() * 1.1);
+        m.userData = { role: roles[i % 3], rs: (.1 + Math.random() * .25) * (Math.random() < .5 ? -1 : 1), y0: m.position.y, o: Math.random() * 6 };
+        scene.add(m); shapes.push(m);
+      }
+      const rgb = s => new THREE.Color(...s.split(',').map(v => +v / 255));
+      let lastKey = '';
+      function colorize() {
+        const c = window.ThemeManager && window.ThemeManager.getColors(); if (!c) return;
+        const key = c.mode + c.primaryRgb + c.secondaryRgb + c.tertiaryRgb; if (key === lastKey) return; lastKey = key;
+        const dark = c.mode === 'dark', col = { p: rgb(c.primaryRgb), s: rgb(c.secondaryRgb), t: rgb(c.tertiaryRgb) };
+        dust[0].color = dark ? new THREE.Color(1, 1, 1) : col.p; dust[1].color = col.s; dust[2].color = col.t;
+        dust.forEach((m, i) => { m.opacity = (dark ? [.5, .6, .7] : [.25, .35, .45])[i]; m.blending = dark ? THREE.AdditiveBlending : THREE.NormalBlending; m.needsUpdate = true; });
+        shapes.forEach(m => { m.material.color = col[m.userData.role]; m.material.opacity = dark ? .22 : .28; });
+      }
+      function size() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+      addEventListener('resize', size); size();
+      const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+      addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth - .5; mouse.ty = e.clientY / innerHeight - .5; }, { passive: true });
+      let z = 0;
+      const clock = new THREE.Clock();
+      (function frame() {
+        requestAnimationFrame(frame);
+        colorize();
+        const t = reduce ? 0 : clock.getElapsedTime();
+        const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+        const target = -(scrollY / max) * (DEPTH - 14);           // the whole page = one trip through the space
+        z += (target - z) * (reduce ? 1 : .06);
+        mouse.x += (mouse.tx - mouse.x) * .04; mouse.y += (mouse.ty - mouse.y) * .04;
+        camera.position.set(mouse.x * 1.6, -mouse.y * 1.1, z + 6);
+        camera.rotation.set(-mouse.y * .06, -mouse.x * .08, Math.sin(t * .05) * .03);
+        shapes.forEach(m => { m.rotation.x = t * m.userData.rs; m.rotation.y = t * m.userData.rs * 1.3; m.position.y = m.userData.y0 + Math.sin(t * .4 + m.userData.o) * .4; });
         renderer.render(scene, camera);
       })();
     })();
@@ -2069,8 +2226,9 @@
         const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
         const max = el.dataset.tiltMax ? +el.dataset.tiltMax : MAX;
         el.classList.add('tilting');
-        el.style.transform = `perspective(900px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateZ(0)`;
+        el.style.transform = `perspective(900px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateZ(0) scale(${el.classList.contains('card3d') ? 1.02 : 1})`;
         el.style.setProperty('--gx', `${px * 100}%`); el.style.setProperty('--gy', `${py * 100}%`);
+        el.style.setProperty('--px', ((px - .5) * 2).toFixed(3)); el.style.setProperty('--py', ((py - .5) * 2).toFixed(3));
       });
       function reset(t) { t.classList.remove('tilting'); t.style.transform = ''; }
       document.addEventListener('pointerleave', () => document.querySelectorAll('.tilt.tilting').forEach(reset));
