@@ -321,33 +321,6 @@
     @media (hover: hover) { .flip-card:hover .flip-inner { transform: rotateY(180deg); } }
     .flip-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 6px; }
     @media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
-    /* About: "Two sides of me" photo stack */
-    .photo-stack { position: relative; height: 330px; perspective: 1200px; cursor: pointer; outline: none; }
-    .photo-stack:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 4px; border-radius: 16px; }
-    .ps-card { position: absolute; top: 14px; width: 58%; aspect-ratio: 3 / 4; max-height: 300px; margin: 0; border-radius: 16px; overflow: hidden;
-      border: 2px solid rgb(var(--color-outline-variant) / .5); background: rgb(var(--color-surface-container-high)); box-shadow: 0 24px 50px -20px rgb(0 0 0 / .6);
-      transition: transform .8s cubic-bezier(.2,.8,.2,1), z-index 0s .25s, box-shadow .5s, border-color .5s, filter .6s; }
-    .ps-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .ps-card figcaption { position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 6px 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 1px;
-      background: rgb(var(--color-surface-dim) / .88); backdrop-filter: blur(8px); border: 1px solid rgb(var(--color-outline-variant) / .4);
-      font-family: var(--md-sys-code-font-family); font-size: 11px; color: rgb(var(--color-on-surface)); line-height: 1.3; }
-    .ps-tag { font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
-    .ps-card { left: 21%; }
-    /* front card */
-    .photo-stack[data-front="formal"] .ps-card[data-k="formal"], .photo-stack[data-front="casual"] .ps-card[data-k="casual"] {
-      z-index: 2; transform: translate3d(-26%, 0, 40px) rotateY(8deg) rotateZ(-4deg); border-color: rgb(var(--color-primary) / .55);
-      box-shadow: 0 30px 60px -18px rgb(0 0 0 / .65), 0 0 30px -6px rgb(var(--color-primary) / .35); }
-    /* back card */
-    .photo-stack[data-front="formal"] .ps-card[data-k="casual"], .photo-stack[data-front="casual"] .ps-card[data-k="formal"] {
-      z-index: 1; transform: translate3d(28%, 0, -60px) rotateY(-14deg) rotateZ(6deg) scale(.9); filter: saturate(.75) brightness(.8); }
-    @media (hover: hover) {
-      .photo-stack:hover .ps-card { filter: none; }
-      .photo-stack[data-front="formal"]:hover .ps-card[data-k="casual"], .photo-stack[data-front="casual"]:hover .ps-card[data-k="formal"] { transform: translate3d(40%, -3%, -40px) rotateY(-20deg) rotateZ(10deg) scale(.92); }
-      .photo-stack[data-front="formal"]:hover .ps-card[data-k="formal"], .photo-stack[data-front="casual"]:hover .ps-card[data-k="casual"] { transform: translate3d(-32%, -2%, 60px) rotateY(12deg) rotateZ(-7deg); }
-    }
-    .photo-stack.shuffling .ps-card { transition-duration: .9s, 0s, .5s, .5s, .6s; }
-    @media (prefers-reduced-motion: reduce) { .ps-card { transition: none; } }
-
     /* Contact: 3D business card */
     .biz-card { position: relative; width: min(440px, 88vw); aspect-ratio: 1.75 / 1; border-radius: 18px; cursor: pointer; outline: none; transform-style: preserve-3d; }
     .biz-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 6px; }
@@ -643,28 +616,8 @@
               </div>
             </div>
 
-            <!-- Right column: photo stack + journey timeline -->
+            <!-- Right column: journey timeline -->
             <div class="lg:col-span-5 flex flex-col gap-space-lg">
-            <div class="p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md overflow-hidden">
-              <div class="flex items-center justify-between gap-space-sm mb-space-sm">
-                <div class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-tertiary text-[22px]">photo_library</span>
-                  <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Two sides of me</h3>
-                </div>
-                <span class="ps-hint font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">swap_horiz</span><span>Tap to shuffle</span></span>
-              </div>
-              <div id="photoStack" class="photo-stack" data-front="formal" role="button" tabindex="0" aria-label="Shuffle photos">
-                <figure class="ps-card" data-k="casual">
-                  <img src="profile.jpg" alt="Jeevan in a casual shirt" loading="lazy" style="object-position:50% 12%">
-                  <figcaption><span class="ps-tag text-secondary">Everyday</span><span>Building &amp; shipping</span></figcaption>
-                </figure>
-                <figure class="ps-card" data-k="formal">
-                  <img src="profile-formal.jpg" alt="Jeevan in a suit" loading="lazy" style="object-position:50% 20%">
-                  <figcaption><span class="ps-tag text-primary">Formal</span><span>Interviews &amp; presentations</span></figcaption>
-                </figure>
-              </div>
-            </div>
-
             <!-- Journey timeline -->
             <div class="p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md">
               <div class="flex items-center gap-space-xs mb-space-lg">
@@ -1663,16 +1616,6 @@
       const toggle = () => { const on = card.classList.toggle('flipped'); card.setAttribute('aria-pressed', on); };
       card.addEventListener('click', e => { if (e.pointerType === 'mouse' && hover) return; toggle(); });
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
-    })();
-
-    /* About photo stack: click / tap / Enter shuffles which photo is in front */
-    (function initPhotoStack() {
-      const st = document.getElementById('photoStack'); if (!st) return;
-      const hint = st.parentElement.querySelector('.ps-hint span:last-child');
-      if (hint && matchMedia('(hover: hover)').matches) hint.textContent = 'Click to shuffle';
-      const shuffle = () => { st.classList.add('shuffling'); st.dataset.front = st.dataset.front === 'formal' ? 'casual' : 'formal'; setTimeout(() => st.classList.remove('shuffling'), 900); };
-      st.addEventListener('click', shuffle);
-      st.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); shuffle(); } });
     })();
 
     /* Contact business card: flips on click / tap / Enter; links on the back work normally */
