@@ -6,7 +6,8 @@ Live at **https://jeevanxx.github.io**. Plain HTML + Tailwind CSS (compiled to `
 
 | What | How it updates |
 |---|---|
-| **Projects, stats, activity, coding-language bars** | Loaded live from GitHub every time someone opens the page. New public repos appear on their own. |
+| **Projects, stats, activity, coding-language bars** | Loaded live from GitHub every time someone opens the page. New public repos appear on their own. Click any card for a details popup. |
+| **Contribution calendar** | Drawn live from your GitHub contributions in the theme colours (falls back to an image if that service is down). |
 | **"Open app" button** | Appears when a repo has GitHub Pages on, or a link in its GitHub **About → Website** box. |
 | **Certificates** | Upload a PDF or image into the `certificates` folder. It appears on the site and in the resume. |
 | **Resume PDF** | Rebuilt by GitHub Actions after every change and every Monday, with your latest projects and certificates. |
@@ -20,6 +21,10 @@ To run it right now: **Actions → Auto-update portfolio → Run workflow**.
 - **Add a certificate:** open the `certificates` folder → **Add file → Upload files** → drop the PDF/image → **Commit changes**.
   The title comes from the file name (`python-basics-2027.pdf` → "Python Basics 2027").
   For a nicer title, date, issuer or ID, add an entry in `certificates/details.json`.
+- **Add a hackathon, workshop or event:** edit `events.json`, copy an entry, change it, Commit.
+  It appears in the "Hackathons & events" section (newest first) and the counters update by themselves.
+- **Change the two big featured cards (Martian Guide, CampusPilot):** edit `highlights` in `projects.json`.
+  `details` are the bullet points shown when someone clicks **Details**.
 - **Change a project's title / description / live link, or the pinned order:** edit `projects.json`.
   A repo with no description anywhere is left off the resume (it still shows on the site).
 - **Change your summary, education, skills or interests in the resume:** edit `resume-template.html`.

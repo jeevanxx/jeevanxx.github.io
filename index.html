@@ -37,6 +37,8 @@
   <meta property="og:url" content="https://jeevanxx.github.io/">
   <meta property="og:image" content="https://jeevanxx.github.io/profile.jpg">
   <meta name="twitter:card" content="summary">
+  <meta name="author" content="Jeevan J Shine">
+  <meta property="og:image:alt" content="Jeevan J Shine">
   <meta name="theme-color" content="#0f131d">
   <meta name="description" content="Jeevan J Shine: first-year B.Tech CSE (AI) student at Joy University × NIAT. Web apps, AI tools and projects, synced live from GitHub.">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
@@ -291,11 +293,64 @@
 
     /* Subtle dot grid background */
     .dot-grid { background-image: radial-gradient(rgb(var(--color-outline-variant) / .35) 1px, transparent 1px); background-size: 22px 22px; }
+
+    /* ---------- Upgrade (Nov 2026) ---------- */
+    /* Phones/tablets: keep the hero background calm so the text stays readable */
+    @media (max-width: 1023px) {
+      #neuralCanvas { opacity: .22 !important; }
+      #hero3d { opacity: .35; }
+    }
+
+    /* Scroll progress bar */
+    #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 70; transform-origin: 0 50%; transform: scaleX(0);
+      background: linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-secondary)), rgb(var(--color-tertiary))); pointer-events: none; }
+
+    /* Back to top */
+    #backToTop { opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .25s, transform .25s, border-color .2s, color .2s; }
+    #backToTop.show { opacity: 1; transform: none; pointer-events: auto; }
+    #backToTop svg { transform: rotate(-90deg); }
+    #backToTop circle.ring { transition: stroke-dashoffset .1s linear; }
+
+    /* Contribution calendar (drawn from data, follows the theme) */
+    .contrib-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, var(--cell)); grid-auto-columns: var(--cell); gap: 3px; --cell: 11px; }
+    @media (min-width: 1280px) { .contrib-grid { --cell: 14px; gap: 4px; } }
+    #contribLegend { --cell: 11px; }
+    @media (min-width: 1280px) { #contribGraph > div { display: flex; justify-content: center; } }
+    .contrib-months { display: grid; grid-auto-flow: column; grid-auto-columns: var(--cell); gap: 3px; --cell: 11px; }
+    @media (min-width: 1280px) { .contrib-months { --cell: 14px; gap: 4px; } }
+    .contrib-months span { white-space: nowrap; overflow: visible; }
+    .contrib-days { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: 3px; --cell: 11px; min-width: 28px; flex-shrink: 0; }
+    @media (min-width: 1280px) { .contrib-days { --cell: 14px; gap: 4px; } }
+    .cday { width: var(--cell); height: var(--cell); border-radius: 3px; background: rgb(var(--color-surface-container-highest)); outline: 1px solid rgb(var(--color-outline-variant) / .25); outline-offset: -1px; }
+    .cday[data-l="1"] { background: rgb(var(--color-secondary) / .3); }
+    .cday[data-l="2"] { background: rgb(var(--color-secondary) / .52); }
+    .cday[data-l="3"] { background: rgb(var(--color-secondary) / .76); }
+    .cday[data-l="4"] { background: rgb(var(--color-secondary)); }
+    .cday.empty { visibility: hidden; }
+    .cday:hover { outline: 2px solid rgb(var(--color-on-surface) / .7); }
+
+    /* Project cards open a detail view */
+    .project-card, .highlight-card { cursor: pointer; }
+    .project-card:focus-visible, .highlight-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 3px; }
+
+    /* Detail popup */
+    #projectModal { transition: opacity .25s ease; }
+    #projectModal.hidden-modal { opacity: 0; pointer-events: none; }
+    #projectModal .modal-panel { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+    #projectModal.hidden-modal .modal-panel { transform: translateY(24px) scale(.98); }
+    body.modal-open { overflow: hidden; }
+
+    /* Events timeline */
+    .event-line { position: relative; }
+    .event-line::before { content: ""; position: absolute; left: 19px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px;
+      background: linear-gradient(rgb(var(--color-primary) / .7), rgb(var(--color-secondary) / .5), rgb(var(--color-outline-variant) / .3)); }
+    @media (min-width: 768px) { .event-line::before { left: 23px; } }
   </style>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+  <div id="scrollProgress" aria-hidden="true"></div>
 
   <!-- ===================== HEADER ===================== -->
   <header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_1px_8px_rgba(0,0,0,0.15)]">
@@ -311,6 +366,7 @@
       <nav id="navbar-links" class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-low/70 backdrop-blur-md rounded-full border border-outline-variant/30">
         <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="about" href="#about">About</a>
         <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="projects" href="#projects">Projects</a>
+        <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="events" href="#events">Events</a>
         <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="activity" href="#activity">Activity</a>
         <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="skills" href="#skills">Skills</a>
         <a class="nav-item px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-target="contact" href="#contact">Contact</a>
@@ -338,6 +394,7 @@
     <nav class="flex flex-col p-space-md gap-1">
       <a href="#about" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">About</a>
       <a href="#projects" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Projects</a>
+      <a href="#events" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Events</a>
       <a href="#activity" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Activity</a>
       <a href="#skills" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Skills</a>
       <a href="#contact" class="mobile-link px-space-md py-3 rounded-DEFAULT font-title-md text-title-md text-on-surface hover:bg-surface-container-high">Contact</a>
@@ -500,6 +557,15 @@
               </div>
               <div class="relative pl-6 space-y-8 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container-highest">
                 <div class="relative">
+                  <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-tertiary ring-4 ring-surface-container-low"></div>
+                  <span class="font-label-sm text-label-sm text-tertiary font-bold">NOV 2026 • HACKATHON</span>
+                  <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">NASA Space Apps Challenge 2026</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Took part virtually with a team of six in the Martian Map challenge and built Martian Guide, a 3D map for planning walks on Mars.</p>
+                  <a class="inline-flex items-center gap-1 mt-space-sm px-space-md py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-primary font-label-sm text-label-sm font-semibold hover:border-primary/50 transition-all" href="martian-guide/" target="_blank" rel="noopener noreferrer">
+                    <span class="material-symbols-outlined text-[14px]">public</span> Open Martian Guide
+                  </a>
+                </div>
+                <div class="relative">
                   <div class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-secondary ring-4 ring-surface-container-low"></div>
                   <span class="font-label-sm text-label-sm text-secondary font-bold">OCT 2026 • CERTIFICATE</span>
                   <h4 class="font-title-sm text-title-sm text-on-surface font-semibold mt-1">Vibe Coding Workshop 2026 — Google for Developers × StartupTN</h4>
@@ -573,24 +639,12 @@
             </div>
             <div id="projectFilters" class="flex flex-wrap gap-space-xs bg-surface-container-low border border-outline-variant/30 p-1.5 rounded-full shadow-inner empty:hidden"></div>
           </div>
-          <div class="glow-border rounded-lg bg-surface-container-low shadow-md p-space-xl mb-space-lg relative overflow-hidden">
-            <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-secondary/10 blur-3xl pointer-events-none"></div>
-            <div class="relative flex flex-col md:flex-row md:items-center gap-space-lg">
-              <div class="w-full md:w-80 aspect-[2/1] rounded-DEFAULT overflow-hidden border border-outline-variant/30 shrink-0" id="campusPilotThumb"></div>
-              <div class="flex-1">
-                <div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
-                  <span class="px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Currently building</span>
-                </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">CampusPilot</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed max-w-3xl">An AI vision assistant to help visually impaired students navigate campus: the camera detects objects and obstacles, and an AI agent turns that into guidance.</p>
-              </div>
-              <div class="flex flex-wrap gap-space-xs md:max-w-[260px] md:justify-end">
-                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">React + Vite</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">FastAPI</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">YOLOv8</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">LangGraph</span>
-              </div>
-            </div>
+          <!-- Highlights: edit "highlights" in projects.json -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg mb-space-lg" id="highlights"></div>
+          <div class="flex items-center gap-space-sm mb-space-md">
+            <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">All repositories</span>
+            <span class="flex-1 h-px bg-outline-variant/40"></span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Click a card for details</span>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg" id="projectsGrid">
             <div class="md:col-span-2 lg:col-span-3 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 text-center font-body-md text-body-md text-on-surface-variant">Loading projects from GitHub…</div>
@@ -598,8 +652,27 @@
         </div>
       </section>
 
+      <!-- ===================== EVENTS (edit events.json) ===================== -->
+      <section class="w-full bg-surface-container-lowest py-24" id="events">
+        <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
+            <div>
+              <div class="flex items-center gap-space-xs text-tertiary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
+                <span class="material-symbols-outlined text-[16px]">emoji_events</span> Hackathons &amp; events
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Where I've been building</h2>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs max-w-2xl">Hackathons, workshops and tech events I've taken part in, newest first.</p>
+            </div>
+            <div class="flex flex-wrap gap-space-xs" id="eventStats"></div>
+          </div>
+          <div class="event-line flex flex-col gap-space-lg" id="eventList">
+            <p class="font-body-sm text-body-sm text-on-surface-variant pl-14">Loading events…</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ===================== ACTIVITY ===================== -->
-      <section class="w-full bg-surface-container-lowest py-24" id="activity">
+      <section class="w-full bg-surface py-24" id="activity">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
             <div>
@@ -612,12 +685,17 @@
               Full profile on GitHub <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
             </a>
           </div>
-          <div class="contrib-card p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md mb-space-lg overflow-x-auto">
+          <div class="contrib-card p-space-lg rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md mb-space-lg">
             <div class="flex items-center justify-between mb-space-md">
               <span class="font-title-md text-title-md text-on-surface font-bold flex items-center gap-space-xs"><span class="material-symbols-outlined text-primary text-[20px]">grid_view</span> GitHub contributions</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant">Last 12 months</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant" id="contribTotal">Last 12 months</span>
             </div>
-            <img src="https://ghchart.rshah.org/2f9e68/jeevanxx" alt="GitHub contribution graph for jeevanxx" class="min-w-[680px] w-full" loading="lazy" onerror="this.closest('.contrib-card').remove()">
+            <div id="contribGraph" class="overflow-x-auto pb-1">
+              <div class="font-body-sm text-body-sm text-on-surface-variant py-space-lg">Loading contributions…</div>
+            </div>
+            <div class="flex items-center justify-end gap-1.5 mt-space-sm font-label-sm text-label-sm text-on-surface-variant" id="contribLegend">
+              Less <span class="cday" data-l="0"></span><span class="cday" data-l="1"></span><span class="cday" data-l="2"></span><span class="cday" data-l="3"></span><span class="cday" data-l="4"></span> More
+            </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="githubActivityStream">
             <p class="font-body-sm text-body-sm text-on-surface-variant">Loading recent activity…</p>
@@ -626,7 +704,7 @@
       </section>
 
       <!-- ===================== SKILLS ===================== -->
-      <section class="w-full bg-surface py-24" id="skills">
+      <section class="w-full bg-surface-container-lowest py-24" id="skills">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="flex items-center gap-space-xs text-primary font-label-md text-label-md uppercase tracking-wider mb-space-xs">
             <span class="material-symbols-outlined text-[16px]">construction</span> Toolbox
@@ -689,7 +767,7 @@
       </section>
 
       <!-- ===================== CONTACT ===================== -->
-      <section class="w-full bg-surface-container-lowest py-24" id="contact">
+      <section class="w-full bg-surface py-24" id="contact">
         <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg">
           <div class="p-space-xl lg:p-16 rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md text-center relative overflow-hidden">
             <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
@@ -711,7 +789,21 @@
         </div>
       </section>
 
-      <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-space-xs pointer-events-none" id="toastContainer"></div>
+      <div class="fixed bottom-24 right-6 z-50 flex flex-col gap-space-xs pointer-events-none" id="toastContainer"></div>
+
+      <!-- Back to top (ring shows how far down the page you are) -->
+      <button id="backToTop" type="button" class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-surface-container-high/95 backdrop-blur-md border border-outline-variant/40 text-on-surface hover:text-primary hover:border-primary/60 shadow-xl" aria-label="Back to top" title="Back to top">
+        <svg class="absolute inset-0 w-12 h-12" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="rgb(var(--color-outline-variant) / .35)" stroke-width="2"/><circle class="ring" cx="24" cy="24" r="22" fill="none" stroke="rgb(var(--color-primary))" stroke-width="2" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2"/></svg>
+        <span class="material-symbols-outlined text-[22px] relative">arrow_upward</span>
+      </button>
+
+      <!-- Project detail popup -->
+      <div id="projectModal" class="hidden-modal fixed inset-0 z-[65] flex items-end sm:items-center justify-center p-0 sm:p-space-lg bg-surface-dim/80 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="pmTitle" aria-hidden="true">
+        <div class="modal-panel relative w-full sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-surface-container-low border border-outline-variant/40 shadow-2xl">
+          <button id="pmClose" type="button" class="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-surface-dim/80 backdrop-blur-md border border-outline-variant/40 text-on-surface hover:border-primary hover:text-primary" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+          <div id="pmBody"></div>
+        </div>
+      </div>
 
       <!-- Design gallery -->
       <div id="designPanel" class="hidden fixed inset-0 z-[60] bg-surface-dim/80 backdrop-blur-md overflow-y-auto">
@@ -729,10 +821,34 @@
     </div>
   </main>
 
-  <footer class="w-full bg-surface-container-low border-t border-outline-variant/20 py-space-xl">
-    <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg flex flex-col md:flex-row items-center justify-between gap-space-md">
-      <span class="font-title-md text-title-md text-on-surface">Jeevan J Shine</span>
-      <span class="font-label-sm text-label-sm text-on-surface-variant">Projects on this page update automatically from GitHub.</span>
+  <footer class="w-full bg-surface-container-low border-t border-outline-variant/20">
+    <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg py-space-xl grid grid-cols-1 md:grid-cols-3 gap-space-xl">
+      <div>
+        <a href="#" class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Jeevan J Shine</a>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs max-w-xs">B.Tech CSE (AI) student at Joy University × NIAT. Building web apps and AI tools, one project at a time.</p>
+        <span class="inline-flex items-center gap-space-xs mt-space-md px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-secondary">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span> Open to hackathon teams &amp; collabs
+        </span>
+      </div>
+      <nav class="grid grid-cols-2 gap-x-space-lg gap-y-2 content-start font-label-md text-label-md" aria-label="Footer">
+        <a class="text-on-surface-variant hover:text-primary" href="#about">About</a>
+        <a class="text-on-surface-variant hover:text-primary" href="#projects">Projects</a>
+        <a class="text-on-surface-variant hover:text-primary" href="#events">Events</a>
+        <a class="text-on-surface-variant hover:text-primary" href="#activity">Activity</a>
+        <a class="text-on-surface-variant hover:text-primary" href="#skills">Skills</a>
+        <a class="text-on-surface-variant hover:text-primary" href="#contact">Contact</a>
+        <a class="text-primary hover:underline" href="Jeevan-J-Shine-Resume.pdf" target="_blank" rel="noopener noreferrer">Resume (PDF)</a>
+      </nav>
+      <div class="md:justify-self-end">
+        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Find me on</span>
+        <div class="flex flex-wrap items-center gap-space-xs mt-space-sm" id="footerSocials"></div>
+      </div>
+    </div>
+    <div class="border-t border-outline-variant/20">
+      <div class="max-w-[1200px] mx-auto px-margin-sm lg:px-margin-lg py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+        <span>© <span id="footerYear">2026</span> Jeevan J Shine</span>
+        <span>Projects update automatically from GitHub.</span>
+      </div>
     </div>
   </footer>
 
@@ -767,6 +883,10 @@
     (function renderSocials() {
       const hero = document.getElementById('heroSocials');
       const contact = document.getElementById('contactLinks');
+      const footer = document.getElementById('footerSocials');
+      if (footer) footer.innerHTML = SITE_CONFIG.socials.map(s => `
+        <a class="social-badge w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all" href="${esc(s.url)}" ${s.url.startsWith('mailto:') ? '' : 'rel="noopener noreferrer" target="_blank"'} title="${esc(s.label)}" aria-label="${esc(s.label)}">${svgIcon(s.icon)}</a>`).join('');
+      const fy = document.getElementById('footerYear'); if (fy) fy.textContent = new Date().getFullYear();
       if (hero) hero.innerHTML = SITE_CONFIG.socials.map(s => `
         <a class="social-badge w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all" href="${esc(s.url)}" ${s.url.startsWith('mailto:') ? '' : 'rel="noopener noreferrer" target="_blank"'} title="${esc(s.label)}" aria-label="${esc(s.label)}">${svgIcon(s.icon)}</a>`).join('');
       if (contact) contact.innerHTML = SITE_CONFIG.socials.map(s => `
@@ -956,7 +1076,6 @@
       };
     })();
 
-    (function () { const el = document.getElementById('campusPilotThumb'); if (el) el.innerHTML = Thumbs.for('campuspilot'); })();
 
     /* =====================================================================
        Certificates: built automatically from certificates/index.json, which
@@ -1045,11 +1164,12 @@
         const topics = (r.topics || []).slice(0, 3).map(t =>
           `<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant">${esc(t)}</span>`).join('');
         return `
-          <article data-tilt-max="6" class="tilt project-card ${i === 0 ? 'md:col-span-2' : ''} rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md flex flex-col justify-between group hover:bg-surface-container hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden" data-category="${esc(lang)}">
-            <a href="${esc(live || r.html_url)}" target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden bg-surface-container-high aspect-[2/1] border-b border-outline-variant/30" tabindex="-1" aria-hidden="true">
+          <article data-tilt-max="6" tabindex="0" role="button" aria-label="${esc(titleOf(r))}: open details" data-name="${esc(r.name)}" class="tilt project-card ${i === 0 ? 'md:col-span-2' : ''} rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md flex flex-col justify-between group hover:bg-surface-container hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden" data-category="${esc(lang)}">
+            <div class="block relative overflow-hidden bg-surface-container-high aspect-[2/1] border-b border-outline-variant/30">
               <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">${Thumbs.for(r.name, titleOf(r), r.language, note(r).thumbnail)}</div>
               ${i === 0 ? '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 font-label-sm text-label-sm text-secondary font-bold">★ Featured</span>' : ''}
-            </a>
+              <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 font-label-sm text-label-sm text-on-surface flex items-center gap-1 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 transition-all"><span class="material-symbols-outlined text-[14px]">open_in_full</span> Details</span>
+            </div>
             <div class="p-space-xl pb-0 flex-1">
               <div class="flex items-start justify-between gap-space-sm">
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold group-hover:text-primary transition-colors">${esc(titleOf(r))}</h3>
@@ -1115,6 +1235,47 @@
         }).join('') + '<p class="font-label-sm text-label-sm text-on-surface-variant pt-space-xs">Share of code across my public repos.</p>';
       }
 
+      window.ghCached = cached; window.ghGetJSON = getJSON;
+
+      // Big featured cards at the top of Projects (from projects.json "highlights")
+      function renderHighlights(list) {
+        const box = $('highlights'); if (!box || !list.length) return;
+        const chip = t => `<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-primary">${esc(t)}</span>`;
+        const thumbOf = h => h.thumbnail ? Thumbs.for('', h.title, '', h.thumbnail) : Thumbs.for(h.drawing || '', h.title, '');
+        const statusPill = h => h.status === 'building'
+          ? `<span class="px-2.5 py-0.5 rounded-full bg-tertiary-container/70 text-on-tertiary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>${esc(h.badge || 'In progress')}</span>`
+          : `<span class="px-2.5 py-0.5 rounded-full bg-secondary-container/70 text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">${esc(h.icon || 'star')}</span>${esc(h.badge || 'Live')}</span>`;
+        box.innerHTML = list.map((h, i) => `
+          <article tabindex="0" role="button" aria-label="${esc(h.title)}: open details" data-i="${i}" class="highlight-card glow-border group rounded-lg bg-surface-container-low shadow-md overflow-hidden flex flex-col hover:-translate-y-1 transition-transform">
+            <div class="relative aspect-[2/1] overflow-hidden bg-surface-container-high">
+              <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">${thumbOf(h)}</div>
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent pointer-events-none"></div>
+              <div class="absolute top-3 left-3">${statusPill(h)}</div>
+            </div>
+            <div class="p-space-xl pt-space-md flex-1 flex flex-col">
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">${esc(h.title)}</h3>
+              ${h.event ? `<span class="font-label-sm text-label-sm text-tertiary mt-1">${esc(h.event)}</span>` : ''}
+              <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed">${esc(h.description)}</p>
+              <div class="flex flex-wrap gap-space-xs mt-space-md">${(h.tech || []).slice(0, 5).map(chip).join('')}</div>
+              <div class="flex flex-wrap items-center gap-space-xs mt-auto pt-space-lg">
+                ${h.url ? `<a class="px-space-md py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold whitespace-nowrap hover:shadow-lg hover:scale-[1.04] transition-all gap-1" href="${esc(h.url)}" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined text-[16px]">rocket_launch</span> Open app</a>` : ''}
+                <button type="button" class="hl-more px-space-md py-2 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary/50 transition-all font-label-md text-label-md whitespace-nowrap gap-1"><span class="material-symbols-outlined text-[16px]">open_in_full</span> Details</button>
+              </div>
+            </div>
+          </article>`).join('');
+        window.observeReveal && window.observeReveal(box.querySelectorAll('.highlight-card'));
+        const open = el => {
+          const h = list[+el.dataset.i]; if (!h || !window.ProjectModal) return;
+          window.ProjectModal.open({
+            title: h.title, description: h.description, thumb: thumbOf(h), badge: h.badge, badgeIcon: h.icon,
+            tech: h.tech || [], details: h.details || [], live: h.url, code: h.code,
+            meta: h.event ? [['emoji_events', 'Event', h.event]] : (h.status === 'building' ? [['construction', 'Status', 'In progress']] : [])
+          });
+        };
+        box.addEventListener('click', e => { const c = e.target.closest('.highlight-card'); if (!c) return; if (e.target.closest('a')) return; open(c); });
+        box.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('highlight-card')) { e.preventDefault(); open(e.target); } });
+      }
+
       function showError() {
         grid.innerHTML = `<div class="md:col-span-2 lg:col-span-3 p-space-xl rounded-lg bg-surface-container-low border border-outline-variant/30 text-center font-body-md text-body-md text-on-surface-variant">
           Couldn't load projects from GitHub right now. <a class="text-primary hover:underline" href="https://github.com/${G.username}?tab=repositories" target="_blank" rel="noopener noreferrer">See them on GitHub</a>.</div>`;
@@ -1130,6 +1291,7 @@
           if (Array.isArray(cfg.pinned)) G.pinned = cfg.pinned;
           if (Array.isArray(cfg.hide)) G.hideRepos = cfg.hide;
           if (cfg.notes && typeof cfg.notes === 'object') SITE_CONFIG.projectNotes = cfg.notes;
+          if (Array.isArray(cfg.highlights)) renderHighlights(cfg.highlights);
         })
         .catch(() => {});
 
@@ -1143,6 +1305,22 @@
 
           grid.innerHTML = repos.map(card).join('');
           window.observeReveal && window.observeReveal(grid.querySelectorAll('.project-card'));
+          const byName = Object.fromEntries(repos.map(r => [r.name, r]));
+          const openRepo = el => {
+            const r = byName[el.dataset.name]; if (!r || !window.ProjectModal) return;
+            const n = note(r);
+            const live = n.liveUrl || r.homepage || (r.has_pages ? `https://${G.username}.github.io/${r.name}/` : '');
+            const bullets = (n.resume || []).filter(b => b !== descOf(r));
+            window.ProjectModal.open({
+              title: titleOf(r), description: descOf(r), thumb: Thumbs.for(r.name, titleOf(r), r.language, n.thumbnail),
+              badge: live ? 'Live' : '', badgeIcon: live ? 'circle' : '', tech: n.tech || (r.language ? [r.language] : []),
+              details: bullets, live, code: r.html_url,
+              meta: [['update', 'Last update', timeAgo(r.pushed_at)], ['calendar_today', 'Started', new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })]],
+              langUrl: r.languages_url, langKey: 'gh_lang_' + r.name
+            });
+          };
+          grid.addEventListener('click', e => { if (e.target.closest('a,button')) return; const c = e.target.closest('.project-card'); if (c) openRepo(c); });
+          grid.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('project-card')) { e.preventDefault(); openRepo(e.target); } });
           renderFilters(repos);
           renderStream(repos);
 
@@ -1168,6 +1346,183 @@
           }
         })
         .catch(showError);
+    })();
+
+    /* =====================================================================
+       Project detail popup (used by project cards and highlights)
+       ===================================================================== */
+    window.ProjectModal = (function () {
+      const modal = document.getElementById('projectModal'), body = document.getElementById('pmBody');
+      if (!modal || !body) return null;
+      let lastFocus = null;
+      const chip = t => `<span class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface">${esc(t)}</span>`;
+      const ghIcon = () => svgIcon(SITE_CONFIG.socials.find(x => x.label === 'GitHub').icon);
+      function close() {
+        modal.classList.add('hidden-modal'); modal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('modal-open');
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+      function langBars(totals) {
+        const entries = Object.entries(totals || {}).sort((a, b) => b[1] - a[1]); if (!entries.length) return '';
+        const sum = entries.reduce((t, [, v]) => t + v, 0) || 1;
+        const cols = ['bg-primary', 'bg-secondary', 'bg-tertiary', 'bg-primary/60', 'bg-secondary/60', 'bg-tertiary/60'];
+        return `<div class="flex h-2.5 rounded-full overflow-hidden bg-surface-container-highest">${entries.map(([l, v], i) => `<span class="${cols[i % 6]}" style="width:${(v / sum * 100).toFixed(2)}%" title="${esc(l)}"></span>`).join('')}</div>
+          <div class="flex flex-wrap gap-x-space-md gap-y-1 mt-space-sm">${entries.slice(0, 6).map(([l, v], i) => `<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full ${cols[i % 6]}"></span>${esc(l)} <span class="opacity-70">${(v / sum * 100).toFixed(1)}%</span></span>`).join('')}</div>`;
+      }
+      function open(d) {
+        lastFocus = document.activeElement;
+        body.innerHTML = `
+          <div class="relative aspect-[2/1] overflow-hidden bg-surface-container-high border-b border-outline-variant/30">${d.thumb || ''}
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/90 via-transparent to-transparent pointer-events-none"></div>
+          </div>
+          <div class="p-space-lg sm:p-space-xl -mt-10 relative">
+            ${d.badge ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container/80 text-on-secondary-container font-label-sm text-label-sm font-bold">${d.badgeIcon === 'circle' ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>' : d.badgeIcon ? `<span class="material-symbols-outlined text-[14px]">${esc(d.badgeIcon)}</span>` : ''}${esc(d.badge)}</span>` : ''}
+            <h2 id="pmTitle" class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-space-xs">${esc(d.title)}</h2>
+            ${d.description ? `<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm leading-relaxed">${esc(d.description)}</p>` : ''}
+            ${(d.meta || []).length ? `<div class="flex flex-wrap gap-space-md mt-space-md">${d.meta.map(([ic, k, v]) => `<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-tertiary">${esc(ic)}</span>${esc(k)}: <span class="text-on-surface">${esc(v)}</span></span>`).join('')}</div>` : ''}
+            ${(d.details || []).length ? `<h3 class="font-title-md text-title-md text-on-surface font-bold mt-space-lg">Highlights</h3>
+              <ul class="mt-space-sm space-y-2">${d.details.map(b => `<li class="flex gap-space-sm font-body-md text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">check_circle</span><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
+            ${(d.tech || []).length ? `<h3 class="font-title-md text-title-md text-on-surface font-bold mt-space-lg">Built with</h3><div class="flex flex-wrap gap-space-xs mt-space-sm">${d.tech.map(chip).join('')}</div>` : ''}
+            <div id="pmLangs" class="mt-space-lg empty:hidden"></div>
+            <div class="flex flex-wrap gap-space-sm mt-space-xl pt-space-lg border-t border-outline-variant/30">
+              ${d.live ? `<a class="px-space-lg py-2.5 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-semibold hover:shadow-lg hover:scale-[1.03] transition-all gap-1" href="${esc(d.live)}" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined text-[18px]">rocket_launch</span> Open app</a>` : ''}
+              ${d.code ? `<a class="px-space-lg py-2.5 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary/50 transition-all font-label-lg text-label-lg gap-1.5" href="${esc(d.code)}" target="_blank" rel="noopener noreferrer">${ghIcon()} View code</a>` : ''}
+            </div>
+          </div>`;
+        modal.classList.remove('hidden-modal'); modal.setAttribute('aria-hidden', 'false'); document.body.classList.add('modal-open');
+        modal.querySelector('.modal-panel').scrollTop = 0;
+        document.getElementById('pmClose').focus();
+        if (d.langUrl && window.ghCached) {
+          window.ghCached(d.langKey, () => window.ghGetJSON(d.langUrl)).then(t => {
+            const box = document.getElementById('pmLangs'); const html = langBars(t);
+            if (box && html) box.innerHTML = `<h3 class="font-title-md text-title-md text-on-surface font-bold mb-space-sm">Code breakdown</h3>${html}`;
+          }).catch(() => {});
+        }
+      }
+      modal.addEventListener('click', e => { if (e.target === modal) close(); });
+      document.getElementById('pmClose').addEventListener('click', close);
+      document.addEventListener('keydown', e => {
+        if (modal.classList.contains('hidden-modal')) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'Tab') {   // keep keyboard focus inside the popup
+          const f = [...modal.querySelectorAll('a[href],button')]; if (!f.length) return;
+          if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+          else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+        }
+      });
+      return { open, close };
+    })();
+
+    /* =====================================================================
+       Hackathons & events: built from events.json (newest first)
+       ===================================================================== */
+    (function initEvents() {
+      const list = document.getElementById('eventList'), stats = document.getElementById('eventStats');
+      if (!list) return;
+      const typeStyle = t => ({ Hackathon: ['text-tertiary', 'bg-tertiary', 'emoji_events'], Workshop: ['text-secondary', 'bg-secondary', 'school'], Competition: ['text-primary', 'bg-primary', 'military_tech'], Meetup: ['text-primary', 'bg-primary', 'groups'], Conference: ['text-primary', 'bg-primary', 'podium'] }[t] || ['text-primary', 'bg-primary', 'event']);
+      const chip = (icon, t) => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">${icon}</span>${esc(t)}</span>`;
+      fetch('events.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : Promise.reject())
+        .then(cfg => {
+          const evs = (cfg.events || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+          if (!evs.length) { document.getElementById('events').remove(); document.querySelectorAll('a[href="#events"]').forEach(a => a.remove()); return; }
+          const counts = {}; evs.forEach(e => counts[e.type || 'Event'] = (counts[e.type || 'Event'] || 0) + 1);
+          if (stats) stats.innerHTML = Object.entries(counts).map(([t, n]) => {
+            const [txt, , ic] = typeStyle(t);
+            return `<span class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-full bg-surface-container-low border border-outline-variant/30 font-label-md text-label-md text-on-surface"><span class="material-symbols-outlined text-[16px] ${txt}">${ic}</span><b>${n}</b> ${esc(t)}${n > 1 ? 's' : ''}</span>`;
+          }).join('');
+          list.innerHTML = evs.map(e => {
+            const [txt, bg, ic] = typeStyle(e.type);
+            const when = e.dateLabel || e.date;
+            return `
+            <article class="relative pl-14 md:pl-16">
+              <div class="absolute left-0 top-4 w-10 h-10 md:w-12 md:h-12 rounded-2xl ${bg} text-surface flex items-center justify-center shadow-lg ring-4 ring-surface-container-lowest"><span class="material-symbols-outlined text-[22px]">${ic}</span></div>
+              <div data-tilt-max="3" class="tilt rounded-lg bg-surface-container-low border border-outline-variant/30 shadow-md overflow-hidden grid grid-cols-1 ${e.image ? 'md:grid-cols-[1fr_280px]' : ''} hover:border-primary/40 transition-colors">
+                <div class="p-space-lg md:p-space-xl">
+                  <div class="flex flex-wrap items-center gap-x-space-sm gap-y-1 font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                    <span class="${txt}">${esc(e.type || 'Event')}</span><span class="text-on-surface-variant">•</span><span class="text-on-surface-variant">${esc(when)}</span>
+                  </div>
+                  <h3 class="font-title-lg text-title-lg text-on-surface font-bold mt-space-xs">${esc(e.title)}</h3>
+                  ${e.challenge ? `<p class="font-body-sm text-body-sm text-on-surface mt-1">Challenge: <span class="${txt} font-semibold">${esc(e.challenge)}</span></p>` : ''}
+                  ${e.summary ? `<p class="font-body-md text-body-md text-on-surface-variant mt-space-sm leading-relaxed">${esc(e.summary)}</p>` : ''}
+                  <div class="flex flex-wrap gap-space-xs mt-space-md">
+                    ${e.mode ? chip(e.mode === 'Virtual' ? 'videocam' : 'location_on', e.mode) : ''}${e.team ? chip('group', e.team) : ''}${e.organiser ? chip('apartment', e.organiser) : ''}${e.place ? chip('pin_drop', e.place) : ''}${e.result ? chip('military_tech', e.result) : ''}
+                  </div>
+                  ${(e.links || []).length ? `<div class="flex flex-wrap gap-space-xs mt-space-lg">${e.links.map((l, i) => `<a class="px-space-md py-2 rounded-full ${i ? 'bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary' : 'bg-primary-container text-on-primary-container font-semibold hover:shadow-lg'} font-label-md text-label-md transition-all gap-1" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined text-[16px]">${esc(l.icon || 'open_in_new')}</span> ${esc(l.label)}</a>`).join('')}</div>` : ''}
+                </div>
+                ${e.image ? `<a href="${esc((e.links && e.links[0] && e.links[0].url) || e.image)}" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true" class="block relative min-h-[160px] bg-surface-container overflow-hidden group"><img src="${esc(e.image)}" alt="" loading="lazy" style="object-position:${esc(e.imagePosition || 'center')}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"></a>` : ''}
+              </div>
+            </article>`;
+          }).join('');
+          window.observeReveal && window.observeReveal(list.querySelectorAll('article'));
+        })
+        .catch(() => { list.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant pl-14">Events unavailable right now.</p>'; });
+    })();
+
+    /* =====================================================================
+       GitHub contribution calendar, drawn in the theme colours.
+       Falls back to the old image if the data service is down.
+       ===================================================================== */
+    (function initContributions() {
+      const box = document.getElementById('contribGraph'), total = document.getElementById('contribTotal');
+      if (!box) return;
+      const user = SITE_CONFIG.github.username;
+      const fallback = () => {
+        box.innerHTML = `<img src="https://ghchart.rshah.org/2f9e68/${user}" alt="GitHub contribution graph for ${user}" class="min-w-[680px] w-full" loading="lazy">`;
+        const lg = document.getElementById('contribLegend'); if (lg) lg.remove();
+      };
+      const load = () => fetch(`https://github-contributions-api.jogruber.de/v4/${user}?y=last`).then(r => r.ok ? r.json() : Promise.reject());
+      const get = window.ghCached ? window.ghCached('gh_contrib_' + user, load) : load();
+      get.then(data => {
+        const days = (data.contributions || []); if (!days.length) return fallback();
+        const first = new Date(days[0].date + 'T00:00:00');
+        const pad = first.getDay();                          // Sunday-first rows, like GitHub
+        const cells = Array(pad).fill(null).concat(days);
+        const months = []; let lastM = -1;
+        for (let w = 0; w * 7 < cells.length; w++) {
+          const d = cells.slice(w * 7, w * 7 + 7).find(Boolean);
+          const m = d ? new Date(d.date + 'T00:00:00').getMonth() : lastM;
+          months.push(m !== lastM && d && new Date(d.date + 'T00:00:00').getDate() <= 7 ? new Date(d.date + 'T00:00:00').toLocaleString('en', { month: 'short' }) : '');
+          lastM = m;
+        }
+        const fmt = d => new Date(d.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const sum = data.total && (data.total.lastYear ?? Object.values(data.total)[0]);
+        const active = days.filter(d => d.count > 0).length;
+        let streak = 0; for (let i = days.length - 1; i >= 0; i--) { if (days[i].count > 0) streak++; else if (i === days.length - 1) continue; else break; }
+        box.innerHTML = `
+          <div class="inline-flex gap-2 min-w-max">
+            <div class="contrib-days pt-5 font-label-sm text-[10px] leading-none text-on-surface-variant"><span></span><span class="self-center">Mon</span><span></span><span class="self-center">Wed</span><span></span><span class="self-center">Fri</span><span></span></div>
+            <div>
+              <div class="contrib-months h-5 font-label-sm text-[10px] text-on-surface-variant">${months.map(m => `<span>${m}</span>`).join('')}</div>
+              <div class="contrib-grid">${cells.map(d => d ? `<span class="cday" data-l="${d.level}" title="${d.count} contribution${d.count === 1 ? '' : 's'} on ${fmt(d)}"></span>` : '<span class="cday empty"></span>').join('')}</div>
+            </div>
+          </div>`;
+        if (total && sum != null) total.innerHTML = `<b class="text-on-surface">${sum}</b> contributions in the last year`;
+        const card = box.closest('.contrib-card');
+        if (card && !card.querySelector('.contrib-stats')) {
+          const st = document.createElement('div');
+          st.className = 'contrib-stats flex flex-wrap gap-space-xs mt-space-md';
+          st.innerHTML = [['local_fire_department', `${streak}-day current streak`], ['event_available', `${active} active days`]].map(([ic, t]) => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">${ic}</span>${t}</span>`).join('');
+          card.appendChild(st);
+        }
+        box.scrollLeft = box.scrollWidth;                     // phones: show the most recent weeks first
+      }).catch(fallback);
+    })();
+
+    /* Scroll progress bar + back-to-top button */
+    (function initScrollUI() {
+      const bar = document.getElementById('scrollProgress'), btn = document.getElementById('backToTop');
+      const ring = btn && btn.querySelector('circle.ring'), C = 138.2;
+      let ticking = false;
+      const update = () => {
+        const max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, scrollY / max) : 0;
+        if (bar) bar.style.transform = `scaleX(${p})`;
+        if (btn) btn.classList.toggle('show', scrollY > innerHeight * 0.8);
+        if (ring) ring.style.strokeDashoffset = C * (1 - p);
+        ticking = false;
+      };
+      addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      addEventListener('resize', update);
+      if (btn) btn.addEventListener('click', () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+      update();
     })();
 
     /* Mobile menu */
@@ -1298,7 +1653,7 @@
        ===================================================================== */
     (function initNavScrollSpy() {
       const navLinks = document.querySelectorAll('#navbar-links .nav-item');
-      const sections = ['about', 'projects', 'activity', 'skills', 'contact'];
+      const sections = ['about', 'projects', 'events', 'activity', 'skills', 'contact'];
 
       window.addEventListener('scroll', () => {
         let current = '';

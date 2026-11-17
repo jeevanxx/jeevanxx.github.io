@@ -1,0 +1,47 @@
+{
+  "_help": [
+    "Hackathons, workshops and tech events shown in the 'Hackathons & events' section, newest first.",
+    "To add one: copy an entry, change the details, Commit. date = YYYY-MM-DD (used for sorting).",
+    "Optional: dateLabel, type (Hackathon/Workshop/Meetup/Competition/Conference), mode (Virtual/In person), place, organiser, team, challenge, result, summary, image, imagePosition (e.g. \"right center\"), links [{label,url,icon}]."
+  ],
+  "events": [
+    {
+      "title": "NASA Space Apps Challenge 2026",
+      "date": "2026-11-14",
+      "dateLabel": "14–15 Nov 2026",
+      "type": "Hackathon",
+      "mode": "Virtual",
+      "organiser": "NASA",
+      "team": "Team of 6",
+      "challenge": "Interplanetary Survival Guide: Martian Map",
+      "summary": "Built Martian Guide: a 3D Mars map for planning an astronaut's walk, with slope-aware routes, science stops, suit time and a turn-back point.",
+      "image": "thumbnails/martian-guide.jpg",
+      "links": [
+        {
+          "label": "Open Martian Guide",
+          "url": "martian-guide/",
+          "icon": "public"
+        }
+      ],
+      "imagePosition": "78% center"
+    },
+    {
+      "title": "Vibe Coding Workshop 2026",
+      "date": "2026-10-30",
+      "dateLabel": "30 Oct 2026",
+      "type": "Workshop",
+      "mode": "In person",
+      "organiser": "StartupTN × Google for Developers",
+      "place": "Noorul Islam Centre for Higher Education, Kumaracoil",
+      "summary": "Hands-on workshop building apps with Google AI Studio. Received a certificate of participation.",
+      "image": "certificates/vibe-coding-workshop-2026.jpg",
+      "links": [
+        {
+          "label": "View certificate",
+          "url": "certificates/vibe-coding-workshop-2026.pdf",
+          "icon": "workspace_premium"
+        }
+      ]
+    }
+  ]
+}
