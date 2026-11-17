@@ -313,6 +313,14 @@
     }
 
     #bg3d { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+    /* Hero photo flip card */
+    .flip-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+    .flip-face { position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+    .flip-back { transform: rotateY(180deg); }
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+    @media (hover: hover) { .flip-card:hover .flip-inner { transform: rotateY(180deg); } }
+    .flip-card:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 6px; }
+    @media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
     /* Scroll progress bar */
     #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 70; transform-origin: 0 50%; transform: scaleX(0);
       background: linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-secondary)), rgb(var(--color-tertiary))); pointer-events: none; }
@@ -397,7 +405,7 @@
           <span id="modeIcon" class="material-symbols-outlined text-[20px]">light_mode</span>
         </button>
         <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md hidden sm:block">
-          <img alt="Jeevan J Shine" class="w-full h-full object-cover object-[50%_32%] profile-photo" src="profile.jpg">
+          <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top profile-photo" src="profile.jpg">
         </div>
       </div>
     </div>
@@ -431,15 +439,29 @@
             <div class="lg:col-span-5 flex justify-center lg:justify-end order-1">
               <div class="relative group float-3d" style="perspective:1000px">
                 <div class="absolute -inset-1.5 bg-gradient-to-r from-primary via-secondary to-tertiary rounded-2xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-1000"></div>
-                <div data-tilt-max="12" class="tilt relative rounded-2xl overflow-hidden bg-surface-container-high border-2 border-outline-variant/30 shadow-2xl w-64 sm:w-72 md:w-80 aspect-[3/4]">
-                  <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-1000 ease-out profile-photo" src="profile.jpg">
-                  <div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-transparent pointer-events-none"></div>
-                  <div class="absolute bottom-3 left-3 right-3 p-space-sm rounded-DEFAULT bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 flex items-center justify-between">
-                    <span class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface">
-                      <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span>
-                      Tamil Nadu, India
-                    </span>
-                    <span class="font-label-sm text-label-sm text-secondary font-bold">Open to collabs</span>
+                <!-- Flip card: casual photo on the front, formal photo on the back (hover on desktop, tap on phones) -->
+                <div data-tilt-max="12" id="photoFlip" class="tilt flip-card relative rounded-2xl w-64 sm:w-72 md:w-80 aspect-[3/4] cursor-pointer" tabindex="0" role="button" aria-pressed="false" aria-label="Flip photo">
+                  <div class="flip-inner">
+                    <div class="flip-face rounded-2xl overflow-hidden bg-surface-container-high border-2 border-outline-variant/30 shadow-2xl">
+                      <img alt="Jeevan J Shine" class="w-full h-full object-cover object-top profile-photo" src="profile.jpg">
+                      <div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-transparent pointer-events-none"></div>
+                      <span class="flip-hint absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-dim/85 backdrop-blur-md border border-outline-variant/40 font-label-sm text-label-sm text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-primary">360</span><span class="hint-text">Flip</span></span>
+                      <div class="absolute bottom-3 left-3 right-3 p-space-sm rounded-DEFAULT bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 flex items-center justify-between">
+                        <span class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface">
+                          <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span>
+                          Tamil Nadu, India
+                        </span>
+                        <span class="font-label-sm text-label-sm text-secondary font-bold">Open to collabs</span>
+                      </div>
+                    </div>
+                    <div class="flip-face flip-back rounded-2xl overflow-hidden bg-surface-container-high border-2 border-primary/40 shadow-2xl">
+                      <img alt="Jeevan J Shine in a suit" class="w-full h-full object-cover object-top" src="profile-formal.jpg" loading="lazy">
+                      <div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-transparent pointer-events-none"></div>
+                      <div class="absolute bottom-3 left-3 right-3 p-space-sm rounded-DEFAULT bg-surface-dim/90 backdrop-blur-md border border-outline-variant/30 flex items-center justify-between">
+                        <span class="font-label-sm text-label-sm text-on-surface">Jeevan J Shine</span>
+                        <span class="font-label-sm text-label-sm text-primary font-bold">B.Tech CSE (AI)</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1530,6 +1552,16 @@
         }
         box.scrollLeft = box.scrollWidth;                     // phones: show the most recent weeks first
       }).catch(fallback);
+    })();
+
+    /* Hero photo flip: tap (phones) or Enter/Space (keyboard) flips; mouse users flip by hovering */
+    (function initPhotoFlip() {
+      const card = document.getElementById('photoFlip'); if (!card) return;
+      const hover = matchMedia('(hover: hover)').matches;
+      const hint = card.querySelector('.hint-text'); if (hint) hint.textContent = hover ? 'Hover to flip' : 'Tap to flip';
+      const toggle = () => { const on = card.classList.toggle('flipped'); card.setAttribute('aria-pressed', on); };
+      card.addEventListener('click', e => { if (e.pointerType === 'mouse' && hover) return; toggle(); });
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
     })();
 
     /* Scroll progress bar + back-to-top button */
