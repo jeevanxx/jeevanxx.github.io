@@ -21,9 +21,15 @@
           "label": "Open Martian Guide",
           "url": "martian-guide/",
           "icon": "public"
+        },
+        {
+          "label": "View certificate",
+          "url": "certificates/nasa-space-apps-2026.jpg",
+          "icon": "workspace_premium"
         }
       ],
-      "imagePosition": "78% center"
+      "imagePosition": "78% center",
+      "result": "Galactic Problem Solver certificate"
     },
     {
       "title": "Vibe Coding Workshop 2026",

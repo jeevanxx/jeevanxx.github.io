@@ -1,5 +1,22 @@
 [
   {
+    "file": "certificates/nasa-space-apps-2026.jpg",
+    "preview": "certificates/nasa-space-apps-2026.jpg",
+    "title": "NASA Space Apps Challenge 2026",
+    "type": "Galactic Problem Solver",
+    "date": "15 Nov 2026",
+    "sortDate": "2026-11-15",
+    "issuer": "NASA Space Apps Challenge",
+    "place": "Virtual",
+    "id": "",
+    "description": "Awarded by the 2026 NASA Space Apps Challenge for outstanding participation and efforts to address challenges we face on Earth and in space. Took part virtually (14–15 Nov 2026) with a team of six in the Martian Map challenge and built Martian Guide.",
+    "tags": [
+      "NASA Space Apps",
+      "Martian Map challenge",
+      "Team of 6"
+    ]
+  },
+  {
     "file": "certificates/vibe-coding-workshop-2026.pdf",
     "preview": "certificates/vibe-coding-workshop-2026.jpg",
     "title": "Vibe Coding Workshop 2026",

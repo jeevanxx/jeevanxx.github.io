@@ -14,6 +14,22 @@
     "place": "Noorul Islam Centre for Higher Education, Kumaracoil",
     "id": "VCW26-7R5XM",
     "description": "Organised by StartupTN in collaboration with Google for Developers at Noorul Islam Centre for Higher Education, Kumaracoil. Built apps hands-on with Google AI Studio.",
-    "tags": ["Google for Developers", "StartupTN"]
+    "tags": [
+      "Google for Developers",
+      "StartupTN"
+    ]
+  },
+  "nasa-space-apps-2026.jpg": {
+    "title": "NASA Space Apps Challenge 2026",
+    "type": "Galactic Problem Solver",
+    "date": "15 Nov 2026",
+    "issuer": "NASA Space Apps Challenge",
+    "place": "Virtual",
+    "description": "Awarded by the 2026 NASA Space Apps Challenge for outstanding participation and efforts to address challenges we face on Earth and in space. Took part virtually (14–15 Nov 2026) with a team of six in the Martian Map challenge and built Martian Guide.",
+    "tags": [
+      "NASA Space Apps",
+      "Martian Map challenge",
+      "Team of 6"
+    ]
   }
 }
